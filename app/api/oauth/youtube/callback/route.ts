@@ -4,6 +4,8 @@ import { ensureDemoUser } from "@/lib/demo-user";
 import { encrypt } from "@/lib/crypto";
 import { requiredEnv } from "@/lib/env";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
@@ -21,7 +23,7 @@ export async function GET(request: NextRequest) {
       code,
       client_id: requiredEnv("GOOGLE_CLIENT_ID"),
       client_secret: requiredEnv("GOOGLE_CLIENT_SECRET"),
-      redirect_uri: requiredEnv("GOOGLE_REDIRECT_URI"),
+      redirect_uri: new URL("/api/oauth/youtube/callback", request.url).toString(),
       grant_type: "authorization_code"
     })
   });
