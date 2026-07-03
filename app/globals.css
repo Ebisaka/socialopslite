@@ -5,11 +5,13 @@ body {
   color: #f4f7fb;
   background: #070b10;
 }
+button, input, select { font: inherit; }
 .page {
   width: min(1040px, calc(100vw - 32px));
   margin: 0 auto;
   padding: 40px 0;
 }
+.accounts-page { width: min(860px, calc(100vw - 32px)); }
 .header, .hero {
   display: flex;
   align-items: center;
@@ -19,6 +21,7 @@ body {
 }
 .hero { margin-bottom: 18px; }
 h1 { font-size: 28px; margin: 4px 0 0; letter-spacing: 0; }
+h2 { font-size: 18px; margin: 0; }
 p { color: #9aa7b6; line-height: 1.65; margin: 8px 0 0; }
 .eyebrow { color: #9fb5cf; font-size: 13px; margin: 0; }
 .panel, .card {
@@ -39,11 +42,13 @@ p { color: #9aa7b6; line-height: 1.65; margin: 8px 0 0; }
   padding: 0 14px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   text-decoration: none;
   cursor: pointer;
   white-space: nowrap;
 }
 .btn.primary { background: #f4f7fb; border-color: #f4f7fb; color: #0b1017; }
+.btn.danger-fill { background: #ef4444; border-color: #ef4444; color: #fff; }
 .badge {
   min-height: 23px;
   display: inline-flex;
@@ -60,10 +65,221 @@ p { color: #9aa7b6; line-height: 1.65; margin: 8px 0 0; }
 .badge.danger { border-color: #7f1d1d; color: #fca5a5; background: rgba(127, 29, 29, .18); }
 .muted { color: #9aa7b6; font-size: 13px; margin-top: 4px; }
 .empty { padding: 24px; text-align: center; }
-.account-card { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.compact-header { margin-bottom: 14px; }
+.account-manager { position: relative; padding: 16px; }
+.account-toolbar {
+  display: grid;
+  grid-template-columns: minmax(190px, 240px) 42px 42px 1fr;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.account-toolbar select,
+.search-input,
+.tag-editor input {
+  width: 100%;
+  min-height: 42px;
+  border-radius: 8px;
+  border: 1px solid #2b3645;
+  background: #0e141b;
+  color: #f4f7fb;
+  padding: 0 12px;
+  outline: none;
+}
+.search-input { max-width: 260px; }
+.icon-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  border: 1px solid #2b3645;
+  background: #121820;
+  color: #c7d2df;
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+}
+.icon-btn:hover,
+.icon-btn.active { background: #1d2937; color: #fff; }
+.icon-btn.danger { color: #fb7185; border-color: #4b2731; }
+.icon-btn.add { color: #86efac; border-color: #284733; }
+.account-list { display: grid; gap: 10px; }
+.account-row {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  align-items: center;
+  gap: 10px;
+}
+.account-manager:not(.editing) .account-row { grid-template-columns: 1fr; }
+.drag-handle {
+  width: 28px;
+  height: 44px;
+  border: 0;
+  background: transparent;
+  color: #788698;
+  cursor: grab;
+  display: grid;
+  place-items: center;
+  letter-spacing: -2px;
+}
+.drag-handle:active { cursor: grabbing; }
+.account-card-formal {
+  min-height: 78px;
+  border: 1px solid #2b3645;
+  border-radius: 8px;
+  background: #121820;
+  display: grid;
+  grid-template-columns: 28px 36px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 14px;
+}
+.heart {
+  width: 24px;
+  height: 24px;
+  border: 0;
+  background: transparent;
+  color: #f472b6;
+  display: grid;
+  place-items: center;
+  cursor: default;
+  font-size: 20px;
+  line-height: 1;
+  padding: 0;
+}
+.editing .heart { cursor: pointer; }
+.heart:not(.filled) { color: transparent; -webkit-text-stroke: 1.5px #f472b6; }
+.account-manager:not(.editing) .heart:not(.filled) { visibility: hidden; }
+.youtube-mark {
+  width: 34px;
+  height: 24px;
+  border-radius: 7px;
+  background: #ff0033;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  line-height: 1;
+}
+.account-main { min-width: 0; }
+.account-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.account-title-row strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.status-dot {
+  width: 15px;
+  height: 15px;
+  border-radius: 999px;
+  border: 2px solid currentColor;
+  background: transparent;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+.status-dot.success { color: #22c55e; }
+.status-dot.warning { color: #f59e0b; }
+.status-dot.danger { color: #ef4444; }
+.status-dot.success::after {
+  content: "";
+  width: 5px;
+  height: 8px;
+  border: solid currentColor;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translate(-1px, -1px);
+}
+.status-action { color: #9aa7b6; font-size: 13px; }
+.tag-line {
+  margin-top: 7px;
+  color: #9fb5cf;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0;
+}
+.tag-icon { margin-right: 6px; color: #788698; }
+.tag-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 0;
+}
+.editing .tag-text { cursor: grab; }
+.tag-text button {
+  opacity: 0;
+  border: 0;
+  background: transparent;
+  color: #fca5a5;
+  cursor: pointer;
+  padding: 0 2px;
+}
+.tag-text:hover button { opacity: 1; }
+.comma { margin: 0 7px 0 3px; color: #64748b; }
+.edit-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.tag-editor {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 42px;
+  gap: 8px;
+  border-top: 1px solid #26313f;
+  padding-top: 12px;
+  margin-top: 2px;
+}
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, .58);
+  padding: 18px;
+}
+.modal {
+  width: min(420px, 100%);
+  border: 1px solid #303b49;
+  border-radius: 8px;
+  background: #171d25;
+  padding: 20px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.45);
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+.toast {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 30;
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 4px;
+  background: #3f7f62;
+  color: #fff;
+  padding: 0 16px;
+  box-shadow: 0 12px 32px rgba(0,0,0,.28);
+}
 @media (max-width: 720px) {
   .header, .hero { align-items: flex-start; flex-direction: column; }
   .actions { width: 100%; }
   .btn { justify-content: center; }
-  .account-card { align-items: flex-start; flex-direction: column; }
+  .account-toolbar { grid-template-columns: 1fr 42px 42px; }
+  .search-input { grid-column: 1 / -1; max-width: none; }
+  .account-card-formal { grid-template-columns: 24px 34px minmax(0,1fr); }
+  .edit-actions { grid-column: 1 / -1; justify-content: flex-end; }
 }
