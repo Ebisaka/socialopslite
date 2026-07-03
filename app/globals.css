@@ -1668,18 +1668,40 @@ body[data-resolved-theme="dark"] .analytics-report {
   background: #0b0f14 !important;
 }
 
-/* Cleaner line chart after deployment: smoother curve, lighter nodes. */
-.chart-line path {
-  stroke: url("#socialopsLineGradient") !important;
-  stroke-width: 2.5 !important;
-  stroke-linecap: round !important;
-  stroke-linejoin: round !important;
+/* Brand label and a cleaner dashboard line chart. */
+aside:hover .brand-copy,
+aside.menu-open .brand-copy {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: var(--sideText) !important;
+  transform: none !important;
 }
 
-.chart-line circle {
+.brand-copy strong {
+  color: var(--sideText) !important;
+  font-weight: 700 !important;
+}
+
+.chart-line .line-area {
+  fill: url("#socialopsLineArea") !important;
+  stroke: none !important;
+}
+
+.chart-line .line-stroke {
+  fill: none !important;
+  stroke: url("#socialopsLineStroke") !important;
+  stroke-width: 2 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  vector-effect: non-scaling-stroke;
+}
+
+.chart-line .line-points circle {
   fill: var(--bg) !important;
   stroke: #cbd5e1 !important;
-  stroke-width: 1.8 !important;
+  stroke-width: 1.4 !important;
+  vector-effect: non-scaling-stroke;
 }
 
   
