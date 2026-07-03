@@ -124,26 +124,11 @@ boot();
       var max=Math.max.apply(null,values),min=Math.min.apply(null,values),span=Math.max(1,max-min);
       var points=values.map(function(v,i){
         var x=values.length===1?50:4+i*(92/(values.length-1));
-        var y=86-((v-min)/span)*68;
+        var y=88-((v-min)/span)*76;
         return {x:x,y:y};
       });
-      function control(current,previous,next,reverse){
-        var p=previous||current,n=next||current,smoothing=.18;
-        var length=Math.sqrt(Math.pow(n.x-p.x,2)+Math.pow(n.y-p.y,2));
-        var angle=Math.atan2(n.y-p.y,n.x-p.x)+(reverse?Math.PI:0);
-        return {x:current.x+Math.cos(angle)*length*smoothing,y:current.y+Math.sin(angle)*length*smoothing};
-      }
-      function linePath(items){
-        return items.reduce(function(path,point,i){
-          if(i===0)return "M"+point.x.toFixed(2)+" "+point.y.toFixed(2);
-          var cps=control(items[i-1],items[i-2],point,false);
-          var cpe=control(point,items[i-1],items[i+1],true);
-          return path+" C"+cps.x.toFixed(2)+" "+cps.y.toFixed(2)+" "+cpe.x.toFixed(2)+" "+cpe.y.toFixed(2)+" "+point.x.toFixed(2)+" "+point.y.toFixed(2);
-        },"");
-      }
-      var d=linePath(points);
-      var area=d+" L"+points[points.length-1].x.toFixed(2)+" 96 L"+points[0].x.toFixed(2)+" 96 Z";
-      q("#chartLine").innerHTML='<defs><linearGradient id="socialopsLineStroke" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="#94a3b8"></stop><stop offset="52%" stop-color="#cbd5e1"></stop><stop offset="100%" stop-color="#f8fafc"></stop></linearGradient><linearGradient id="socialopsLineArea" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#cbd5e1" stop-opacity=".22"></stop><stop offset="100%" stop-color="#cbd5e1" stop-opacity="0"></stop></linearGradient></defs><path class="line-area" d="'+area+'"></path><path class="line-stroke" d="'+d+'"></path><g class="line-points">'+points.map(function(p,i){return '<circle data-point-index="'+i+'" cx="'+p.x.toFixed(2)+'" cy="'+p.y.toFixed(2)+'" r="1.05"></circle>'}).join("")+"</g>";
+      var d=points.map(function(p,i){return (i?"L":"M")+p.x.toFixed(2)+" "+p.y.toFixed(2)}).join(" ");
+      q("#chartLine").innerHTML='<path class="line-stroke" d="'+d+'"></path><g class="line-points">'+points.map(function(p,i){return '<circle data-point-index="'+i+'" cx="'+p.x.toFixed(2)+'" cy="'+p.y.toFixed(2)+'" r="1.35"></circle>'}).join("")+"</g>";
     };
   }
   async function loadLiveAccounts(){

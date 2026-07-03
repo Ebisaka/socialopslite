@@ -1683,15 +1683,10 @@ aside.menu-open .brand-copy {
   font-weight: 700 !important;
 }
 
-.chart-line .line-area {
-  fill: url("#socialopsLineArea") !important;
-  stroke: none !important;
-}
-
 .chart-line .line-stroke {
   fill: none !important;
-  stroke: url("#socialopsLineStroke") !important;
-  stroke-width: 2 !important;
+  stroke: #cbd5e1 !important;
+  stroke-width: 2.2 !important;
   stroke-linecap: round !important;
   stroke-linejoin: round !important;
   vector-effect: non-scaling-stroke;
@@ -1700,7 +1695,7 @@ aside.menu-open .brand-copy {
 .chart-line .line-points circle {
   fill: var(--bg) !important;
   stroke: #cbd5e1 !important;
-  stroke-width: 1.4 !important;
+  stroke-width: 1.6 !important;
   vector-effect: non-scaling-stroke;
 }
 
