@@ -4,7 +4,7 @@ import { AppShell } from "./ui/app-shell";
 
 export const metadata: Metadata = {
   title: "SocialOps Lite",
-  description: "YouTube 帳戶管理、內容發布與洞察報告工具"
+  description: "YouTube 帳戶管理、內容發文與洞察報告工具"
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

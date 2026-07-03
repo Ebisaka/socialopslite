@@ -8,7 +8,6 @@ type Account = {
   id: string;
   displayName: string;
   status: string;
-  favorite?: boolean;
 };
 
 function formatNumber(value: number) {
@@ -18,14 +17,14 @@ function formatNumber(value: number) {
 export default function DashboardClient() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const activeAccount = accounts[0];
 
   useEffect(() => {
     let alive = true;
     fetch("/api/accounts", { cache: "no-store" })
       .then((response) => response.ok ? response.json() : Promise.reject())
       .then((data) => {
-        if (!alive) return;
-        setAccounts(data.accounts ?? []);
+        if (alive) setAccounts(data.accounts ?? []);
       })
       .catch(() => {
         if (alive) setAccounts([]);
@@ -36,101 +35,82 @@ export default function DashboardClient() {
     return () => { alive = false; };
   }, []);
 
-  const activeAccount = accounts[0];
-  const hasAccount = accounts.length > 0;
-  const pendingCount = accounts.filter((account) => account.status !== "authorized").length;
-  const metrics = useMemo(() => hasAccount
-    ? [
-        { label: "訂閱", value: formatNumber(18420 + accounts.length * 120), delta: "+4.8%" },
-        { label: "觀看", value: formatNumber(742980 + accounts.length * 3200), delta: "+11.2%" },
-        { label: "互動", value: "6.7%", delta: "+0.9%" }
-      ]
-    : [
-        { label: "訂閱", value: loaded ? "0" : "-", delta: "-" },
-        { label: "觀看", value: loaded ? "0" : "-", delta: "-" },
-        { label: "互動", value: loaded ? "0%" : "-", delta: "-" }
-      ], [accounts.length, hasAccount, loaded]);
+  const metrics = useMemo(() => {
+    const bump = accounts.length * 120;
+    return [
+      { label: "訂閱", value: formatNumber(18420 + bump), delta: "+4.8%" },
+      { label: "觀看", value: formatNumber(742980 + accounts.length * 3200), delta: "+11.2%" },
+      { label: "互動", value: "6.7%", delta: "+0.9%" }
+    ];
+  }, [accounts.length]);
 
-  const chart = hasAccount ? [56, 66, 48, 78, 70, 90, 61] : [0, 0, 0, 0, 0, 0, 0];
-  const max = Math.max(...chart, 1);
+  const chart = [56, 66, 48, 78, 70, 90, 61];
+  const max = Math.max(...chart);
 
   return (
-    <section className="dashboard-page page-narrow">
-      <div className="top-controls">
-        <div className="topbar-left">
-          <button className="report-switch-btn" type="button">
-            洞察報告 <strong>帳號</strong>
-          </button>
-        </div>
-        <div className="topbar-right">
-          <select className="top-range" aria-label="時間範圍" defaultValue="7">
-            <option value="7">近 7 天</option>
-            <option value="30">近 30 天</option>
-            <option value="90">近 90 天</option>
-            <option value="custom">自訂</option>
-          </select>
-          <button className="platform-icon-button" type="button" aria-label="切換平台">
-            <YoutubeMark />
-          </button>
-          <Link className="top-account" href="/accounts">
-            <YoutubeMark />
-            <strong>{activeAccount?.displayName ?? (loaded ? "尚未連線帳戶" : "讀取中")}</strong>
-          </Link>
-        </div>
+    <section className="dashboard-page">
+      <div className="dashboard-control-row">
+        <button className="platform-icon-button" type="button" aria-label="切換平台"><YoutubeMark /></button>
+        <Link className="top-account" href="/accounts">
+          <YoutubeMark />
+          <strong>{activeAccount?.displayName ?? (loaded ? "尚未連線帳戶" : "載入中")}</strong>
+        </Link>
+        <button className="report-switch-btn" type="button">洞察報告 <strong>帳號</strong></button>
+        <select className="top-range" aria-label="時間範圍" defaultValue="7">
+          <option value="7">近 7 天</option>
+          <option value="30">近 30 天</option>
+          <option value="90">近 90 天</option>
+          <option value="custom">自訂</option>
+        </select>
       </div>
 
       <div className="dashboard-report">
-        <div className="report-title">
-          <h2>帳號洞察報告</h2>
-        </div>
-
+        <div className="report-title"><h2>帳號洞察報告</h2></div>
         <div className="report-metrics">
           {metrics.map((metric) => (
-            <article className="report-metric" key={metric.label}>
+            <article className="metric report-metric" key={metric.label}>
               <label><span className="badge neutral">{metric.label}</span></label>
               <strong>{metric.value}</strong>
-              <small className={metric.delta.startsWith("+") ? "delta-up" : "delta-neutral"}>{metric.delta}</small>
+              <small className="delta-up">{metric.delta}</small>
             </article>
           ))}
         </div>
 
-        <div className="chart-panel">
-          <div className="chart-heading">
-            <h3>觀看次數</h3>
-            <div className="chart-toggle" aria-label="圖表類型">
-              <span></span>
-              <span className="line"></span>
+        <div className="report-chart-panel">
+          <div className="panel-head chart-head">
+            <h2>觀看次數</h2>
+            <div className="segmented" aria-label="圖表類型">
+              <button className="chart-icon-btn active" type="button" title="柱狀圖" aria-label="柱狀圖">
+                <svg className="chart-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="3" height="8" rx="1" /><rect x="10.5" y="6" width="3" height="13" rx="1" /><rect x="17" y="9" width="3" height="10" rx="1" /></svg>
+              </button>
+              <button className="chart-icon-btn" type="button" title="線性圖" aria-label="線性圖">
+                <svg className="chart-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="3,16 8,11 13,13 20,6" /></svg>
+              </button>
             </div>
           </div>
-          <div className="bar-chart" aria-label="近 7 天觀看次數">
-            {chart.map((value, index) => (
-              <div className="bar-column" key={index}>
-                <span style={{ height: `${Math.max(6, (value / max) * 140)}px` }} />
-                <small>{["一", "二", "三", "四", "五", "六", "日"][index]}</small>
+          <div className="chart">
+            <div className="chart-y-axis"><span>94</span><span>77</span><span>61</span><span>45</span></div>
+            <div className="chart-plot">
+              <div className="chart-bars">
+                {chart.map((value, index) => (
+                  <span className="bar" style={{ height: `${Math.max(18, (value / max) * 170)}px` }} key={index} />
+                ))}
               </div>
-            ))}
+            </div>
+            <div className="chart-corner" />
+            <div className="chart-labels">
+              {["一", "二", "三", "四", "五", "六", "日"].map((label) => <span key={label}>{label}</span>)}
+            </div>
           </div>
         </div>
 
-        <div className="dashboard-summary">
-          <div className="summary-item">
-            <span>已連線帳戶</span>
-            <strong>{loaded ? accounts.length : "-"}</strong>
+        {loaded && accounts.length === 0 ? (
+          <div className="panel empty-state">
+            <strong>尚未連線 YouTube</strong>
+            <Link className="btn primary" href="/api/oauth/youtube/start">連線 YouTube</Link>
           </div>
-          <div className="summary-item">
-            <span>待確認狀態</span>
-            <strong>{loaded ? pendingCount : "-"}</strong>
-          </div>
-        </div>
+        ) : null}
       </div>
-
-      {loaded && !hasAccount ? (
-        <div className="panel empty-state">
-          <h2>尚未連線 YouTube</h2>
-          <p>連線帳戶後，這裡會顯示帳號資料與近期表現。</p>
-          <Link className="btn primary" href="/api/oauth/youtube/start">連線 YouTube</Link>
-        </div>
-      ) : null}
     </section>
   );
 }
