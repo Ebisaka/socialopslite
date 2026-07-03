@@ -23,6 +23,14 @@ body {
 }
 button, input, select, textarea { font: inherit; }
 button { color: inherit; }
+button:focus-visible,
+a:focus-visible,
+select:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 1px solid #7aa7ff;
+  outline-offset: 2px;
+}
 a { color: inherit; }
 h1, h2, h3, p { margin: 0; }
 p { color: var(--muted); line-height: 1.65; }
@@ -148,6 +156,7 @@ p { color: var(--muted); line-height: 1.65; }
   padding: 0 14px 18px;
 }
 .more-btn { width: 100%; }
+.more-btn:focus:not(:focus-visible) { outline: none; }
 .app-main {
   grid-column: 2;
   min-width: 0;
@@ -554,6 +563,15 @@ p { color: var(--muted); line-height: 1.65; }
   align-items: start;
 }
 .composer-editor { display: grid; gap: 18px; }
+.composer-block {
+  display: grid;
+  gap: 12px;
+}
+.composer-block h3,
+.advanced-group h4 {
+  font-size: 15px;
+  margin: 0;
+}
 .field-label,
 .field span,
 .upload-box span {
@@ -605,26 +623,39 @@ legend b { color: #ff5f5f; }
   color: #bad5f7;
   font-weight: 700;
 }
+.advanced-stack {
+  display: grid;
+  gap: 16px;
+  margin-top: 14px;
+}
 .advanced-grid {
   margin-top: 14px;
 }
-.advanced-grid fieldset {
+.advanced-group {
   border: 1px solid #2b3645;
   border-radius: 8px;
-  margin: 0;
   padding: 12px;
+  display: grid;
+  gap: 10px;
 }
-.advanced-grid legend {
-  color: #bad5f7;
-  padding: 0 6px;
-}
-.advanced-grid label,
+.advanced-group label,
 .check-field {
   color: var(--ink);
   display: flex;
   align-items: center;
   gap: 8px;
   min-height: 30px;
+}
+.advanced-group b { color: #ff5f5f; }
+.age-limit {
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+  margin-top: 2px;
+}
+.age-limit summary {
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 8px;
 }
 .composer-actions { display: flex; justify-content: flex-end; }
 .composer-preview h2 { margin-bottom: 14px; }
