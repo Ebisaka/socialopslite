@@ -35,7 +35,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const navItems = [
     { href: "/", label: "總覽", icon: "dashboard" as const, active: pathname === "/" },
-    { href: "/accounts", label: "帳號", icon: "accounts" as const, active: pathname.startsWith("/accounts") },
+    { href: "/accounts", label: "帳戶", icon: "accounts" as const, active: pathname.startsWith("/accounts") },
     { href: "/composer", label: "發文", icon: "composer" as const, active: pathname.startsWith("/composer") }
   ];
 
@@ -57,7 +57,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <strong>SocialOps Lite</strong>
           </span>
         </Link>
-        <nav className="nav" aria-label="主要功能">
+        <nav className="nav" aria-label="主要導覽">
           {navItems.map((item) => (
             <Link className={item.active ? "active" : ""} href={item.href} key={item.href} title={item.label}>
               <span className="nav-icon"><NavIcon name={item.icon} /></span>
