@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ensureDemoUser } from "@/lib/demo-user";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const user = await ensureDemoUser();
   const accounts = await prisma.socialAccount.findMany({
