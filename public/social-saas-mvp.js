@@ -67,6 +67,104 @@ function ensureDashboardPlatformSwitch(){
 }
 function setupDashboardControls(){var header=q("header");if(!header)return;var host=q("#insightControlHost");if(!host){host=document.createElement("div");host.id="insightControlHost";host.className="insight-control-host";header.insertAdjacentElement("afterend",host)}var row=q("#dashboardControlRow");if(!row){row=document.createElement("div");row.id="dashboardControlRow";row.className="dashboard-control-row"}if(row.parentElement!==host)host.appendChild(row);var platform=ensureDashboardPlatformSwitch(),account=q(".top-account-wrap"),report=q(".report-switch"),range=q("#rangeSelect");if(platform&&platform.parentElement!==row)row.appendChild(platform);if(account&&account.parentElement!==row)row.appendChild(account);if(report&&report.parentElement!==row)row.appendChild(report);if(range&&range.parentElement!==row)row.appendChild(range);}function boot(){setupDashboardControls();var now=new Date();now.setHours(now.getHours()+3);q("#publishTime").value=now.toISOString().slice(0,16);applyThemeMode(localStorage.getItem("mvp_theme_mode")||"system");renderAccountSwitcher();renderChart(localStorage.getItem("mvp_chart_range")||"7");renderAccounts();renderQueue();renderPublishTargets();renderPlaylistOptions();renderComposer();tab(localStorage.getItem("mvp_active_tab")||"dashboard");qa(".nav button").forEach(function(b){b.onclick=function(){tab(b.dataset.tab)}});qa("[data-open-composer]").forEach(function(b){b.onclick=function(){tab("composer")}});if(q("#reportSwitchBtn")){q("#reportSwitchBtn").onclick=function(event){event.stopPropagation();q("#reportMenu").classList.toggle("open")};qa("[data-report-tab]").forEach(function(b){b.onclick=function(event){event.stopPropagation();tab(b.dataset.reportTab)}})}if(q("#moreBtn")){q("#moreBtn").onclick=function(event){event.stopPropagation();var menu=q("#moreMenu"),more=q("#moreBtn"),panel=q("#appearancePanel"),appearance=q("#appearanceBtn");if(menu)menu.classList.toggle("open");var isOpen=!!(menu&&menu.classList.contains("open"));if(more)more.classList.toggle("active",isOpen);if(!isOpen){if(panel)panel.classList.remove("open");if(appearance)appearance.classList.remove("open")}setAsideMenuOpen(isOpen)}}if(q("#appearanceBtn")){q("#appearanceBtn").onclick=function(event){event.stopPropagation();var menu=q("#moreMenu"),panel=q("#appearancePanel"),btn=q("#appearanceBtn"),more=q("#moreBtn");if(menu)menu.classList.add("open");if(more)more.classList.add("active");if(panel)panel.classList.toggle("open");if(btn)btn.classList.toggle("open");setAsideMenuOpen(true)}}qa("[data-theme-choice]").forEach(function(btn){btn.onclick=function(event){event.stopPropagation();applyThemeMode(btn.dataset.themeChoice);closeSideMenus()}});if(window.matchMedia){window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",function(){if((document.body.dataset.themeMode||"system")==="system")applyThemeMode("system")})}if(q("#platformSwitchBtn")){q("#platformSwitchBtn").onclick=function(event){event.stopPropagation();var menu=q("#platformMenu"),moreMenu=q("#moreMenu"),more=q("#moreBtn"),panel=q("#appearancePanel"),appearance=q("#appearanceBtn");if(moreMenu)moreMenu.classList.remove("open");if(more)more.classList.remove("active");if(panel)panel.classList.remove("open");if(appearance)appearance.classList.remove("open");if(menu)menu.classList.remove("open");setAsideMenuOpen(false);localStorage.setItem("mvp_active_platform","youtube");tab("dashboard");renderChart(localStorage.getItem("mvp_chart_range")||"7")};qa("[data-platform-id]").forEach(function(btn){btn.onclick=function(event){event.stopPropagation();localStorage.setItem("mvp_active_platform",btn.dataset.platformId);closeAccountMenu();tab("dashboard");renderChart(localStorage.getItem("mvp_chart_range")||"7")}});q(".platform-switch").onclick=function(event){event.stopPropagation()}}if(q("#topAccount")){q("#topAccount").onclick=function(event){event.stopPropagation();q("#topAccountMenu").classList.toggle("open")};q(".top-account-wrap").onclick=function(event){event.stopPropagation()}}q("aside").onclick=function(event){event.stopPropagation()};q("aside").onmouseleave=function(){var moreMenu=q("#moreMenu");if(!(moreMenu&&moreMenu.classList.contains("open")))closeSideMenus()};document.addEventListener("click",function(){closeSideMenus();closeHelpPopover();var menu=q("#reportMenu");if(menu)menu.classList.remove("open")});document.addEventListener("keydown",handleGlobalEscape);q("#rangeSelect").onchange=function(){renderChart(q("#rangeSelect").value)};qa("#chartTypeTabs button").forEach(function(btn){btn.onclick=function(){localStorage.setItem("mvp_chart_type",btn.dataset.chartType);renderChart(localStorage.getItem("mvp_chart_range")||"7")}});q("#applyCustomRange").onclick=function(){var s=q("#customStart"),e=q("#customEnd");if(s.value>e.value){toast("開始日期不能晚於結束日期");return}renderChart("custom");toast("已套用自訂時間範圍")};qa("[data-chart-metric]").forEach(function(card){card.onclick=function(){localStorage.setItem("mvp_chart_metric",card.dataset.chartMetric);renderChart(localStorage.getItem("mvp_chart_range")||"7")}});q("#groupFilter").onchange=renderAccounts;q("#accountSearch").oninput=function(){var wrap=q("#accountSearchWrap");if(wrap)wrap.classList.toggle("has-value",!!q("#accountSearch").value.trim());renderAccounts()};if(q("#accountSearchToggle")){q("#accountSearchToggle").onclick=function(){var wrap=q("#accountSearchWrap"),input=q("#accountSearch");if(wrap)wrap.classList.toggle("open");if(wrap&&wrap.classList.contains("open")&&input)setTimeout(function(){input.focus()},0)}}if(q("#accountEditToggle"))q("#accountEditToggle").onclick=function(){accountEditMode=!accountEditMode;if(!accountEditMode)activeGroupIndex=null;renderAccounts();toast(accountEditMode?"已進入編輯帳戶":"已結束編輯")};if(q("#addDemoAccountBtn"))q("#addDemoAccountBtn").onclick=addDemoAccount;if(q("#addPlaylistBtn"))q("#addPlaylistBtn").onclick=function(){showPlaylistCreate(true)};if(q("#deletePlaylistBtn"))q("#deletePlaylistBtn").onclick=deleteSelectedPlaylist;if(q("#savePlaylistBtn"))q("#savePlaylistBtn").onclick=addPlaylistForCurrentAccount;if(q("#cancelPlaylistBtn"))q("#cancelPlaylistBtn").onclick=function(){showPlaylistCreate(false)};if(q("#playlistNameInput"))q("#playlistNameInput").onkeydown=function(event){if(event.key==="Enter")addPlaylistForCurrentAccount();if(event.key==="Escape")showPlaylistCreate(false)};qa("[data-help]").forEach(function(btn){btn.onclick=function(event){event.preventDefault();event.stopPropagation();showHelpPopover(btn.dataset.help,btn)}});qa('input[name="audienceChoice"]').forEach(function(el){el.onchange=function(){if(audienceChoice())setFieldError("audience","");renderComposer()}});qa('input[name="ageRestrictionChoice"]').forEach(function(el){el.onclick=function(event){if(isMadeForKids()){event.preventDefault();qa('input[name="ageRestrictionChoice"]').forEach(function(input){input.checked=input.value==="false"});renderComposer();return false}};el.onchange=renderComposer});["contentInput","titleInput","contentType","publishMode","visibilityInput","playlistInput","categoryInput","tagsInput","mediaInput","coverInput","captionInput","publishTime","licenseInput","embedInput","notifyInput","commentsInput","remixInput","paidPromoInput","aiDisclosureInput"].forEach(function(id){var el=q("#"+id);if(el){el.oninput=function(){if(id==="titleInput"&&el.value.trim())setFieldError("title","");renderComposer()};el.onchange=renderComposer}});q("#scheduleBtn").onclick=function(){var mode=q("#publishMode").value;if(!validateComposer(mode))return;var button=q("#scheduleBtn"),originalText=button.textContent;if(mode==="排程發布"){var targets=selectedPublishAccounts();queue.unshift({title:q("#titleInput").value.trim(),platform:"YouTube",accountId:targets[0].id,accountIds:targets.map(function(a){return a.id}),accountName:targets.map(function(a){return a.name}).join("、"),time:q("#publishTime").value||"未設定",status:"排程發布",visibility:fieldValue("visibilityInput","private"),playlist:fieldValue("playlistInput",""),madeForKids:isMadeForKids()});save();renderQueue();toast("已加入發文佇列");return}if(mode==="立即發布"){button.disabled=true;button.textContent="準備發布...";toast("準備發布...");setTimeout(function(){button.disabled=false;renderComposer();toast("目前為預覽模式，尚未送出到 YouTube")},900);return}localStorage.setItem("mvp_youtube_draft",JSON.stringify({title:q("#titleInput").value.trim(),content:q("#contentInput").value,type:q("#contentType").value,accountIds:selectedPublishAccounts().map(function(a){return a.id}),visibility:fieldValue("visibilityInput","private"),playlist:fieldValue("playlistInput",""),madeForKids:isMadeForKids(),category:fieldValue("categoryInput",""),tags:fieldValue("tagsInput","")}));button.textContent="已儲存草稿";toast("已儲存草稿");setTimeout(renderComposer,900)};if(q("#removeMediaBtn"))q("#removeMediaBtn").onclick=function(){clearFileInput("mediaInput","media");setFieldError("media","")};if(q("#removeCoverBtn"))q("#removeCoverBtn").onclick=function(){clearFileInput("coverInput","cover")};if(q("#removeCaptionBtn"))q("#removeCaptionBtn").onclick=function(){clearFileInput("captionInput","caption")};}
 boot();
+/* Production bridge: keep demo UI, but use real connected accounts on the live app. */
+(function(){
+  function isProductionHost(){
+    return location.hostname==="socialopslite.com"||location.hostname==="www.socialopslite.com";
+  }
+  function demoToolsEnabled(){
+    return !isProductionHost()||/[?&]demoTools=1\b/.test(location.search)||localStorage.getItem("socialops_demo_tools")==="1";
+  }
+  function normalizeStatus(status){
+    var value=String(status||"").toLowerCase();
+    if(value==="connected"||value==="active"||status==="已連線")return "已連線";
+    if(value==="expired"||value==="reconnect"||status==="需重新確認")return "需重新確認";
+    if(value==="insufficient_scope"||value==="permission"||status==="需補權限")return "需補權限";
+    return "已連線";
+  }
+  function mapApiAccount(item,index){
+    return {
+      id:String(item.id||item.platformAccountId||("account-"+index)),
+      name:item.displayName||item.platformAccountId||("YouTube 帳號 "+(index+1)),
+      platform:item.platform||"YouTube",
+      group:item.groupName||"",
+      tags:item.groupName?String(item.groupName).split(",").map(function(t){return t.trim()}).filter(Boolean):[],
+      favorite:!!item.favorite,
+      status:normalizeStatus(item.status),
+      expires:item.tokenExpiresAt?String(item.tokenExpiresAt).slice(0,10):"",
+      color:"transparent",
+      avatar:"play",
+      dataStart:"2026-04-01",
+      dataEnd:"2026-06-30"
+    };
+  }
+  function ensureAccountDemoData(account,index){
+    if(!accountStats[account.id]){
+      accountStats[account.id]=JSON.parse(JSON.stringify(accountStats.main));
+    }
+    if(!contentAnalytics.youtube[account.id]){
+      createDemoContentAnalytics(account.id,index+1);
+    }
+    if(!accountHealth[account.id]){
+      accountHealth[account.id]=[
+        {key:"auth",state:account.status==="已連線"?"ok":account.status==="需重新確認"?"warn":"bad",icon:account.status==="已連線"?"✓":"!",title:account.status,text:"YouTube "+account.status},
+        {key:"sync",state:"ok",icon:"✓",title:"資料已同步",text:"剛剛",action:true}
+      ];
+    }
+  }
+  function applyDemoToolVisibility(){
+    var add=q("#addDemoAccountBtn");
+    if(add){
+      add.classList.toggle("is-hidden",!demoToolsEnabled());
+      add.title=demoToolsEnabled()?"新增測試帳戶":"正式站不顯示測試帳戶";
+    }
+  }
+  function improveLineChart(){
+    renderLine=function(values){
+      var max=Math.max.apply(null,values),min=Math.min.apply(null,values),span=Math.max(1,max-min);
+      var points=values.map(function(v,i){
+        var x=values.length===1?50:6+i*(88/(values.length-1));
+        var y=88-((v-min)/span)*76;
+        return {x:x,y:y};
+      });
+      var d="";
+      points.forEach(function(p,i){
+        if(i===0){d="M"+p.x.toFixed(2)+" "+p.y.toFixed(2);return}
+        var prev=points[i-1],mid=(prev.x+p.x)/2;
+        d+=" C"+mid.toFixed(2)+" "+prev.y.toFixed(2)+" "+mid.toFixed(2)+" "+p.y.toFixed(2)+" "+p.x.toFixed(2)+" "+p.y.toFixed(2);
+      });
+      q("#chartLine").innerHTML='<defs><linearGradient id="socialopsLineGradient" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="#94a3b8"></stop><stop offset="100%" stop-color="#cbd5e1"></stop></linearGradient></defs><path d="'+d+'"></path>'+points.map(function(p,i){return '<circle data-point-index="'+i+'" cx="'+p.x.toFixed(2)+'" cy="'+p.y.toFixed(2)+'" r="1.35"></circle>'}).join("");
+    };
+  }
+  async function loadLiveAccounts(){
+    try{
+      var res=await fetch("/api/accounts",{cache:"no-store"});
+      if(!res.ok)return;
+      var data=await res.json();
+      var live=(data.accounts||[]).map(mapApiAccount);
+      if(!live.length)return;
+      accounts=live;
+      accounts.forEach(ensureAccountDemoData);
+      if(!accounts.some(function(a){return a.id===activeAccountId()})){
+        localStorage.setItem("mvp_active_account",accounts[0].id);
+        localStorage.setItem("mvp_publish_accounts",JSON.stringify([accounts[0].id]));
+        localStorage.setItem("mvp_publish_account",accounts[0].id);
+      }
+      renderAccountSwitcher();
+      renderChart(localStorage.getItem("mvp_chart_range")||"7");
+      renderAccounts();
+      renderPublishTargets();
+      renderPlaylistOptions();
+      renderComposer();
+    }catch(error){
+      console.warn("SocialOps accounts sync skipped",error);
+    }
+  }
+  applyDemoToolVisibility();
+  improveLineChart();
+  renderChart(localStorage.getItem("mvp_chart_range")||"7");
+  loadLiveAccounts();
+})();
 /* Account search auto collapse when empty. */
 (function(){
   var input=document.querySelector('#accountSearch');

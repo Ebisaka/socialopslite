@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef } from "react";
 
@@ -27,5 +27,6 @@ export default function DemoShell({ initialTab = "dashboard" }: DemoShellProps) 
     };
   }, [initialTab]);
 
-  return <div data-socialops-build="demo-parity-20260704-0148" dangerouslySetInnerHTML={{ __html: demoMarkup }} />;
+  return <div data-socialops-build="demo-parity-20260704-accounts-live-0158" dangerouslySetInnerHTML={{ __html: demoMarkup }} />;
 }
+

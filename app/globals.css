@@ -1668,6 +1668,20 @@ body[data-resolved-theme="dark"] .analytics-report {
   background: #0b0f14 !important;
 }
 
+/* Cleaner line chart after deployment: smoother curve, lighter nodes. */
+.chart-line path {
+  stroke: url("#socialopsLineGradient") !important;
+  stroke-width: 2.5 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+.chart-line circle {
+  fill: var(--bg) !important;
+  stroke: #cbd5e1 !important;
+  stroke-width: 1.8 !important;
+}
+
   
     /* Final tighten: remove leftover inner gap before favorite/icon/name group. */
     .account-row .account-title{grid-template-columns:18px 34px minmax(0,1fr)!important;column-gap:6px!important;width:max-content!important;max-width:100%!important}
