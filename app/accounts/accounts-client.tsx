@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { YoutubeMark } from "../ui/app-shell";
 
 type IconName = "search" | "edit" | "tag" | "trash" | "grip" | "plus" | "x" | "heart";
@@ -88,6 +88,7 @@ async function deleteAccount(id: string) {
 
 export default function AccountsClient({ initialAccounts, connectHref }: Props) {
   const [accounts, setAccounts] = useState(initialAccounts);
+  const [loading, setLoading] = useState(initialAccounts.length === 0);
   const [filter, setFilter] = useState("all");
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -98,6 +99,26 @@ export default function AccountsClient({ initialAccounts, connectHref }: Props) 
   const [notice, setNotice] = useState<string | null>(null);
   const [dragAccountId, setDragAccountId] = useState<string | null>(null);
   const [dragTag, setDragTag] = useState<{ accountId: string; tag: string } | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    fetch("/api/accounts", { cache: "no-store" })
+      .then((response) => response.ok ? response.json() : Promise.reject())
+      .then((data) => {
+        if (!alive) return;
+        setAccounts((data.accounts ?? []).map((account: ManagedAccount) => ({
+          ...account,
+          tokenExpiresAt: account.tokenExpiresAt ?? null
+        })));
+      })
+      .catch(() => {
+        if (alive) showNotice("帳戶資料讀取失敗");
+      })
+      .finally(() => {
+        if (alive) setLoading(false);
+      });
+    return () => { alive = false; };
+  }, []);
 
   const allTags = useMemo(() => {
     return Array.from(new Set(accounts.flatMap((account) => tagsFromGroup(account.groupName)))).sort((a, b) => a.localeCompare(b, "zh-Hant"));
@@ -255,8 +276,8 @@ export default function AccountsClient({ initialAccounts, connectHref }: Props) 
 
       {visibleAccounts.length === 0 ? (
         <div className="empty account-empty">
-          <strong>{accounts.length === 0 ? "尚未連線 YouTube" : "沒有符合條件的帳戶"}</strong>
-          <p>{accounts.length === 0 ? "連線 YouTube 後，帳戶會出現在這裡。" : "請調整篩選或搜尋條件。"}</p>
+          <strong>{loading ? "讀取帳戶中" : accounts.length === 0 ? "尚未連線 YouTube" : "沒有符合條件的帳戶"}</strong>
+          <p>{loading ? "資料載入後會顯示在這裡。" : accounts.length === 0 ? "連線 YouTube 後，帳戶會出現在這裡。" : "請調整篩選或搜尋條件。"}</p>
         </div>
       ) : (
         <div className="account-list">
