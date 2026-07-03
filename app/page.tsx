@@ -18,7 +18,6 @@ export default async function DashboardPage() {
   });
 
   const activeAccount = accounts[0];
-  const connectedCount = accounts.filter((account) => account.status === "authorized").length;
   const hasAccount = accounts.length > 0;
   const metrics = hasAccount
     ? [
@@ -88,18 +87,7 @@ export default async function DashboardPage() {
           <p>先連線帳戶後，總覽會開始顯示你的帳戶資料與內容表現。</p>
           <Link className="btn primary" href="/api/oauth/youtube/start">連線 YouTube</Link>
         </div>
-      ) : (
-        <div className="dashboard-summary">
-          <div className="summary-item">
-            <span>已連線帳戶</span>
-            <strong>{connectedCount}</strong>
-          </div>
-          <div className="summary-item">
-            <span>待確認狀態</span>
-            <strong>{accounts.length - connectedCount}</strong>
-          </div>
-        </div>
-      )}
+      ) : null}
     </section>
   );
 }

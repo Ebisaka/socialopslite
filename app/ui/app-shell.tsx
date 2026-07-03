@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 function NavIcon({ name }: { name: "dashboard" | "accounts" | "composer" | "more" }) {
-  const common = { fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+  const common = { fill: "none", stroke: "currentColor", strokeWidth: 1.9, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
 
   return (
     <svg className="nav-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -19,8 +19,8 @@ function NavIcon({ name }: { name: "dashboard" | "accounts" | "composer" | "more
 export function YoutubeMark() {
   return (
     <svg className="yt-svg" viewBox="0 0 34 24" aria-hidden="true" focusable="false">
-      <rect x="0" y="0" width="34" height="24" rx="7" />
-      <path d="M14 8.2v7.6L21 12l-7-3.8Z" />
+      <rect x="0" y="0" width="34" height="24" rx="7" fill="#ff0033" />
+      <path d="M14 8.2v7.6L21 12l-7-3.8Z" fill="#fff" />
     </svg>
   );
 }
@@ -37,7 +37,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="app-shell">
       <aside className="sidebar">
         <Link className="brand" href="/" aria-label="SocialOps Lite">
-          <img className="brand-logo" src="/socialops-logo.png" alt="SocialOps Lite" />
+          <span className="brand-mark">
+            <img
+              className="brand-logo"
+              src="/socialops-logo.png"
+              alt=""
+              width={38}
+              height={38}
+              style={{ width: 38, height: 38, objectFit: "cover" }}
+            />
+            <span className="brand-fallback">S</span>
+          </span>
+          <span className="brand-copy">
+            <strong>SocialOps Lite</strong>
+          </span>
         </Link>
         <nav className="nav" aria-label="主要功能">
           {navItems.map((item) => (
