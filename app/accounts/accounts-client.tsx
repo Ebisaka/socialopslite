@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { YoutubeMark } from "../ui/app-shell";
 
-type IconName = "search" | "edit" | "tag" | "trash" | "grip" | "plus" | "x" | "play" | "heart";
+type IconName = "search" | "edit" | "tag" | "trash" | "grip" | "plus" | "x" | "heart";
 
 export type ManagedAccount = {
   id: string;
@@ -24,22 +25,10 @@ type Props = {
 };
 
 function Icon({ name, filled = false }: { name: IconName; filled?: boolean }) {
-  if (name === "play") {
-    return (
-      <svg className="yt-svg" viewBox="0 0 34 24" aria-hidden="true" focusable="false">
-        <rect x="0" y="0" width="34" height="24" rx="7" />
-        <path d="M14 8.2v7.6L21 12l-7-3.8Z" />
-      </svg>
-    );
-  }
-
   if (name === "heart") {
     return (
       <svg className="heart-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <path
-          d="M12 20.2s-6.8-4.2-9.2-8.2C.8 8.7 2.7 5 6.4 5c2 0 3.3 1 4.1 2.1C11.3 6 12.6 5 14.6 5c3.7 0 5.6 3.7 3.6 7-2.4 4-9.2 8.2-9.2 8.2Z"
-          fill={filled ? "currentColor" : "none"}
-        />
+        <path d="M12 20.2s-6.8-4.2-9.2-8.2C.8 8.7 2.7 5 6.4 5c2 0 3.3 1 4.1 2.1C11.3 6 12.6 5 14.6 5c3.7 0 5.6 3.7 3.6 7-2.4 4-9.2 8.2-9.2 8.2Z" fill={filled ? "currentColor" : "none"} />
       </svg>
     );
   }
@@ -140,7 +129,7 @@ export default function AccountsClient({ initialAccounts, connectHref }: Props) 
     const index = accounts.length + 1;
     const statuses = ["authorized", "expired", "insufficient_scope"];
     const status = statuses[index % statuses.length];
-    const next: ManagedAccount = {
+    setAccounts((current) => [...current, {
       id: "demo-" + Date.now(),
       platform: "youtube",
       platformAccountId: "demo-" + index,
@@ -148,11 +137,10 @@ export default function AccountsClient({ initialAccounts, connectHref }: Props) 
       status,
       favorite: false,
       groupName: index % 2 === 0 ? "工作用, A廠商" : "",
-      sortOrder: accounts.length,
+      sortOrder: current.length,
       tokenExpiresAt: null,
       createdAt: new Date().toISOString()
-    };
-    setAccounts((current) => [...current, next]);
+    }]);
     showNotice("已新增測試帳戶");
   }
 
@@ -218,7 +206,7 @@ export default function AccountsClient({ initialAccounts, connectHref }: Props) 
     setAccounts(reordered);
     setDragAccountId(null);
     try {
-      await Promise.all(reordered.map((account) => updateAccount(account.id, { sortOrder: account.sortOrder })));
+      await Promise.all(reordered.filter((account) => !account.id.startsWith("demo-")).map((account) => updateAccount(account.id, { sortOrder: account.sortOrder })));
       showNotice("排序已更新");
     } catch {
       setAccounts(accounts);
@@ -284,7 +272,7 @@ export default function AccountsClient({ initialAccounts, connectHref }: Props) 
                   <button className={account.favorite ? "heart filled" : "heart"} type="button" aria-label="我的最愛" onClick={() => toggleFavorite(account)}>
                     {account.favorite || editing ? <Icon name="heart" filled={account.favorite} /> : null}
                   </button>
-                  <div className="youtube-mark"><Icon name="play" /></div>
+                  <div className="youtube-mark"><YoutubeMark /></div>
                   <div className="account-main">
                     <div className="account-title-row">
                       <strong>{account.displayName}</strong>

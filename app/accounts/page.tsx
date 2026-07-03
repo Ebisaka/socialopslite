@@ -30,8 +30,8 @@ export default async function AccountsPage() {
   }));
 
   return (
-    <main className="page accounts-page">
+    <section className="accounts-page">
       <AccountsClient initialAccounts={initialAccounts} connectHref="/api/oauth/youtube/start" />
-    </main>
+    </section>
   );
 }
