@@ -228,6 +228,130 @@
   padding: 0 16px;
 }
 
+/* Dashboard should match the original demo: dark canvas, compact controls, no extra title band. */
+body,
+.app-main {
+  background: #0b0f14 !important;
+}
+
+.dashboard-page {
+  width: min(900px, calc(100vw - 128px)) !important;
+  margin: 0 auto !important;
+}
+
+.dashboard-control-row {
+  margin: 14px 0 24px !important;
+  justify-content: center !important;
+  gap: 10px !important;
+}
+
+.platform-icon-button {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+}
+
+.platform-icon-button .yt-svg {
+  width: 32px !important;
+  height: 23px !important;
+}
+
+.top-account,
+.report-switch-btn,
+.top-range {
+  min-height: 38px !important;
+  border-radius: 999px !important;
+  border-color: #2b3139 !important;
+  background: #151a21 !important;
+  box-shadow: none !important;
+}
+
+.top-account {
+  padding: 4px 13px 4px 7px !important;
+  gap: 9px !important;
+}
+
+.top-account .yt-svg {
+  width: 30px !important;
+  height: 21px !important;
+}
+
+.report-switch-btn,
+.top-range {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+}
+
+.dashboard-report {
+  max-width: 900px !important;
+  margin: 0 auto !important;
+}
+
+.report-title {
+  display: none !important;
+}
+
+.report-metrics {
+  border-top: 1px solid #2b3139 !important;
+  border-bottom: 1px solid #2b3139 !important;
+  margin: 0 0 28px !important;
+}
+
+.report-metric {
+  min-height: 156px !important;
+  padding: 26px 18px !important;
+  background: transparent !important;
+  border-right: 1px solid #2b3139 !important;
+  box-shadow: none !important;
+}
+
+.report-metric:last-child {
+  border-right: 0 !important;
+}
+
+.report-metric strong {
+  font-size: 34px !important;
+  margin-top: 18px !important;
+}
+
+.report-chart-panel {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.chart-head {
+  justify-content: center !important;
+  margin-bottom: 18px !important;
+}
+
+.chart-head h2 {
+  font-size: 16px !important;
+}
+
+.chart {
+  min-height: 324px !important;
+}
+
+.chart-y-axis,
+.chart-plot {
+  min-height: 224px !important;
+}
+
+.chart-plot {
+  background: repeating-linear-gradient(to top, transparent 0, transparent 52px, #242a32 53px) !important;
+}
+
+.bar {
+  background: #6b7280 !important;
+  opacity: .72 !important;
+  border-radius: 6px 6px 0 0 !important;
+}
+
 .panel,
 .account-card,
 .composer-editor,

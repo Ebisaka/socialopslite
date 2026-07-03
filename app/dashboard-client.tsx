@@ -50,12 +50,16 @@ export default function DashboardClient() {
   return (
     <section className="dashboard-page">
       <div className="dashboard-control-row">
-        <button className="platform-icon-button" type="button" aria-label="切換平台"><YoutubeMark /></button>
+        <button className="platform-icon-button" type="button" aria-label="切換平台">
+          <YoutubeMark />
+        </button>
         <Link className="top-account" href="/accounts">
           <YoutubeMark />
-          <strong>{activeAccount?.displayName ?? (loaded ? "尚未連線帳戶" : "載入中")}</strong>
+          <strong>{activeAccount?.displayName ?? (loaded ? "尚未連線帳戶" : "讀取帳戶")}</strong>
         </Link>
-        <button className="report-switch-btn" type="button">洞察報告 <strong>帳號</strong></button>
+        <button className="report-switch-btn" type="button">
+          洞察報告 <strong>帳號</strong>
+        </button>
         <select className="top-range" aria-label="時間範圍" defaultValue="7">
           <option value="7">近 7 天</option>
           <option value="30">近 30 天</option>
@@ -65,7 +69,6 @@ export default function DashboardClient() {
       </div>
 
       <div className="dashboard-report">
-        <div className="report-title"><h2>帳號洞察報告</h2></div>
         <div className="report-metrics">
           {metrics.map((metric) => (
             <article className="metric report-metric" key={metric.label}>
@@ -81,10 +84,16 @@ export default function DashboardClient() {
             <h2>觀看次數</h2>
             <div className="segmented" aria-label="圖表類型">
               <button className="chart-icon-btn active" type="button" title="柱狀圖" aria-label="柱狀圖">
-                <svg className="chart-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="3" height="8" rx="1" /><rect x="10.5" y="6" width="3" height="13" rx="1" /><rect x="17" y="9" width="3" height="10" rx="1" /></svg>
+                <svg className="chart-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="4" y="11" width="3" height="8" rx="1" />
+                  <rect x="10.5" y="6" width="3" height="13" rx="1" />
+                  <rect x="17" y="9" width="3" height="10" rx="1" />
+                </svg>
               </button>
               <button className="chart-icon-btn" type="button" title="線性圖" aria-label="線性圖">
-                <svg className="chart-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="3,16 8,11 13,13 20,6" /></svg>
+                <svg className="chart-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <polyline points="3,16 8,11 13,13 20,6" />
+                </svg>
               </button>
             </div>
           </div>
