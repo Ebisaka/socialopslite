@@ -1699,6 +1699,18 @@ aside.menu-open .brand-copy {
   pointer-events: auto;
 }
 
+/* Chart bars should sit on the x-axis baseline instead of floating inside the plot. */
+.chart-bars {
+  position: absolute !important;
+  left: 12px !important;
+  right: 12px !important;
+  top: 8px !important;
+  bottom: 0 !important;
+  height: auto !important;
+  display: grid !important;
+  align-items: end !important;
+}
+
 /* Light mode should feel like a normal social/SaaS dashboard, not an inverted dark theme. */
 body[data-resolved-theme="light"] {
   --bg: #f6f7f9 !important;

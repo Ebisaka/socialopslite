@@ -14,6 +14,7 @@ model User {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   socialAccounts SocialAccount[]
+  issueReports   IssueReport[]
 }
 
 model SocialAccount {
@@ -34,7 +35,43 @@ model SocialAccount {
   updatedAt             DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  metricSnapshots MetricSnapshot[]
 
   @@unique([userId, platform, platformAccountId])
   @@index([userId, platform])
+}
+
+model MetricSnapshot {
+  id              String   @id @default(cuid())
+  socialAccountId String
+  platform        String
+  date            DateTime
+  subscriberCount Int?
+  viewCount       BigInt?
+  videoCount      Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  socialAccount SocialAccount @relation(fields: [socialAccountId], references: [id], onDelete: Cascade)
+
+  @@unique([socialAccountId, date])
+  @@index([socialAccountId, date])
+  @@index([platform, date])
+}
+
+model IssueReport {
+  id        String   @id @default(cuid())
+  userId    String?
+  email     String?
+  category  String   @default("general")
+  page      String   @default("")
+  message   String
+  status    String   @default("open")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([userId, createdAt])
 }
