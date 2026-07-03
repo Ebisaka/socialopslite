@@ -1668,6 +1668,37 @@ body[data-resolved-theme="dark"] .analytics-report {
   background: #0b0f14 !important;
 }
 
+/* Brand label and a cleaner dashboard line chart. */
+aside:hover .brand-copy,
+aside.menu-open .brand-copy {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: var(--sideText) !important;
+  transform: none !important;
+}
+
+.brand-copy strong {
+  color: var(--sideText) !important;
+  font-weight: 700 !important;
+}
+
+.chart-line .line-stroke {
+  fill: none !important;
+  stroke: #cbd5e1 !important;
+  stroke-width: 2.2 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  vector-effect: non-scaling-stroke;
+}
+
+.chart-line .line-hit-points circle {
+  fill: transparent !important;
+  stroke: transparent !important;
+  opacity: 0 !important;
+  pointer-events: auto;
+}
+
   
     /* Final tighten: remove leftover inner gap before favorite/icon/name group. */
     .account-row .account-title{grid-template-columns:18px 34px minmax(0,1fr)!important;column-gap:6px!important;width:max-content!important;max-width:100%!important}
