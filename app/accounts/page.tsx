@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { ensureDemoUser } from "@/lib/demo-user";
 import AccountsClient, { ManagedAccount } from "./accounts-client";
@@ -32,15 +31,7 @@ export default async function AccountsPage() {
 
   return (
     <main className="page accounts-page">
-      <div className="header compact-header">
-        <div>
-          <p className="eyebrow">帳戶</p>
-          <h1>帳戶管理</h1>
-        </div>
-        <Link className="btn primary" href="/api/oauth/youtube/start">連線 YouTube</Link>
-      </div>
-
-      <AccountsClient initialAccounts={initialAccounts} />
+      <AccountsClient initialAccounts={initialAccounts} connectHref="/api/oauth/youtube/start" />
     </main>
   );
 }

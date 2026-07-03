@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 
 type IconName = "search" | "edit" | "tag" | "trash" | "grip" | "plus" | "x" | "play" | "heart";
@@ -19,13 +20,14 @@ export type ManagedAccount = {
 
 type Props = {
   initialAccounts: ManagedAccount[];
+  connectHref: string;
 };
 
 function Icon({ name, filled = false }: { name: IconName; filled?: boolean }) {
   if (name === "play") {
     return (
-      <svg viewBox="0 0 34 24" aria-hidden="true" className="yt-svg">
-        <rect width="34" height="24" rx="7" />
+      <svg className="yt-svg" viewBox="0 0 34 24" aria-hidden="true" focusable="false">
+        <rect x="0" y="0" width="34" height="24" rx="7" />
         <path d="M14 8.2v7.6L21 12l-7-3.8Z" />
       </svg>
     );
@@ -33,7 +35,7 @@ function Icon({ name, filled = false }: { name: IconName; filled?: boolean }) {
 
   if (name === "heart") {
     return (
-      <svg viewBox="0 0 24 24" aria-hidden="true" className="heart-svg">
+      <svg className="heart-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
         <path
           d="M12 20.2s-6.8-4.2-9.2-8.2C.8 8.7 2.7 5 6.4 5c2 0 3.3 1 4.1 2.1C11.3 6 12.6 5 14.6 5c3.7 0 5.6 3.7 3.6 7-2.4 4-9.2 8.2-9.2 8.2Z"
           fill={filled ? "currentColor" : "none"}
@@ -42,18 +44,12 @@ function Icon({ name, filled = false }: { name: IconName; filled?: boolean }) {
     );
   }
 
-  const common = {
-    fill: "none",
-    stroke: "currentColor",
-    strokeWidth: 1.8,
-    strokeLinecap: "round" as const,
-    strokeLinejoin: "round" as const
-  };
+  const common = { fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
 
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="ui-svg">
-      {name === "search" ? <><circle cx="11" cy="11" r="6" {...common} /><path d="m16 16 4 4" {...common} /></> : null}
-      {name === "edit" ? <><path d="M4 20h4.5L19 9.5 14.5 5 4 15.5V20Z" {...common} /><path d="m13.5 6 4.5 4.5" {...common} /></> : null}
+    <svg className="ui-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      {name === "search" ? <><circle cx="10.5" cy="10.5" r="5.8" {...common} /><path d="M15 15l4.5 4.5" {...common} /></> : null}
+      {name === "edit" ? <><path d="M12 20h9" {...common} /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7.2 18.8 3 20l1.2-4.2 12.3-12.3z" {...common} /></> : null}
       {name === "tag" ? <><path d="M4 6v6.2c0 .5.2 1 .6 1.4l6.8 6.8c.8.8 2 .8 2.8 0l5.2-5.2c.8-.8.8-2 0-2.8L12.6 5.6A2 2 0 0 0 11.2 5H5a1 1 0 0 0-1 1Z" {...common} /><circle cx="8" cy="9" r="1.3" fill="currentColor" /></> : null}
       {name === "trash" ? <><path d="M5 7h14" {...common} /><path d="M9 7V5h6v2" {...common} /><path d="M8 10v8" {...common} /><path d="M12 10v8" {...common} /><path d="M16 10v8" {...common} /><path d="M7 7l1 14h8l1-14" {...common} /></> : null}
       {name === "grip" ? <><circle cx="9" cy="6" r="1" fill="currentColor" /><circle cx="15" cy="6" r="1" fill="currentColor" /><circle cx="9" cy="12" r="1" fill="currentColor" /><circle cx="15" cy="12" r="1" fill="currentColor" /><circle cx="9" cy="18" r="1" fill="currentColor" /><circle cx="15" cy="18" r="1" fill="currentColor" /></> : null}
@@ -61,19 +57,6 @@ function Icon({ name, filled = false }: { name: IconName; filled?: boolean }) {
       {name === "x" ? <><path d="M6 6l12 12" {...common} /><path d="M18 6 6 18" {...common} /></> : null}
     </svg>
   );
-}
-
-function statusLabel(status: string) {
-  if (status === "authorized") return "已連線";
-  if (status === "expired") return "需重新確認";
-  if (status === "insufficient_scope") return "需補齊權限";
-  return "需處理";
-}
-
-function statusClass(status: string) {
-  if (status === "authorized") return "status-dot success";
-  if (status === "expired") return "status-dot warning";
-  return "status-dot danger";
 }
 
 function tagsFromGroup(groupName: string) {
@@ -84,7 +67,21 @@ function tagsToGroup(tags: string[]) {
   return tags.map((tag) => tag.trim()).filter(Boolean).join(", ");
 }
 
+function statusLabel(status: string) {
+  if (status === "authorized") return "已連線";
+  if (status === "expired") return "重新確認";
+  if (status === "insufficient_scope") return "補齊權限";
+  return "需處理";
+}
+
+function statusClass(status: string) {
+  if (status === "authorized") return "status-dot success";
+  if (status === "expired") return "status-dot warning";
+  return "status-dot danger";
+}
+
 async function updateAccount(id: string, payload: Partial<Pick<ManagedAccount, "favorite" | "groupName" | "sortOrder">>) {
+  if (id.startsWith("demo-")) return { ok: true };
   const response = await fetch("/api/accounts/" + id, {
     method: "PATCH",
     headers: { "content-type": "application/json" },
@@ -95,11 +92,12 @@ async function updateAccount(id: string, payload: Partial<Pick<ManagedAccount, "
 }
 
 async function deleteAccount(id: string) {
+  if (id.startsWith("demo-")) return;
   const response = await fetch("/api/accounts/" + id, { method: "DELETE" });
   if (!response.ok) throw new Error("帳戶移除失敗");
 }
 
-export default function AccountsClient({ initialAccounts }: Props) {
+export default function AccountsClient({ initialAccounts, connectHref }: Props) {
   const [accounts, setAccounts] = useState(initialAccounts);
   const [filter, setFilter] = useState("all");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -133,16 +131,41 @@ export default function AccountsClient({ initialAccounts }: Props) {
     setAccounts((current) => current.map((account) => account.id === id ? { ...account, ...updates } : account));
   }
 
+  function closeTagEditor() {
+    setEditingTagsId(null);
+    setNewTag("");
+  }
+
+  function addPreviewAccount() {
+    const index = accounts.length + 1;
+    const statuses = ["authorized", "expired", "insufficient_scope"];
+    const status = statuses[index % statuses.length];
+    const next: ManagedAccount = {
+      id: "demo-" + Date.now(),
+      platform: "youtube",
+      platformAccountId: "demo-" + index,
+      displayName: "YouTube 測試帳號 " + index,
+      status,
+      favorite: false,
+      groupName: index % 2 === 0 ? "工作用, A廠商" : "",
+      sortOrder: accounts.length,
+      tokenExpiresAt: null,
+      createdAt: new Date().toISOString()
+    };
+    setAccounts((current) => [...current, next]);
+    showNotice("已新增測試帳戶");
+  }
+
   async function toggleFavorite(account: ManagedAccount) {
     if (!editing) return;
     const next = !account.favorite;
     patchLocal(account.id, { favorite: next });
     try {
       await updateAccount(account.id, { favorite: next });
-      showNotice(next ? "已加入我的最愛" : "已移除我的最愛");
+      showNotice(next ? "已加入我的最愛" : "已移出我的最愛");
     } catch {
       patchLocal(account.id, { favorite: account.favorite });
-      showNotice("更新失敗，請稍後再試");
+      showNotice("更新失敗，已還原");
     }
   }
 
@@ -213,34 +236,39 @@ export default function AccountsClient({ initialAccounts }: Props) {
       showNotice("帳戶已移除");
     } catch {
       setAccounts(original);
-      showNotice("移除失敗，請稍後再試");
+      showNotice("移除失敗，已還原");
     }
-  }
-
-  function closeTagEditor() {
-    setEditingTagsId(null);
-    setNewTag("");
   }
 
   return (
     <section className={editing ? "panel account-manager editing" : "panel account-manager"}>
-      <div className="account-toolbar">
+      <div className="panel-head">
+        <h2>帳號管理</h2>
+        <div className="toolbar">
+          <button className="btn" type="button" onClick={addPreviewAccount}>新增帳戶</button>
+          <Link className="btn primary" href={connectHref}>連線 YouTube</Link>
+        </div>
+      </div>
+
+      <div className="account-filter-row">
         <select value={filter} onChange={(event) => setFilter(event.target.value)} aria-label="篩選帳戶">
           <option value="all">全部帳戶</option>
           <option value="favorite">我的最愛</option>
           {allTags.map((tag) => <option key={tag} value={tag}>{tag}</option>)}
         </select>
-        <button className="icon-btn" type="button" aria-label="搜尋帳戶" onClick={() => setSearchOpen((open) => !open)}><Icon name="search" /></button>
-        <button className={editing ? "icon-btn active" : "icon-btn"} type="button" aria-label="編輯帳戶" onClick={() => { setEditing((value) => !value); closeTagEditor(); }}><Icon name="edit" /></button>
-        {searchOpen ? (
-          <input className="search-input" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜尋帳戶或標籤" autoFocus />
-        ) : null}
+        <div className="account-filter-actions">
+          <div className={searchOpen ? "account-search-wrap open" : "account-search-wrap"}>
+            <button className="account-search-toggle" type="button" aria-label="搜尋帳戶" onClick={() => setSearchOpen((open) => !open)}><Icon name="search" /></button>
+            {searchOpen ? <input className="account-search-input" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜尋帳戶或標籤" autoFocus /> : null}
+          </div>
+          <button className={editing ? "account-edit-toggle active" : "account-edit-toggle"} type="button" aria-label="編輯帳戶" onClick={() => { setEditing((value) => !value); closeTagEditor(); }}><Icon name="edit" /></button>
+        </div>
       </div>
 
       {visibleAccounts.length === 0 ? (
-        <div className="empty">
+        <div className="empty account-empty">
           <strong>{accounts.length === 0 ? "尚未連線 YouTube" : "沒有符合條件的帳戶"}</strong>
-          <p>{accounts.length === 0 ? "點選右上角連線 YouTube，授權完成後會出現在這裡。" : "可以調整篩選條件或搜尋字詞。"}</p>
+          <p>{accounts.length === 0 ? "點選連線 YouTube，授權完成後會出現在這裡。" : "可以調整篩選條件或搜尋字詞。"}</p>
         </div>
       ) : (
         <div className="account-list">
@@ -250,7 +278,7 @@ export default function AccountsClient({ initialAccounts }: Props) {
             return (
               <div className="account-row" key={account.id} onDragOver={(event) => editing && event.preventDefault()} onDrop={() => reorderAccount(account.id)}>
                 {editing ? (
-                  <button className="drag-handle" type="button" aria-label="拖曳排序" draggable onDragStart={() => setDragAccountId(account.id)} onDragEnd={() => setDragAccountId(null)}><Icon name="grip" /></button>
+                  <button className="account-drag-handle" type="button" aria-label="拖曳排序" draggable onDragStart={() => setDragAccountId(account.id)} onDragEnd={() => setDragAccountId(null)}><Icon name="grip" /></button>
                 ) : null}
                 <article className="account-card-formal">
                   <button className={account.favorite ? "heart filled" : "heart"} type="button" aria-label="我的最愛" onClick={() => toggleFavorite(account)}>
@@ -302,7 +330,7 @@ export default function AccountsClient({ initialAccounts }: Props) {
         <div className="modal-backdrop" role="presentation" onClick={() => setConfirmDeleteId(null)}>
           <div className="modal" role="dialog" aria-modal="true" onClick={(event) => event.stopPropagation()}>
             <h2>移除帳戶？</h2>
-            <p>這只會移除 SocialOps Lite 中的連線資料，不會刪除你的 YouTube 帳號。</p>
+            <p>這只會移除 SocialOps Lite 內的連線資料，不會刪除你的 YouTube 帳號。</p>
             <div className="modal-actions">
               <button className="btn" type="button" onClick={() => setConfirmDeleteId(null)}>取消</button>
               <button className="btn danger-fill" type="button" onClick={confirmDelete}>移除</button>
