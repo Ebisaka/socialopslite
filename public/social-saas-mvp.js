@@ -128,7 +128,7 @@ boot();
         return {x:x,y:y};
       });
       var d=points.map(function(p,i){return (i?"L":"M")+p.x.toFixed(2)+" "+p.y.toFixed(2)}).join(" ");
-      q("#chartLine").innerHTML='<path class="line-stroke" d="'+d+'"></path><g class="line-points">'+points.map(function(p,i){return '<circle data-point-index="'+i+'" cx="'+p.x.toFixed(2)+'" cy="'+p.y.toFixed(2)+'" r="1.35"></circle>'}).join("")+"</g>";
+      q("#chartLine").innerHTML='<path class="line-stroke" d="'+d+'"></path><g class="line-hit-points">'+points.map(function(p,i){return '<circle data-point-index="'+i+'" cx="'+p.x.toFixed(2)+'" cy="'+p.y.toFixed(2)+'" r="3.6"></circle>'}).join("")+"</g>";
     };
   }
   async function loadLiveAccounts(){

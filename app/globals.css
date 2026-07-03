@@ -1692,11 +1692,154 @@ aside.menu-open .brand-copy {
   vector-effect: non-scaling-stroke;
 }
 
-.chart-line .line-points circle {
-  fill: var(--bg) !important;
-  stroke: #cbd5e1 !important;
-  stroke-width: 1.6 !important;
-  vector-effect: non-scaling-stroke;
+.chart-line .line-hit-points circle {
+  fill: transparent !important;
+  stroke: transparent !important;
+  opacity: 0 !important;
+  pointer-events: auto;
+}
+
+/* Light mode should feel like a normal social/SaaS dashboard, not an inverted dark theme. */
+body[data-resolved-theme="light"] {
+  --bg: #f6f7f9 !important;
+  --panel: #ffffff !important;
+  --field: #ffffff !important;
+  --ink: #111827 !important;
+  --muted: #667085 !important;
+  --line: #e5e7eb !important;
+  --chartGrid: #eef1f5 !important;
+  --side: #ffffff !important;
+  --sideText: #111827 !important;
+  --sideMuted: #667085 !important;
+  --sideLine: #e5e7eb !important;
+  --shadow: 0 14px 34px rgba(16,24,40,.07) !important;
+  background: #f6f7f9 !important;
+  color: #111827 !important;
+}
+
+body[data-resolved-theme="light"] .app,
+body[data-resolved-theme="light"] main,
+body[data-resolved-theme="light"] .section,
+body[data-resolved-theme="light"] .dashboard-report,
+body[data-resolved-theme="light"] .analytics-report {
+  background: #f6f7f9 !important;
+}
+
+body[data-resolved-theme="light"] aside {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border-right: 1px solid #e5e7eb !important;
+  box-shadow: 10px 0 30px rgba(16,24,40,.035) !important;
+}
+
+body[data-resolved-theme="light"] .brand-copy strong,
+body[data-resolved-theme="light"] .nav button,
+body[data-resolved-theme="light"] .more-btn {
+  color: #344054 !important;
+}
+
+body[data-resolved-theme="light"] .nav button:hover,
+body[data-resolved-theme="light"] .nav button.active,
+body[data-resolved-theme="light"] .more-btn:hover,
+body[data-resolved-theme="light"] .more-btn.active {
+  color: #111827 !important;
+  background: #f1f5f9 !important;
+}
+
+body[data-resolved-theme="light"] .panel,
+body[data-resolved-theme="light"] .item-card,
+body[data-resolved-theme="light"] .queue-row,
+body[data-resolved-theme="light"] .rule,
+body[data-resolved-theme="light"] .account-menu,
+body[data-resolved-theme="light"] .report-menu,
+body[data-resolved-theme="light"] .top-account,
+body[data-resolved-theme="light"] .report-switch-btn,
+body[data-resolved-theme="light"] .segmented,
+body[data-resolved-theme="light"] input,
+body[data-resolved-theme="light"] select,
+body[data-resolved-theme="light"] textarea {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border-color: #d8dee8 !important;
+}
+
+body[data-resolved-theme="light"] .dashboard-control-row,
+body[data-resolved-theme="light"] .report-metrics,
+body[data-resolved-theme="light"] .metric.report-metric {
+  border-color: #d8dee8 !important;
+}
+
+body[data-resolved-theme="light"] .metric.report-metric strong,
+body[data-resolved-theme="light"] h1,
+body[data-resolved-theme="light"] h2,
+body[data-resolved-theme="light"] strong {
+  color: #111827 !important;
+}
+
+body[data-resolved-theme="light"] .badge,
+body[data-resolved-theme="light"] .neutral,
+body[data-resolved-theme="light"] .ok,
+body[data-resolved-theme="light"] .info,
+body[data-resolved-theme="light"] .metric label .badge {
+  background: #f8fafc !important;
+  border-color: #d8dee8 !important;
+  color: #475467 !important;
+}
+
+body[data-resolved-theme="light"] .btn {
+  background: #ffffff !important;
+  border-color: #d8dee8 !important;
+  color: #111827 !important;
+}
+
+body[data-resolved-theme="light"] .btn.primary {
+  background: #111827 !important;
+  border-color: #111827 !important;
+  color: #ffffff !important;
+}
+
+body[data-resolved-theme="light"] .chart-plot {
+  border-bottom-color: #d8dee8 !important;
+  background: repeating-linear-gradient(
+    to top,
+    transparent 0,
+    transparent 52px,
+    #eef1f5 53px
+  ) !important;
+}
+
+body[data-resolved-theme="light"] .bar {
+  background: #94a3b8 !important;
+  opacity: .72 !important;
+}
+
+body[data-resolved-theme="light"] .chart-line .line-stroke {
+  stroke: #64748b !important;
+}
+
+body[data-resolved-theme="light"] .chart-y-axis,
+body[data-resolved-theme="light"] .chart-labels,
+body[data-resolved-theme="light"] .hint,
+body[data-resolved-theme="light"] .muted,
+body[data-resolved-theme="light"] .sub {
+  color: #667085 !important;
+}
+
+body[data-resolved-theme="light"] .more-menu {
+  background: #ffffff !important;
+  border-color: #d8dee8 !important;
+  box-shadow: 0 18px 40px rgba(16,24,40,.14) !important;
+}
+
+body[data-resolved-theme="light"] .more-item-title,
+body[data-resolved-theme="light"] .more-option {
+  color: #344054 !important;
+}
+
+body[data-resolved-theme="light"] .more-option:hover,
+body[data-resolved-theme="light"] .more-option.active {
+  background: #f1f5f9 !important;
+  color: #111827 !important;
 }
 
   
