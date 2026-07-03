@@ -1,18 +1,24 @@
-﻿function enforceDemoDarkCanvas(){
+﻿function enforceDemoCanvasForTheme(){
+  var isDark=document.body.dataset.resolvedTheme==='dark';
   var targets=[document.documentElement,document.body,document.querySelector('[data-socialops-build]'),document.querySelector('.app'),document.querySelector('main'),document.querySelector('.section.active'),document.querySelector('.dashboard-report')].filter(Boolean);
-  targets.forEach(function(el){el.style.setProperty('background-color','#0b0f14','important')});
-  document.body.style.setProperty('--bg','#0b0f14','important');
-  document.body.style.setProperty('--side','#080b0f','important');
-  document.body.style.setProperty('--panel','#151a21','important');
-  document.body.style.setProperty('--field','#10151c','important');
+  if(isDark){
+    targets.forEach(function(el){el.style.setProperty('background-color','#0b0f14','important')});
+    document.body.style.setProperty('--bg','#0b0f14','important');
+    document.body.style.setProperty('--side','#080b0f','important');
+    document.body.style.setProperty('--panel','#151a21','important');
+    document.body.style.setProperty('--field','#10151c','important');
+  }else{
+    targets.forEach(function(el){el.style.removeProperty('background-color')});
+    ['--bg','--side','--panel','--field'].forEach(function(name){document.body.style.removeProperty(name)});
+  }
 }
 function renderStyleDebugBadge(){
   if(!/[?&]debug=style\b/.test(location.search))return;
   var badge=document.getElementById('socialopsStyleDebug');
   if(!badge){badge=document.createElement('div');badge.id='socialopsStyleDebug';badge.style.cssText='position:fixed;right:10px;bottom:10px;z-index:999999;padding:7px 9px;border-radius:6px;background:#111827;color:#fff;border:1px solid #374151;font:12px/1.4 Segoe UI,Arial,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.28)';document.body.appendChild(badge)}
-  badge.textContent='0137 bg '+getComputedStyle(document.body).backgroundColor+' var '+getComputedStyle(document.body).getPropertyValue('--bg').trim();
+  badge.textContent='0144 '+document.body.dataset.resolvedTheme+' bg '+getComputedStyle(document.body).backgroundColor+' var '+getComputedStyle(document.body).getPropertyValue('--bg').trim();
 }
-if(document.body){enforceDemoDarkCanvas();renderStyleDebugBadge();setInterval(function(){enforceDemoDarkCanvas();renderStyleDebugBadge()},500)}var metricMeta={subscribers:{title:"閮??,unit:"鈭?},views:{title:"閫?活??,unit:"甈?},engagement:{title:"撟喳?鈭???,unit:"%"}};
+if(document.body){enforceDemoCanvasForTheme();renderStyleDebugBadge();setInterval(function(){enforceDemoCanvasForTheme();renderStyleDebugBadge()},500)}var metricMeta={subscribers:{title:"閮??,unit:"鈭?},views:{title:"閫?活??,unit:"甈?},engagement:{title:"撟喳?鈭???,unit:"%"}};
 var defaultAccounts=[
   {id:"main",name:"YouTube",platform:"YouTube",group:"",favorite:true,status:"撌脤??",expires:"2026-07-25",color:"transparent",avatar:"play",dataStart:"2026-04-01",dataEnd:"2026-06-30"},
   {id:"studio",name:"撌乩???YouTube",platform:"YouTube",group:"",favorite:false,status:"撌脤??",expires:"2026-08-12",color:"transparent",avatar:"play",dataStart:"2026-05-10",dataEnd:"2026-06-30"}

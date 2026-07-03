@@ -8,17 +8,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="zh-Hant" style={{ backgroundColor: "#0b0f14" }}>
-      <body
-        data-resolved-theme="dark"
-        style={{ backgroundColor: "#0b0f14" }}
-      >
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              "document.documentElement.style.backgroundColor='#0b0f14';document.body&&document.body.style.setProperty('background-color','#0b0f14','important');"
-          }}
-        />
+    <html lang="zh-Hant">
+      <body data-resolved-theme="dark">
         {children}
       </body>
     </html>

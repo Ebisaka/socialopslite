@@ -27,5 +27,5 @@ export default function DemoShell({ initialTab = "dashboard" }: DemoShellProps) 
     };
   }, [initialTab]);
 
-  return <div data-socialops-build="demo-parity-20260704-0137" dangerouslySetInnerHTML={{ __html: demoMarkup }} />;
+  return <div data-socialops-build="demo-parity-20260704-0148" dangerouslySetInnerHTML={{ __html: demoMarkup }} />;
 }

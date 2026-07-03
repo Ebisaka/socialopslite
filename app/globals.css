@@ -1651,14 +1651,9 @@ aside.menu-open .nav-label{display:block!important;opacity:1!important;white-spa
     .account-row>.account-drag-cell>.account-drag-handle{width:20px!important;min-width:20px!important}
 
 /* SocialOps Lite demo parity guard.
-   Keep the deployed app on the same dark canvas as the approved static demo. */
-html,
-body,
+   Keep dark mode on the approved static demo canvas without breaking light mode. */
 body[data-resolved-theme="dark"] {
   background: #0b0f14 !important;
-}
-
-body[data-resolved-theme="dark"] {
   --bg: #0b0f14 !important;
   --side: #080b0f !important;
   --panel: #151a21 !important;
