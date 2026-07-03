@@ -23,7 +23,7 @@ export default async function ComposerPage() {
             <div className="publish-targets">
               <label className="field-label">發布目標</label>
               {accounts.length === 0 ? (
-                <Link className="target-empty" href="/accounts">先連線 YouTube 帳戶</Link>
+                <Link className="target-empty" href="/accounts">先連線 YouTube 帳號</Link>
               ) : (
                 <div className="target-list">
                   {accounts.map((account, index) => (
@@ -110,6 +110,7 @@ export default async function ComposerPage() {
                     <option value="entertainment">娛樂</option>
                     <option value="education">教育</option>
                     <option value="science">科學與科技</option>
+                    <option value="nonprofits">非營利組織與社運活動</option>
                   </select>
                 </label>
                 <label className="field">

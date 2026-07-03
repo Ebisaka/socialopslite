@@ -76,14 +76,14 @@ async function updateAccount(id: string, payload: Partial<Pick<ManagedAccount, "
     headers: { "content-type": "application/json" },
     body: JSON.stringify(payload)
   });
-  if (!response.ok) throw new Error("帳戶更新失敗");
+  if (!response.ok) throw new Error("帳號更新失敗");
   return response.json();
 }
 
 async function deleteAccount(id: string) {
   if (id.startsWith("demo-")) return;
   const response = await fetch("/api/accounts/" + id, { method: "DELETE" });
-  if (!response.ok) throw new Error("帳戶移除失敗");
+  if (!response.ok) throw new Error("帳號移除失敗");
 }
 
 export default function AccountsClient({ initialAccounts, connectHref }: Props) {
@@ -150,7 +150,7 @@ export default function AccountsClient({ initialAccounts, connectHref }: Props) 
     patchLocal(account.id, { favorite: next });
     try {
       await updateAccount(account.id, { favorite: next });
-      showNotice(next ? "已加入我的最愛" : "已移出我的最愛");
+      showNotice(next ? "已加入我的最愛" : "已移除我的最愛");
     } catch {
       patchLocal(account.id, { favorite: account.favorite });
       showNotice("更新失敗，已還原");
@@ -221,7 +221,7 @@ export default function AccountsClient({ initialAccounts, connectHref }: Props) 
     try {
       await deleteAccount(confirmDeleteId);
       setConfirmDeleteId(null);
-      showNotice("帳戶已移除");
+      showNotice("帳號已移除");
     } catch {
       setAccounts(original);
       showNotice("移除失敗，已還原");
@@ -239,24 +239,24 @@ export default function AccountsClient({ initialAccounts, connectHref }: Props) 
       </div>
 
       <div className="account-filter-row">
-        <select value={filter} onChange={(event) => setFilter(event.target.value)} aria-label="篩選帳戶">
-          <option value="all">全部帳戶</option>
+        <select value={filter} onChange={(event) => setFilter(event.target.value)} aria-label="篩選帳號">
+          <option value="all">全部帳號</option>
           <option value="favorite">我的最愛</option>
           {allTags.map((tag) => <option key={tag} value={tag}>{tag}</option>)}
         </select>
         <div className="account-filter-actions">
           <div className={searchOpen ? "account-search-wrap open" : "account-search-wrap"}>
-            <button className="account-search-toggle" type="button" aria-label="搜尋帳戶" onClick={() => setSearchOpen((open) => !open)}><Icon name="search" /></button>
-            {searchOpen ? <input className="account-search-input" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜尋帳戶或標籤" autoFocus /> : null}
+            <button className="account-search-toggle" type="button" aria-label="搜尋帳號" onClick={() => setSearchOpen((open) => !open)}><Icon name="search" /></button>
+            {searchOpen ? <input className="account-search-input" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜尋帳號或標籤" autoFocus /> : null}
           </div>
-          <button className={editing ? "account-edit-toggle active" : "account-edit-toggle"} type="button" aria-label="編輯帳戶" onClick={() => { setEditing((value) => !value); closeTagEditor(); }}><Icon name="edit" /></button>
+          <button className={editing ? "account-edit-toggle active" : "account-edit-toggle"} type="button" aria-label="編輯帳號" onClick={() => { setEditing((value) => !value); closeTagEditor(); }}><Icon name="edit" /></button>
         </div>
       </div>
 
       {visibleAccounts.length === 0 ? (
         <div className="empty account-empty">
-          <strong>{accounts.length === 0 ? "尚未連線 YouTube" : "沒有符合條件的帳戶"}</strong>
-          <p>{accounts.length === 0 ? "點選連線 YouTube，授權完成後會出現在這裡。" : "可以調整篩選條件或搜尋字詞。"}</p>
+          <strong>{accounts.length === 0 ? "尚未連線 YouTube" : "沒有符合條件的帳號"}</strong>
+          <p>{accounts.length === 0 ? "連線 YouTube 後，帳號會出現在這裡。" : "請調整篩選或搜尋條件。"}</p>
         </div>
       ) : (
         <div className="account-list">
@@ -295,7 +295,7 @@ export default function AccountsClient({ initialAccounts, connectHref }: Props) 
                   {editing ? (
                     <div className="edit-actions">
                       <button className="icon-btn" type="button" aria-label="編輯標籤" onClick={() => setEditingTagsId(tagEditorOpen ? null : account.id)}><Icon name="tag" /></button>
-                      <button className="icon-btn danger" type="button" aria-label="移除帳戶" onClick={() => setConfirmDeleteId(account.id)}><Icon name="trash" /></button>
+                      <button className="icon-btn danger" type="button" aria-label="移除帳號" onClick={() => setConfirmDeleteId(account.id)}><Icon name="trash" /></button>
                     </div>
                   ) : null}
                   {tagEditorOpen ? (
@@ -317,8 +317,8 @@ export default function AccountsClient({ initialAccounts, connectHref }: Props) 
       {confirmDeleteId ? (
         <div className="modal-backdrop" role="presentation" onClick={() => setConfirmDeleteId(null)}>
           <div className="modal" role="dialog" aria-modal="true" onClick={(event) => event.stopPropagation()}>
-            <h2>移除帳戶？</h2>
-            <p>這只會移除 SocialOps Lite 內的連線資料，不會刪除你的 YouTube 帳號。</p>
+            <h2>移除帳號？</h2>
+            <p>這只會從 SocialOps Lite 移除此帳號連線，不會刪除你的 YouTube 帳號或頻道。</p>
             <div className="modal-actions">
               <button className="btn" type="button" onClick={() => setConfirmDeleteId(null)}>取消</button>
               <button className="btn danger-fill" type="button" onClick={confirmDelete}>移除</button>

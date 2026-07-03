@@ -40,7 +40,7 @@ export default async function DashboardPage() {
         <button className="platform-icon-button" type="button" aria-label="切換平台"><YoutubeMark /></button>
         <Link className="top-account" href="/accounts">
           <YoutubeMark />
-          <strong>{activeAccount?.displayName ?? "尚未連線帳戶"}</strong>
+          <strong>{activeAccount?.displayName ?? "尚未連線帳號"}</strong>
         </Link>
         <button className="report-switch-btn" type="button">洞察報告 <strong>帳號</strong></button>
         <select className="top-range" aria-label="時間範圍" defaultValue="7">
@@ -81,10 +81,21 @@ export default async function DashboardPage() {
         </div>
       </div>
 
+      <div className="dashboard-summary-row">
+        <div className="mini-panel">
+          <span>已連線帳戶</span>
+          <strong>{accounts.length}</strong>
+        </div>
+        <div className="mini-panel">
+          <span>待確認狀態</span>
+          <strong>{accounts.filter((account) => account.status !== "authorized").length}</strong>
+        </div>
+      </div>
+
       {!hasAccount ? (
         <div className="panel empty-state">
           <h2>尚未連線 YouTube</h2>
-          <p>先連線帳戶後，總覽會開始顯示你的帳戶資料與內容表現。</p>
+          <p>連線帳號後，這裡會顯示帳號表現、內容數據與排程狀態。</p>
           <Link className="btn primary" href="/api/oauth/youtube/start">連線 YouTube</Link>
         </div>
       ) : null}

@@ -4,7 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 function NavIcon({ name }: { name: "dashboard" | "accounts" | "composer" | "more" }) {
-  const common = { fill: "none", stroke: "currentColor", strokeWidth: 1.9, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+  const common = {
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.9,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const
+  };
 
   return (
     <svg className="nav-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -40,13 +46,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <span className="brand-mark">
             <img
               className="brand-logo"
-              src="/socialops-logo.png"
+              src="/socialops-logo-small.png"
               alt=""
               width={38}
               height={38}
-              style={{ width: 38, height: 38, objectFit: "cover" }}
+              style={{ width: 38, height: 38, objectFit: "contain" }}
             />
-            <span className="brand-fallback">S</span>
           </span>
           <span className="brand-copy">
             <strong>SocialOps Lite</strong>

@@ -70,19 +70,9 @@ p { color: var(--muted); line-height: 1.65; }
   z-index: 1;
   width: 38px;
   height: 38px;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 10px;
-  background: #f5ecd8;
-}
-.brand-fallback {
-  position: absolute;
-  inset: 3px;
-  display: grid;
-  place-items: center;
-  border-radius: 10px;
-  background: #24364f;
-  color: #f4f7fb;
-  font-weight: 800;
+  background: transparent;
 }
 .brand-logo[src] {
   color: transparent;
