@@ -97,6 +97,7 @@ p { color: #9aa7b6; line-height: 1.65; margin: 8px 0 0; }
   display: inline-grid;
   place-items: center;
   cursor: pointer;
+  padding: 0;
 }
 .icon-btn:hover,
 .icon-btn.active { background: #1d2937; color: #fff; }
@@ -119,7 +120,7 @@ p { color: #9aa7b6; line-height: 1.65; margin: 8px 0 0; }
   cursor: grab;
   display: grid;
   place-items: center;
-  letter-spacing: -2px;
+  padding: 0;
 }
 .drag-handle:active { cursor: grabbing; }
 .account-card-formal {
@@ -142,22 +143,18 @@ p { color: #9aa7b6; line-height: 1.65; margin: 8px 0 0; }
   display: grid;
   place-items: center;
   cursor: default;
-  font-size: 20px;
   line-height: 1;
   padding: 0;
 }
 .editing .heart { cursor: pointer; }
-.heart:not(.filled) { color: transparent; -webkit-text-stroke: 1.5px #f472b6; }
+.heart:not(.filled) { color: #f472b6; }
 .account-manager:not(.editing) .heart:not(.filled) { visibility: hidden; }
 .youtube-mark {
   width: 34px;
   height: 24px;
   border-radius: 7px;
-  background: #ff0033;
-  color: #fff;
   display: grid;
   place-items: center;
-  font-size: 12px;
   line-height: 1;
 }
 .account-main { min-width: 0; }
@@ -205,7 +202,7 @@ p { color: #9aa7b6; line-height: 1.65; margin: 8px 0 0; }
   flex-wrap: wrap;
   gap: 0;
 }
-.tag-icon { margin-right: 6px; color: #788698; }
+.tag-icon { width: 14px; height: 14px; margin-right: 6px; color: #788698; display: inline-grid; place-items: center; }
 .tag-text {
   display: inline-flex;
   align-items: center;
@@ -214,12 +211,16 @@ p { color: #9aa7b6; line-height: 1.65; margin: 8px 0 0; }
 }
 .editing .tag-text { cursor: grab; }
 .tag-text button {
+  width: 16px;
+  height: 16px;
   opacity: 0;
   border: 0;
   background: transparent;
   color: #fca5a5;
   cursor: pointer;
-  padding: 0 2px;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
 }
 .tag-text:hover button { opacity: 1; }
 .comma { margin: 0 7px 0 3px; color: #64748b; }
@@ -283,3 +284,15 @@ p { color: #9aa7b6; line-height: 1.65; margin: 8px 0 0; }
   .account-card-formal { grid-template-columns: 24px 34px minmax(0,1fr); }
   .edit-actions { grid-column: 1 / -1; justify-content: flex-end; }
 }
+
+.ui-svg { width: 18px; height: 18px; display: block; }
+.icon-btn .ui-svg { width: 18px; height: 18px; }
+.drag-handle .ui-svg { width: 18px; height: 18px; }
+.yt-svg { width: 34px; height: 24px; display: block; }
+.yt-svg rect { fill: #ff0033; }
+.yt-svg path { fill: #fff; }
+.heart-svg { width: 20px; height: 20px; display: block; }
+.heart-svg path { stroke: currentColor; stroke-width: 1.9; stroke-linejoin: round; }
+.heart.filled .heart-svg path { stroke: currentColor; }
+.tag-icon .ui-svg { width: 13px; height: 13px; }
+.tag-text button .ui-svg { width: 13px; height: 13px; }

@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 
+type IconName = "search" | "edit" | "tag" | "trash" | "grip" | "plus" | "x" | "play" | "heart";
+
 export type ManagedAccount = {
   id: string;
   platform: string;
@@ -18,6 +20,48 @@ export type ManagedAccount = {
 type Props = {
   initialAccounts: ManagedAccount[];
 };
+
+function Icon({ name, filled = false }: { name: IconName; filled?: boolean }) {
+  if (name === "play") {
+    return (
+      <svg viewBox="0 0 34 24" aria-hidden="true" className="yt-svg">
+        <rect width="34" height="24" rx="7" />
+        <path d="M14 8.2v7.6L21 12l-7-3.8Z" />
+      </svg>
+    );
+  }
+
+  if (name === "heart") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" className="heart-svg">
+        <path
+          d="M12 20.2s-6.8-4.2-9.2-8.2C.8 8.7 2.7 5 6.4 5c2 0 3.3 1 4.1 2.1C11.3 6 12.6 5 14.6 5c3.7 0 5.6 3.7 3.6 7-2.4 4-9.2 8.2-9.2 8.2Z"
+          fill={filled ? "currentColor" : "none"}
+        />
+      </svg>
+    );
+  }
+
+  const common = {
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.8,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const
+  };
+
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="ui-svg">
+      {name === "search" ? <><circle cx="11" cy="11" r="6" {...common} /><path d="m16 16 4 4" {...common} /></> : null}
+      {name === "edit" ? <><path d="M4 20h4.5L19 9.5 14.5 5 4 15.5V20Z" {...common} /><path d="m13.5 6 4.5 4.5" {...common} /></> : null}
+      {name === "tag" ? <><path d="M4 6v6.2c0 .5.2 1 .6 1.4l6.8 6.8c.8.8 2 .8 2.8 0l5.2-5.2c.8-.8.8-2 0-2.8L12.6 5.6A2 2 0 0 0 11.2 5H5a1 1 0 0 0-1 1Z" {...common} /><circle cx="8" cy="9" r="1.3" fill="currentColor" /></> : null}
+      {name === "trash" ? <><path d="M5 7h14" {...common} /><path d="M9 7V5h6v2" {...common} /><path d="M8 10v8" {...common} /><path d="M12 10v8" {...common} /><path d="M16 10v8" {...common} /><path d="M7 7l1 14h8l1-14" {...common} /></> : null}
+      {name === "grip" ? <><circle cx="9" cy="6" r="1" fill="currentColor" /><circle cx="15" cy="6" r="1" fill="currentColor" /><circle cx="9" cy="12" r="1" fill="currentColor" /><circle cx="15" cy="12" r="1" fill="currentColor" /><circle cx="9" cy="18" r="1" fill="currentColor" /><circle cx="15" cy="18" r="1" fill="currentColor" /></> : null}
+      {name === "plus" ? <><path d="M12 5v14" {...common} /><path d="M5 12h14" {...common} /></> : null}
+      {name === "x" ? <><path d="M6 6l12 12" {...common} /><path d="M18 6 6 18" {...common} /></> : null}
+    </svg>
+  );
+}
 
 function statusLabel(status: string) {
   if (status === "authorized") return "已連線";
@@ -186,8 +230,8 @@ export default function AccountsClient({ initialAccounts }: Props) {
           <option value="favorite">我的最愛</option>
           {allTags.map((tag) => <option key={tag} value={tag}>{tag}</option>)}
         </select>
-        <button className="icon-btn" type="button" aria-label="搜尋帳戶" onClick={() => setSearchOpen((open) => !open)}>⌕</button>
-        <button className={editing ? "icon-btn active" : "icon-btn"} type="button" aria-label="編輯帳戶" onClick={() => { setEditing((value) => !value); closeTagEditor(); }}>✎</button>
+        <button className="icon-btn" type="button" aria-label="搜尋帳戶" onClick={() => setSearchOpen((open) => !open)}><Icon name="search" /></button>
+        <button className={editing ? "icon-btn active" : "icon-btn"} type="button" aria-label="編輯帳戶" onClick={() => { setEditing((value) => !value); closeTagEditor(); }}><Icon name="edit" /></button>
         {searchOpen ? (
           <input className="search-input" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜尋帳戶或標籤" autoFocus />
         ) : null}
@@ -206,11 +250,13 @@ export default function AccountsClient({ initialAccounts }: Props) {
             return (
               <div className="account-row" key={account.id} onDragOver={(event) => editing && event.preventDefault()} onDrop={() => reorderAccount(account.id)}>
                 {editing ? (
-                  <button className="drag-handle" type="button" aria-label="拖曳排序" draggable onDragStart={() => setDragAccountId(account.id)} onDragEnd={() => setDragAccountId(null)}>⋮⋮</button>
+                  <button className="drag-handle" type="button" aria-label="拖曳排序" draggable onDragStart={() => setDragAccountId(account.id)} onDragEnd={() => setDragAccountId(null)}><Icon name="grip" /></button>
                 ) : null}
                 <article className="account-card-formal">
-                  <button className={account.favorite ? "heart filled" : "heart"} type="button" aria-label="我的最愛" onClick={() => toggleFavorite(account)}>{account.favorite || editing ? "♥" : ""}</button>
-                  <div className="youtube-mark">▶</div>
+                  <button className={account.favorite ? "heart filled" : "heart"} type="button" aria-label="我的最愛" onClick={() => toggleFavorite(account)}>
+                    {account.favorite || editing ? <Icon name="heart" filled={account.favorite} /> : null}
+                  </button>
+                  <div className="youtube-mark"><Icon name="play" /></div>
                   <div className="account-main">
                     <div className="account-title-row">
                       <strong>{account.displayName}</strong>
@@ -219,11 +265,11 @@ export default function AccountsClient({ initialAccounts }: Props) {
                     </div>
                     {tags.length > 0 ? (
                       <div className="tag-line">
-                        <span className="tag-icon">⌁</span>
+                        <span className="tag-icon"><Icon name="tag" /></span>
                         {tags.map((tag, index) => (
                           <span className="tag-text" key={tag} draggable={editing} onDragStart={() => editing && setDragTag({ accountId: account.id, tag })} onDragOver={(event) => editing && event.preventDefault()} onDrop={() => reorderTag(account, tag)}>
                             {tag}
-                            {editing ? <button type="button" aria-label={"移除 " + tag} onClick={() => removeTag(account, tag)}>×</button> : null}
+                            {editing ? <button type="button" aria-label={"移除 " + tag} onClick={() => removeTag(account, tag)}><Icon name="x" /></button> : null}
                             {index < tags.length - 1 ? <span className="comma">,</span> : null}
                           </span>
                         ))}
@@ -232,8 +278,8 @@ export default function AccountsClient({ initialAccounts }: Props) {
                   </div>
                   {editing ? (
                     <div className="edit-actions">
-                      <button className="icon-btn" type="button" aria-label="編輯標籤" onClick={() => setEditingTagsId(tagEditorOpen ? null : account.id)}>⌁</button>
-                      <button className="icon-btn danger" type="button" aria-label="移除帳戶" onClick={() => setConfirmDeleteId(account.id)}>⌫</button>
+                      <button className="icon-btn" type="button" aria-label="編輯標籤" onClick={() => setEditingTagsId(tagEditorOpen ? null : account.id)}><Icon name="tag" /></button>
+                      <button className="icon-btn danger" type="button" aria-label="移除帳戶" onClick={() => setConfirmDeleteId(account.id)}><Icon name="trash" /></button>
                     </div>
                   ) : null}
                   {tagEditorOpen ? (
@@ -242,7 +288,7 @@ export default function AccountsClient({ initialAccounts }: Props) {
                         if (event.key === "Enter") addTag(account, newTag);
                         if (event.key === "Escape") closeTagEditor();
                       }} placeholder="新增標籤" autoFocus />
-                      <button className="icon-btn add" type="button" onClick={() => addTag(account, newTag)}>＋</button>
+                      <button className="icon-btn add" type="button" onClick={() => addTag(account, newTag)}><Icon name="plus" /></button>
                     </div>
                   ) : null}
                 </article>
