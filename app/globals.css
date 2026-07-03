@@ -1,19 +1,20 @@
 :root {
-  --bg: #080c11;
+  --bg: #0b0f14;
   --panel: #151a21;
-  --panel-soft: #10151c;
+  --panel-soft: #151a21;
   --ink: #f2f4f7;
   --muted: #9aa5b4;
   --line: #2b3139;
-  --line-soft: #202731;
+  --line-soft: #252b33;
   --red: #ff0033;
   --pink: #ff5aaa;
   --green: #27d980;
   --amber: #f2a900;
   --danger: #ff4d4f;
   --blue: #223044;
-  --chart: #5e646a;
-  --field: #0e141b;
+  --chart: #6b7280;
+  --field: #10151c;
+  --chart-grid: #242a32;
   --shadow: 0 12px 28px rgba(0, 0, 0, .28);
 }
 
@@ -24,6 +25,7 @@ body {
   color: var(--ink);
   font-family: "Segoe UI", "Microsoft JhengHei", Arial, sans-serif;
   letter-spacing: 0;
+  transition: background .18s ease, color .18s ease;
 }
 button, input, textarea, select { font: inherit; }
 button { cursor: pointer; }
@@ -89,13 +91,14 @@ a { color: inherit; text-decoration: none; }
 }
 .nav a,
 .more-btn {
+  width: 100%;
   min-height: 44px;
   border: 0;
   border-radius: 8px;
   color: #c8d2dd;
   background: transparent;
   display: grid;
-  grid-template-columns: 44px 1fr;
+  grid-template-columns: 44px 150px;
   align-items: center;
   gap: 8px;
   padding: 0;
@@ -113,6 +116,7 @@ a { color: inherit; text-decoration: none; }
   height: 44px;
   display: grid;
   place-items: center;
+  line-height: 0;
 }
 .nav-svg,
 .ui-svg {
@@ -194,37 +198,42 @@ a { color: inherit; text-decoration: none; }
 .top-account,
 .report-switch-btn,
 .top-range {
-  min-height: 44px;
+  min-height: 38px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: var(--panel);
   color: var(--ink);
+  line-height: 1;
 }
 .top-account {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 14px 4px 8px;
+  gap: 9px;
+  padding: 4px 12px 4px 5px;
 }
-.top-account strong { line-height: 1; font-size: 14px; }
+.top-account strong { line-height: 1; font-size: 13px; }
 .report-switch-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 0 15px;
+  padding: 0 14px;
+  font-weight: 700;
 }
 .top-range {
-  width: 118px;
-  padding: 0 34px 0 16px;
+  width: auto;
+  min-width: 116px;
+  padding: 0 34px 0 14px;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 4.5 6 7.5 9 4.5' stroke='%2398A2B3' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
 }
 .yt-svg {
-  width: 34px;
-  height: 24px;
+  width: 32px;
+  height: 23px;
   display: block;
+  flex: 0 0 auto;
+  overflow: visible;
 }
 
 .dashboard-report {
@@ -246,9 +255,10 @@ a { color: inherit; text-decoration: none; }
   grid-template-columns: repeat(3, minmax(0, 1fr));
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
+  margin-bottom: 28px;
 }
 .report-metric {
-  min-height: 124px;
+  min-height: 150px;
   display: grid;
   justify-items: center;
   align-content: center;
@@ -332,13 +342,13 @@ a { color: inherit; text-decoration: none; }
   grid-template-rows: 1fr auto;
   column-gap: 10px;
   row-gap: 10px;
-  min-height: 330px;
-  padding-top: 18px;
+  min-height: 292px;
+  padding-top: 10px;
 }
 .chart-y-axis {
   grid-column: 1;
   grid-row: 1;
-  min-height: 224px;
+  min-height: 210px;
   display: grid;
   align-content: space-between;
   text-align: right;
@@ -349,32 +359,34 @@ a { color: inherit; text-decoration: none; }
 .chart-plot {
   grid-column: 2;
   grid-row: 1;
-  min-height: 224px;
+  min-height: 210px;
   border-bottom: 1px solid var(--line);
-  background: repeating-linear-gradient(to top, transparent 0, transparent 52px, #18202a 53px);
+  background: repeating-linear-gradient(to top, transparent 0, transparent 52px, var(--chart-grid) 53px);
   padding: 8px 12px 0;
 }
 .chart-bars {
-  height: 206px;
+  height: 190px;
   display: grid;
   align-items: end;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 20px;
+  gap: 8px;
 }
 .bar {
   min-height: 20px;
   background: var(--chart);
   border-radius: 6px 6px 0 0;
+  opacity: .72;
 }
 .chart-labels {
   grid-column: 2;
   grid-row: 2;
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 20px;
-  color: #bcd0eb;
+  gap: 8px;
+  color: var(--muted);
   font-size: 12px;
   text-align: center;
+  line-height: 1.2;
 }
 
 .panel {
@@ -388,7 +400,7 @@ a { color: inherit; text-decoration: none; }
 .icon-btn,
 .account-search-toggle,
 .account-edit-toggle {
-  min-height: 38px;
+  min-height: 36px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);
@@ -397,11 +409,12 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   justify-content: center;
   padding: 0 12px;
+  line-height: 1;
 }
 .btn.primary {
-  color: #0b0f14;
-  background: #f2f4f7;
-  border-color: #f2f4f7;
+  color: var(--panel);
+  background: var(--ink);
+  border-color: var(--ink);
 }
 .toolbar {
   display: flex;
@@ -424,6 +437,7 @@ a { color: inherit; text-decoration: none; }
 input,
 select,
 textarea {
+  width: 100%;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--field);
@@ -442,9 +456,20 @@ textarea {
 .account-search-toggle,
 .account-edit-toggle,
 .icon-btn {
-  width: 40px;
+  width: 38px;
+  height: 38px;
+  min-height: 38px;
   padding: 0;
   color: var(--muted);
+  display: inline-grid;
+  place-items: center;
+}
+.account-search-toggle .ui-svg,
+.account-edit-toggle .ui-svg,
+.icon-btn .ui-svg {
+  width: 18px;
+  height: 18px;
+  display: block;
 }
 .account-edit-toggle.active,
 .account-search-toggle:hover,
@@ -470,8 +495,8 @@ textarea {
   min-height: 78px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: var(--panel-soft);
-  padding: 12px 14px;
+  background: var(--panel);
+  padding: 13px;
 }
 .heart {
   width: 32px;
@@ -501,6 +526,7 @@ textarea {
 }
 .account-title-row strong {
   font-size: 15px;
+  line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -621,7 +647,7 @@ textarea {
   gap: 8px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: var(--panel-soft);
+  background: var(--panel);
   padding: 0 12px;
 }
 .target-card input { width: auto; }
@@ -646,7 +672,7 @@ textarea {
 .field input,
 .field select {
   min-height: 42px;
-  padding: 0 12px;
+  padding: 9px 10px;
 }
 textarea {
   width: 100%;
@@ -674,6 +700,19 @@ textarea {
   width: 100%;
   border: 0;
   padding: 0;
+  color: var(--ink);
+  font-size: 14px;
+}
+.upload-box input::file-selector-button {
+  min-height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--ink);
+  padding: 0 12px;
+  margin-right: 8px;
+  cursor: pointer;
+  font-weight: 650;
 }
 .advanced-header {
   display: flex;
@@ -734,7 +773,7 @@ textarea {
   min-height: 144px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: var(--panel-soft);
+  background: var(--field);
 }
 .preview-card p {
   margin: 0;
