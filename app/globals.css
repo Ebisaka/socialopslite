@@ -1650,6 +1650,29 @@ aside.menu-open .nav-label{display:block!important;opacity:1!important;white-spa
     .account-row.is-editing .account-drag-cell{width:22px!important;min-width:22px!important}
     .account-row>.account-drag-cell>.account-drag-handle{width:20px!important;min-width:20px!important}
 
+/* SocialOps Lite demo parity guard.
+   Keep the deployed app on the same dark canvas as the approved static demo. */
+html,
+body,
+body[data-resolved-theme="dark"] {
+  background: #0b0f14 !important;
+}
+
+body[data-resolved-theme="dark"] {
+  --bg: #0b0f14 !important;
+  --side: #080b0f !important;
+  --panel: #151a21 !important;
+  --field: #10151c !important;
+}
+
+body[data-resolved-theme="dark"] .app,
+body[data-resolved-theme="dark"] main,
+body[data-resolved-theme="dark"] .section,
+body[data-resolved-theme="dark"] .dashboard-report,
+body[data-resolved-theme="dark"] .analytics-report {
+  background: #0b0f14 !important;
+}
+
   
     /* Final tighten: remove leftover inner gap before favorite/icon/name group. */
     .account-row .account-title{grid-template-columns:18px 34px minmax(0,1fr)!important;column-gap:6px!important;width:max-content!important;max-width:100%!important}
