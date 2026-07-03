@@ -1,5 +1,5 @@
-import DashboardClient from "./dashboard-client";
+import DemoShell from "./demo-shell";
 
 export default function DashboardPage() {
-  return <DashboardClient />;
+  return <DemoShell initialTab="dashboard" />;
 }

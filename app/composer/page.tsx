@@ -1,5 +1,5 @@
-import ComposerClient from "./composer-client";
+import DemoShell from "../demo-shell";
 
 export default function ComposerPage() {
-  return <ComposerClient />;
+  return <DemoShell initialTab="composer" />;
 }

@@ -1,14 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { YoutubeMark } from "./ui/app-shell";
-
-type Account = {
-  id: string;
-  displayName: string;
-  status: string;
-};
 
 function formatNumber(value: number) {
   return new Intl.NumberFormat("zh-TW").format(value);
@@ -22,35 +16,15 @@ function ChartIcon({ type }: { type: "bar" | "line" }) {
 }
 
 export default function DashboardClient() {
-  const [accounts, setAccounts] = useState<Account[]>([]);
-  const [loaded, setLoaded] = useState(false);
   const [chartType, setChartType] = useState<"bar" | "line">("bar");
-  const activeAccount = accounts[0];
-
-  useEffect(() => {
-    let alive = true;
-    fetch("/api/accounts", { cache: "no-store" })
-      .then((response) => response.ok ? response.json() : Promise.reject())
-      .then((data) => {
-        if (alive) setAccounts(data.accounts ?? []);
-      })
-      .catch(() => {
-        if (alive) setAccounts([]);
-      })
-      .finally(() => {
-        if (alive) setLoaded(true);
-      });
-    return () => { alive = false; };
-  }, []);
 
   const metrics = useMemo(() => {
-    const bump = Math.max(0, accounts.length - 1) * 120;
     return [
-      { label: "訂閱", value: formatNumber(18420 + bump), delta: "+4.8%" },
-      { label: "觀看", value: formatNumber(742980 + Math.max(0, accounts.length - 1) * 3200), delta: "+11.2%", active: true },
+      { label: "訂閱", value: formatNumber(18420), delta: "+4.8%" },
+      { label: "觀看", value: formatNumber(742980), delta: "+11.2%", active: true },
       { label: "互動", value: "6.7%", delta: "+0.9%" }
     ];
-  }, [accounts.length]);
+  }, []);
 
   const chart = [75, 80, 70, 88, 82, 94, 77];
   const max = 100;
@@ -70,7 +44,7 @@ export default function DashboardClient() {
           <button className="platform-icon-button" type="button" aria-label="切換平台"><YoutubeMark /></button>
           <Link className="top-account" href="/accounts" aria-label="切換帳戶">
             <div className="profile-avatar" style={{ background: "transparent" }}><YoutubeMark className="yt-play" /></div>
-            <div><strong>{activeAccount?.displayName ?? (loaded ? "YouTube" : "讀取中")}</strong></div>
+            <div><strong>YouTube 測試帳號 3</strong></div>
           </Link>
           <div className="report-switch">
             <button className="report-switch-btn" type="button">洞察報告 <strong>帳號</strong><span className="chevron" aria-hidden="true" /></button>
@@ -130,12 +104,6 @@ export default function DashboardClient() {
           </div>
         </div>
 
-        {loaded && accounts.length === 0 ? (
-          <div className="panel empty-state">
-            <strong>尚未連線 YouTube 帳戶</strong>
-            <Link className="btn primary" href="/api/oauth/youtube/start">連線 YouTube</Link>
-          </div>
-        ) : null}
       </div>
     </section>
   );

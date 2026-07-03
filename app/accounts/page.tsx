@@ -1,9 +1,5 @@
-import AccountsClient from "./accounts-client";
+import DemoShell from "../demo-shell";
 
 export default function AccountsPage() {
-  return (
-    <section className="accounts-page">
-      <AccountsClient initialAccounts={[]} connectHref="/api/oauth/youtube/start" />
-    </section>
-  );
+  return <DemoShell initialTab="accounts" />;
 }
