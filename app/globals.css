@@ -160,7 +160,7 @@ p { color: var(--muted); line-height: 1.65; }
 .app-main {
   grid-column: 2;
   min-width: 0;
-  padding: 32px 24px 56px;
+  padding: 22px;
 }
 .page-narrow,
 .accounts-page,
@@ -218,7 +218,8 @@ p { color: var(--muted); line-height: 1.65; }
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
-  margin-bottom: 22px;
+  margin: 0 auto 22px;
+  width: min(980px, 100%);
 }
 .platform-icon-button {
   width: 42px;
@@ -246,8 +247,10 @@ p { color: var(--muted); line-height: 1.65; }
 .top-account strong { font-size: 14px; }
 .top-range { outline: none; }
 .dashboard-report {
+  max-width: 900px;
+  margin: 22px auto 0;
   border-top: 1px solid var(--line);
-  padding-top: 34px;
+  padding-top: 32px;
 }
 .report-title {
   text-align: center;
@@ -259,14 +262,16 @@ p { color: var(--muted); line-height: 1.65; }
   grid-template-columns: repeat(3, 1fr);
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
+  margin-bottom: 24px;
 }
 .report-metric {
   min-height: 124px;
   display: grid;
   place-items: center;
   align-content: center;
-  gap: 10px;
+  gap: 9px;
   border-right: 1px solid var(--line);
+  background: transparent;
 }
 .report-metric:last-child { border-right: 0; }
 .report-metric strong {
@@ -276,13 +281,13 @@ p { color: var(--muted); line-height: 1.65; }
 .report-metric small { font-size: 13px; }
 .delta-up { color: #ff5f5f; }
 .delta-neutral { color: var(--muted); }
-.chart-panel { padding-top: 30px; }
+.chart-panel { padding-top: 0; }
 .chart-heading {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  margin-bottom: 22px;
+  margin-bottom: 18px;
 }
 .chart-heading h3 { font-size: 16px; }
 .chart-toggle {
@@ -309,13 +314,13 @@ p { color: var(--muted); line-height: 1.65; }
     linear-gradient(135deg, transparent 0 43%, #b9c7d8 44% 50%, transparent 51%) center / 22px 22px no-repeat;
 }
 .bar-chart {
-  min-height: 230px;
+  min-height: 206px;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   align-items: end;
   gap: 8px;
   border-bottom: 1px solid var(--line);
-  padding: 0 42px 0;
+  padding: 0 48px 0;
 }
 .bar-column {
   display: grid;
@@ -336,10 +341,10 @@ p { color: var(--muted); line-height: 1.65; }
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
-  margin-top: 22px;
+  margin-top: 18px;
 }
 .summary-item {
-  min-height: 74px;
+  min-height: 68px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);
@@ -558,11 +563,11 @@ p { color: var(--muted); line-height: 1.65; }
 .composer-page { width: min(980px, calc(100vw - 128px)); }
 .composer-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 290px;
+  grid-template-columns: minmax(0, 1fr) 300px;
   gap: 14px;
   align-items: start;
 }
-.composer-editor { display: grid; gap: 18px; }
+.composer-editor { display: grid; gap: 16px; }
 .composer-block {
   display: grid;
   gap: 12px;
