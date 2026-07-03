@@ -92,6 +92,10 @@ export default function AccountsClient({ initialAccounts, connectHref }: Props) 
   const [notice, setNotice] = useState<string | null>(null);
 
   useEffect(() => {
+    if (initialAccounts.length > 0) {
+      setLoading(false);
+      return;
+    }
     let alive = true;
     fetch("/api/accounts", { cache: "no-store" })
       .then((response) => response.ok ? response.json() : Promise.reject())
@@ -105,7 +109,7 @@ export default function AccountsClient({ initialAccounts, connectHref }: Props) 
         if (alive) setLoading(false);
       });
     return () => { alive = false; };
-  }, []);
+  }, [initialAccounts.length]);
 
   const allTags = useMemo(() => {
     return Array.from(new Set(accounts.flatMap((account) => tagsFromGroup(account.groupName)))).sort((a, b) => a.localeCompare(b, "zh-Hant"));

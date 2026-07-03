@@ -18,6 +18,224 @@
   --shadow: 0 12px 28px rgba(0, 0, 0, .28);
 }
 
+/* Demo parity pass: keep the shipped app visually aligned with the HTML prototype. */
+@media (min-width: 981px) {
+  .app {
+    grid-template-columns: 72px 1fr;
+  }
+
+  .sidebar {
+    background: #080b0f;
+    padding: 20px 12px;
+  }
+
+  .sidebar:hover,
+  .sidebar.menu-open {
+    width: 236px;
+    padding: 20px 16px;
+  }
+
+  .brand {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .sidebar:hover .brand,
+  .sidebar.menu-open .brand {
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  .brand-copy {
+    display: block;
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity .12s ease, transform .12s ease;
+  }
+
+  .sidebar:hover .brand-copy,
+  .sidebar.menu-open .brand-copy {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .nav {
+    margin: auto 0;
+    gap: 6px;
+  }
+
+  .nav a,
+  .more-btn {
+    min-height: 40px;
+    height: 40px;
+    grid-template-columns: 24px 1fr;
+    gap: 10px;
+    padding: 0 12px;
+    border-radius: 8px;
+  }
+
+  .nav-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .nav-svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .sidebar:not(:hover):not(.menu-open) .nav a,
+  .sidebar:not(:hover):not(.menu-open) .more-btn {
+    grid-template-columns: 1fr;
+    place-items: center;
+    padding: 0;
+    height: 44px;
+    min-height: 44px;
+  }
+
+  .sidebar:not(:hover):not(.menu-open) .nav-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .sidebar:not(:hover):not(.menu-open) .nav-label {
+    opacity: 0;
+  }
+
+  .sidebar:hover .nav-label,
+  .sidebar.menu-open .nav-label {
+    opacity: 1;
+  }
+
+  .sidebar-controls {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 18px;
+    display: grid;
+    gap: 10px;
+  }
+
+  .sidebar:hover .sidebar-controls,
+  .sidebar.menu-open .sidebar-controls {
+    left: 16px;
+    right: 16px;
+  }
+
+  .more-menu {
+    background: #2d3033;
+    border-color: rgba(255,255,255,.08);
+    box-shadow: var(--shadow);
+    margin-bottom: 0;
+  }
+
+  .more-row,
+  .appearance-panel button {
+    color: #eef2f6;
+  }
+}
+
+.app-main {
+  padding: 22px;
+}
+
+.accounts-page {
+  min-height: calc(100vh - 44px);
+}
+
+.accounts-page .account-manager {
+  width: min(720px, calc(100vw - 128px));
+  margin: 16px auto 0;
+}
+
+.account-manager .panel-head {
+  margin-bottom: 12px;
+}
+
+.account-manager .panel-head h2 {
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+.account-filter-row {
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.account-filter-row select {
+  flex: 0 0 220px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0 36px 0 14px;
+}
+
+.account-search-toggle,
+.account-edit-toggle,
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  min-height: 38px;
+  border-radius: 8px;
+  background: var(--panel);
+  border-color: var(--line);
+}
+
+.account-list {
+  gap: 10px;
+}
+
+.account-card {
+  min-height: 78px;
+  padding: 13px;
+  grid-template-columns: 32px 38px minmax(0, 1fr) auto;
+  gap: 10px;
+  background: var(--panel);
+  border-color: var(--line);
+}
+
+.account-card .yt-svg,
+.youtube-mark .yt-svg {
+  width: 34px;
+  height: 24px;
+}
+
+.heart {
+  width: 32px;
+  height: 32px;
+  color: var(--pink);
+}
+
+.heart:empty {
+  visibility: hidden;
+}
+
+.account-title-row strong {
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+.tag-line {
+  margin-top: 6px;
+}
+
+.empty.account-empty {
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.panel,
+.account-card,
+.composer-editor,
+.preview-panel {
+  border-color: var(--line);
+  box-shadow: var(--shadow);
+}
+
 * { box-sizing: border-box; }
 html, body { margin: 0; min-height: 100%; }
 body {
@@ -906,4 +1124,187 @@ textarea {
     grid-column: 1 / -1;
     justify-content: flex-end;
   }
+}
+
+/* Final demo-parity overrides. Kept at EOF so earlier prototype-port rules cannot undo them. */
+@media (min-width: 981px) {
+  .app { grid-template-columns: 72px 1fr; }
+
+  .sidebar {
+    width: 72px;
+    padding: 20px 12px;
+    background: #080b0f;
+  }
+
+  .sidebar:hover,
+  .sidebar.menu-open {
+    width: 236px;
+    padding: 20px 16px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 24px;
+  }
+
+  .sidebar:hover .brand,
+  .sidebar.menu-open .brand {
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  .brand-copy {
+    display: none;
+    opacity: 0;
+    transform: translateX(-6px);
+    white-space: nowrap;
+    transition: opacity .12s ease, transform .12s ease;
+  }
+
+  .sidebar:hover .brand-copy,
+  .sidebar.menu-open .brand-copy {
+    display: block;
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .nav {
+    margin: auto 0;
+    display: grid;
+    gap: 6px;
+    align-content: center;
+  }
+
+  .nav a,
+  .more-btn {
+    height: 40px;
+    min-height: 40px;
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    align-items: center;
+    gap: 10px;
+    padding: 0 12px;
+    border-radius: 8px;
+  }
+
+  .nav-icon {
+    width: 24px;
+    height: 24px;
+    display: grid;
+    place-items: center;
+  }
+
+  .nav-svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .sidebar:not(:hover):not(.menu-open) .nav a,
+  .sidebar:not(:hover):not(.menu-open) .more-btn {
+    height: 44px;
+    min-height: 44px;
+    grid-template-columns: 1fr;
+    place-items: center;
+    padding: 0;
+  }
+
+  .sidebar:not(:hover):not(.menu-open) .nav-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .sidebar:not(:hover):not(.menu-open) .nav-label,
+  .sidebar:not(:hover):not(.menu-open) .brand-copy {
+    opacity: 0;
+  }
+
+  .sidebar:hover .nav-label,
+  .sidebar.menu-open .nav-label {
+    opacity: 1;
+  }
+
+  .sidebar-controls {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 18px;
+    display: grid;
+    gap: 10px;
+  }
+
+  .sidebar:hover .sidebar-controls,
+  .sidebar.menu-open .sidebar-controls {
+    left: 16px;
+    right: 16px;
+  }
+}
+
+.accounts-page .account-manager {
+  width: min(720px, calc(100vw - 128px));
+  margin: 16px auto 0;
+}
+
+.account-manager .panel-head { margin-bottom: 12px; }
+.account-manager .panel-head h2 { font-size: 16px; line-height: 1.35; }
+
+.account-filter-row {
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.account-filter-row select {
+  flex: 0 0 220px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0 36px 0 14px;
+}
+
+.account-search-toggle,
+.account-edit-toggle,
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  min-height: 38px;
+  border-radius: 8px;
+  background: var(--panel);
+  border-color: var(--line);
+}
+
+.account-list { gap: 10px; }
+
+.account-card {
+  min-height: 78px;
+  padding: 13px;
+  grid-template-columns: 32px 38px minmax(0, 1fr) auto;
+  gap: 10px;
+  background: var(--panel);
+  border-color: var(--line);
+}
+
+.account-card .yt-svg,
+.youtube-mark .yt-svg {
+  width: 34px;
+  height: 24px;
+}
+
+.heart {
+  width: 32px;
+  height: 32px;
+  color: var(--pink);
+}
+
+.heart:empty { visibility: hidden; }
+.account-title-row strong { font-size: 15px; line-height: 1.2; }
+.tag-line { margin-top: 6px; }
+
+.empty.account-empty {
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
 }
