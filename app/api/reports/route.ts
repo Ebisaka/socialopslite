@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     };
     const message = String(body.message || "").trim();
     if (!message) {
-      return NextResponse.json({ error: "請輸入問題內容。" }, { status: 400 });
+      return NextResponse.json({ error: "請輸入回報內容。" }, { status: 400 });
     }
 
     const user = await getCurrentUser();
