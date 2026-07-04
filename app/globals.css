@@ -2170,3 +2170,198 @@ aside .more-menu {
 body[data-resolved-theme="light"] .chart[data-chart-type="line"] .chart-line path {
   stroke: #64748b !important;
 }
+
+/* Account switch should behave like a centered social-app dialog, not a tiny dropdown. */
+.top-account-menu {
+  display: none !important;
+}
+
+.account-switch-dialog {
+  width: min(560px, calc(100vw - 40px));
+  max-height: min(560px, calc(100vh - 64px));
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--panel);
+  color: var(--ink);
+  box-shadow: 0 22px 80px rgba(0, 0, 0, .42);
+}
+
+.account-switch-head {
+  min-height: 58px;
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  padding: 0 12px;
+}
+
+.account-switch-head h3 {
+  grid-column: 2;
+  margin: 0;
+  text-align: center;
+  font-size: 16px;
+}
+
+.account-switch-close {
+  grid-column: 3;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: 30px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+}
+
+.account-switch-list {
+  display: grid;
+}
+
+.account-switch-row {
+  min-height: 74px;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 32px;
+  align-items: center;
+  gap: 14px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  padding: 12px 18px;
+  text-align: left;
+}
+
+.account-switch-row:last-child {
+  border-bottom: 0;
+}
+
+.account-switch-row:hover {
+  background: rgba(148, 163, 184, .08);
+}
+
+.account-switch-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: transparent;
+}
+
+.account-switch-avatar .yt-play {
+  width: 34px;
+  height: 24px;
+}
+
+.account-switch-row strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-switch-check {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--panel);
+  font-weight: 800;
+}
+
+/* Single-account / single-platform dashboards should not reserve empty switcher space. */
+.dashboard-control-row .is-hidden,
+.insight-control-host .is-hidden {
+  display: none !important;
+}
+
+/* Insight metric cards are clickable, but should not jump on hover. */
+.metric.report-metric,
+.metric.report-metric:hover,
+.metric.report-metric.active {
+  transform: none !important;
+}
+
+/* Content insight list with visible thumbnails and type split. */
+.content-type-summary {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.content-type-summary span {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(148, 163, 184, .08);
+  color: var(--muted);
+  padding: 0 11px;
+  font-size: 12px;
+}
+
+.content-type-summary strong {
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.content-rank-card.with-cover {
+  grid-template-columns: 32px 74px minmax(0, 1fr) 88px 74px !important;
+}
+
+.rank-thumb {
+  width: 74px;
+  aspect-ratio: 16 / 9;
+  border-radius: 6px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #293241, #4b5563);
+  border: 1px solid rgba(148, 163, 184, .18);
+}
+
+.rank-thumb img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.rank-thumb-fallback {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(135deg, rgba(255, 0, 51, .82), rgba(75, 85, 99, .86)),
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, .28), transparent 34%);
+}
+
+.rank-thumb-fallback span {
+  width: 30px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, .24);
+  color: white;
+  font-weight: 800;
+  font-size: 12px;
+}
+
+@media (max-width: 760px) {
+  .content-rank-card.with-cover {
+    grid-template-columns: 28px 66px minmax(0, 1fr) !important;
+  }
+
+  .content-rank-card.with-cover .rank-stats {
+    grid-column: 3;
+  }
+}
