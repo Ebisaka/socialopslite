@@ -26,7 +26,7 @@ export default function LoginClient() {
       setMessage(body.error || "登入失敗，請稍後再試。");
       return;
     }
-    window.location.href = "/";
+    window.location.href = "/app";
   }
 
   return (

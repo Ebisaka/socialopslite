@@ -1,10 +1,22 @@
 import Link from "next/link";
 
 const features = [
-  { title: "連線 YouTube 帳號", body: "用自己的會員帳戶管理已授權的 YouTube 頻道。" },
-  { title: "查看帳戶表現", body: "集中查看訂閱、觀看與互動資料，減少切換後台的時間。" },
-  { title: "準備與排程內容", body: "整理影片標題、說明、封面與 YouTube 發布設定。" },
-  { title: "逐步增加平台", body: "先把 YouTube 做穩，再擴充其他常用社群平台。" }
+  {
+    title: "連線 YouTube 帳號",
+    body: "透過官方授權連接帳號，不需要共享密碼。"
+  },
+  {
+    title: "查看帳戶表現",
+    body: "集中查看訂閱、觀看與互動資料，減少來回切換。"
+  },
+  {
+    title: "準備與排程內容",
+    body: "先整理標題、說明、封面與 YouTube 設定，再排程送出。"
+  },
+  {
+    title: "逐步增加平台",
+    body: "先把 YouTube 做穩，再依需求擴充其他社群平台。"
+  }
 ];
 
 export default function LandingPage() {
@@ -25,8 +37,8 @@ export default function LandingPage() {
         <div>
           <h1>一個地方管理 YouTube 內容、帳戶與數據。</h1>
           <p>
-            為個人創作者與小型團隊準備的輕量工作台。先從 YouTube 做穩，
-            再逐步擴充到更多社群平台。
+            SocialOps Lite 幫你把帳戶連線、內容準備、排程與表現資料集中到同一個工作區，
+            先專注把 YouTube 營運流程做得乾淨、省事、可追蹤。
           </p>
           <div className="landing-cta">
             <Link className="btn primary" href="/login">開始使用</Link>

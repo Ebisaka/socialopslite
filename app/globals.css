@@ -1708,7 +1708,7 @@ aside.menu-open .brand-copy {
   bottom: 0 !important;
   height: auto !important;
   display: grid !important;
-  align-items: end !important;
+  align-items: flex-end !important;
 }
 
 /* Light mode should feel like a normal social/SaaS dashboard, not an inverted dark theme. */
@@ -3064,7 +3064,7 @@ body[data-resolved-theme="light"] button.btn.primary:hover {
 .landing-bars {
   height: 220px;
   display: flex;
-  align-items: end;
+  align-items: flex-end;
   gap: 10px;
   padding: 38px 28px 0;
   border-bottom: 1px solid var(--line);
@@ -3140,4 +3140,81 @@ body[data-resolved-theme="light"] button.btn.primary:hover {
   .landing-features {
     grid-template-columns: 1fr;
   }
+}
+
+/* Final shared button system.
+   Text action buttons share the same shape; primary/secondary differ only by color. */
+.btn:not(.icon-action):not(.account-action):not(.theme-btn),
+a.btn:not(.icon-action):not(.account-action):not(.theme-btn),
+button.btn:not(.icon-action):not(.account-action):not(.theme-btn),
+.confirm-actions .confirm-cancel,
+.target-dialog-done {
+  min-height: 32px !important;
+  height: 32px !important;
+  border-radius: 10px !important;
+  padding: 0 13px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  font-family: "Segoe UI", "Microsoft JhengHei", Arial, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 650 !important;
+  line-height: 1 !important;
+  letter-spacing: 0 !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.btn:not(.primary):not(.danger):not(.danger-fill):not(.icon-action):not(.account-action):not(.theme-btn),
+a.btn:not(.primary):not(.danger):not(.danger-fill):not(.icon-action):not(.account-action):not(.theme-btn),
+button.btn:not(.primary):not(.danger):not(.danger-fill):not(.icon-action):not(.account-action):not(.theme-btn),
+.confirm-actions .confirm-cancel {
+  background: transparent !important;
+  border: 1px solid rgba(148, 163, 184, .34) !important;
+  color: var(--ink) !important;
+}
+
+.btn.primary:not(.icon-action):not(.account-action):not(.theme-btn),
+a.btn.primary:not(.icon-action):not(.account-action):not(.theme-btn),
+button.btn.primary:not(.icon-action):not(.account-action):not(.theme-btn),
+.target-dialog-done {
+  background: rgba(248, 250, 252, .96) !important;
+  border: 1px solid rgba(248, 250, 252, .92) !important;
+  color: #111827 !important;
+}
+
+.btn:not(.primary):not(.danger):not(.danger-fill):not(.icon-action):not(.account-action):not(.theme-btn):hover,
+a.btn:not(.primary):not(.danger):not(.danger-fill):not(.icon-action):not(.account-action):not(.theme-btn):hover,
+button.btn:not(.primary):not(.danger):not(.danger-fill):not(.icon-action):not(.account-action):not(.theme-btn):hover,
+.confirm-actions .confirm-cancel:hover {
+  background: rgba(148, 163, 184, .10) !important;
+  border-color: rgba(148, 163, 184, .48) !important;
+}
+
+.btn.primary:not(.icon-action):not(.account-action):not(.theme-btn):hover,
+a.btn.primary:not(.icon-action):not(.account-action):not(.theme-btn):hover,
+button.btn.primary:not(.icon-action):not(.account-action):not(.theme-btn):hover,
+.target-dialog-done:hover {
+  background: #fff !important;
+  border-color: #fff !important;
+}
+
+body[data-resolved-theme="light"] .btn.primary:not(.icon-action):not(.account-action):not(.theme-btn),
+body[data-resolved-theme="light"] a.btn.primary:not(.icon-action):not(.account-action):not(.theme-btn),
+body[data-resolved-theme="light"] button.btn.primary:not(.icon-action):not(.account-action):not(.theme-btn),
+body[data-resolved-theme="light"] .target-dialog-done {
+  background: #111827 !important;
+  border-color: #111827 !important;
+  color: #fff !important;
+}
+
+body[data-resolved-theme="light"] .btn.primary:not(.icon-action):not(.account-action):not(.theme-btn):hover,
+body[data-resolved-theme="light"] a.btn.primary:not(.icon-action):not(.account-action):not(.theme-btn):hover,
+body[data-resolved-theme="light"] button.btn.primary:not(.icon-action):not(.account-action):not(.theme-btn):hover,
+body[data-resolved-theme="light"] .target-dialog-done:hover {
+  background: #020617 !important;
+  border-color: #020617 !important;
 }
