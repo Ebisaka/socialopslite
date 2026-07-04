@@ -3493,10 +3493,10 @@ body[data-resolved-theme="light"] .landing-cta a.landing-cta-primary {
     height: 46px !important;
     min-height: 46px !important;
     display: grid !important;
-    grid-template-columns: 20px auto !important;
+    grid-template-columns: 1fr !important;
     justify-content: center !important;
     align-items: center !important;
-    gap: 6px !important;
+    gap: 0 !important;
     padding: 0 8px !important;
     border-radius: 8px !important;
   }
@@ -3523,12 +3523,9 @@ body[data-resolved-theme="light"] .landing-cta a.landing-cta-primary {
   aside .nav-label,
   aside:hover .nav-label,
   aside.menu-open .nav-label {
-    display: block !important;
-    opacity: 1 !important;
+    display: none !important;
+    opacity: 0 !important;
     transform: none !important;
-    font-size: 13px !important;
-    line-height: 1 !important;
-    white-space: nowrap !important;
   }
 
   aside .sidebar-controls,
@@ -3615,26 +3612,23 @@ body[data-resolved-theme="light"] .landing-cta a.landing-cta-primary {
   }
 
   .dashboard-control-row .top-account {
-    width: auto !important;
-    max-width: min(58vw, 220px) !important;
+    width: 44px !important;
+    max-width: 44px !important;
     height: 38px !important;
     min-height: 38px !important;
-    padding: 0 12px 0 6px !important;
-    display: inline-flex !important;
-    gap: 7px !important;
+    padding: 0 !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    place-items: center !important;
+    gap: 0 !important;
   }
 
   .dashboard-control-row .top-account div:not(.profile-avatar) {
-    display: block !important;
-    min-width: 0 !important;
+    display: none !important;
   }
 
   .dashboard-control-row .top-account strong {
-    display: block !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    max-width: 150px !important;
+    display: none !important;
   }
 
   .report-switch-btn,
