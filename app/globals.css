@@ -2777,3 +2777,63 @@ body[data-resolved-theme="light"] .health-strip .health-item {
   background: #fff;
   border-color: #fff;
 }
+
+/* Shared action button language: compact rounded-rectangle primary, quiet outlined cancel. */
+.btn.primary,
+a.btn.primary,
+button.btn.primary {
+  min-height: 30px !important;
+  border-radius: 10px !important;
+  padding: 0 12px !important;
+  border-color: rgba(248, 250, 252, .92) !important;
+  background: rgba(248, 250, 252, .96) !important;
+  color: #111827 !important;
+  font-family: "Segoe UI", "Microsoft JhengHei", Arial, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  box-shadow: none !important;
+}
+
+.btn.primary:hover,
+a.btn.primary:hover,
+button.btn.primary:hover {
+  background: #fff !important;
+  border-color: #fff !important;
+}
+
+.confirm-actions .btn:not(.primary):not(.danger):not(.danger-fill),
+.confirm-actions .confirm-cancel {
+  min-height: 30px !important;
+  border-radius: 10px !important;
+  padding: 0 11px !important;
+  background: transparent !important;
+  border-color: rgba(148, 163, 184, .34) !important;
+  color: var(--ink) !important;
+  font-family: "Segoe UI", "Microsoft JhengHei", Arial, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  box-shadow: none !important;
+}
+
+.confirm-actions .btn:not(.primary):not(.danger):not(.danger-fill):hover,
+.confirm-actions .confirm-cancel:hover {
+  background: rgba(148, 163, 184, .1) !important;
+  border-color: rgba(148, 163, 184, .48) !important;
+}
+
+body[data-resolved-theme="light"] .btn.primary,
+body[data-resolved-theme="light"] a.btn.primary,
+body[data-resolved-theme="light"] button.btn.primary {
+  background: #111827 !important;
+  border-color: #111827 !important;
+  color: #fff !important;
+}
+
+body[data-resolved-theme="light"] .btn.primary:hover,
+body[data-resolved-theme="light"] a.btn.primary:hover,
+body[data-resolved-theme="light"] button.btn.primary:hover {
+  background: #020617 !important;
+  border-color: #020617 !important;
+}
