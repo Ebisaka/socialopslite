@@ -4,6 +4,6 @@ import LoginClient from "./login-client";
 
 export default async function LoginPage() {
   const user = await getCurrentUser();
-  if (user) redirect("/");
+  if (user) redirect("/app");
   return <LoginClient />;
 }

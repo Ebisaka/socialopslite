@@ -665,6 +665,23 @@ boot();
   renderPublishTargets();
 })();
 
+/* Member center entry. */
+(function(){
+  function addProfileEntry(){
+    var menu=document.querySelector("#moreMenu");
+    var report=document.querySelector("#reportIssueBtn");
+    if(!menu||document.querySelector("#profileCenterBtn"))return;
+    var btn=document.createElement("button");
+    btn.className="more-item-title";
+    btn.id="profileCenterBtn";
+    btn.type="button";
+    btn.innerHTML='<span class="more-row-icon">◎</span><span>會員中心</span>';
+    btn.onclick=function(){window.location.href="/profile";};
+    if(report)menu.insertBefore(btn,report);else menu.appendChild(btn);
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",addProfileEntry);else addProfileEntry();
+})();
+
 /* Remove YouTube Studio-only settings from the publishing flow. */
 (function(){
   function removeElement(node){

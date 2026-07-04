@@ -18,6 +18,7 @@ model User {
   issueReports   IssueReport[]
   publishTasks   PublishTask[]
   sessions       UserSession[]
+  passwordResets PasswordResetToken[]
 }
 
 model UserSession {
@@ -27,6 +28,20 @@ model UserSession {
   expiresAt    DateTime
   createdAt    DateTime @default(now())
   lastSeenAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+  @@index([expiresAt])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
