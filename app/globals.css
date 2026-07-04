@@ -2632,17 +2632,18 @@ body[data-resolved-theme="light"] .health-strip .health-item {
 }
 
 .publish-target-summary {
-  width: 100%;
-  min-height: 48px;
+  width: auto;
+  max-width: 100%;
+  min-height: 42px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 999px;
   background: var(--panel);
   color: var(--ink);
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 8px 12px;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 6px 13px 6px 8px;
   text-align: left;
 }
 
@@ -2655,7 +2656,7 @@ body[data-resolved-theme="light"] .health-strip .health-item {
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
 }
 
 .publish-target-summary-icons {
@@ -2672,8 +2673,7 @@ body[data-resolved-theme="light"] .health-strip .health-item {
 
 .publish-target-summary-text {
   min-width: 0;
-  display: grid;
-  gap: 2px;
+  display: block;
 }
 
 .publish-target-summary-text strong {
@@ -2685,15 +2685,11 @@ body[data-resolved-theme="light"] .health-strip .health-item {
 }
 
 .publish-target-summary-text span {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.2;
+  display: none;
 }
 
 .publish-target-summary-action {
-  color: var(--muted);
-  font-size: 13px;
-  flex: 0 0 auto;
+  display: none;
 }
 
 .target-dialog {
@@ -2744,17 +2740,33 @@ body[data-resolved-theme="light"] .health-strip .health-item {
 }
 
 .target-dialog-check {
-  width: 24px;
-  height: 24px;
-  border-radius: 999px;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
   display: grid;
   place-items: center;
   color: transparent;
-  font-size: 15px;
+  border: 1px solid transparent;
+  font-size: 16px;
   font-weight: 900;
 }
 
 .target-dialog-row.active .target-dialog-check {
-  background: var(--ink);
-  color: var(--panel);
+  background: rgba(34, 197, 94, .16);
+  border-color: rgba(34, 197, 94, .45);
+  color: #22c55e;
+}
+
+.target-dialog-done {
+  width: 40px;
+  min-width: 40px;
+  padding: 0 !important;
+  border-radius: 999px !important;
+  font-size: 0;
+}
+
+.target-dialog-done::before {
+  content: "✓";
+  font-size: 18px;
+  line-height: 1;
 }

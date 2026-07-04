@@ -646,13 +646,15 @@ boot();
     var host=document.querySelector('#publishTargets');
     if(!host)return;
     var selectedAccounts=selectedPublishAccounts();
+    var wrapper=host.closest('.publish-targets');
+    var label=wrapper&&wrapper.querySelector('label');
+    if(label)label.remove();
     host.classList.add('target-summary-list');
     host.innerHTML='<button class="publish-target-summary" type="button" id="publishTargetSummary">'+
       '<span class="publish-target-summary-main">'+
         '<span class="publish-target-summary-icons">'+youtubeIcon()+'</span>'+
-        '<span class="publish-target-summary-text"><strong>'+escapeHtml(selectedTargetLabel(selectedAccounts))+'</strong><span>'+escapeHtml(selectedTargetNames(selectedAccounts))+'</span></span>'+
+        '<span class="publish-target-summary-text"><strong>'+escapeHtml(selectedTargetLabel(selectedAccounts))+'</strong></span>'+
       '</span>'+
-      '<span class="publish-target-summary-action">選擇</span>'+
     '</button>';
     var button=document.querySelector('#publishTargetSummary');
     if(button)button.onclick=openPublishTargetDialog;
