@@ -2981,8 +2981,16 @@ body[data-resolved-theme="light"] button.btn.primary:not(.landing-cta-button):ho
 }
 
 .password-toggle:hover {
-  background: rgba(148, 163, 184, .12);
+  background: transparent;
   color: var(--ink);
+}
+
+.password-toggle:active,
+.password-toggle:focus,
+.password-toggle:focus-visible {
+  background: transparent;
+  box-shadow: none;
+  outline: none;
 }
 
 .password-toggle svg {

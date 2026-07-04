@@ -665,6 +665,209 @@ boot();
   renderPublishTargets();
 })();
 
+/* Remove YouTube Studio-only settings from the publishing flow. */
+(function(){
+  function removeElement(node){
+    if(node&&node.parentNode)node.parentNode.removeChild(node);
+  }
+
+  function removeAdvancedHelpSections(){
+    if(!window.helpContent||!helpContent.advancedYoutube||!Array.isArray(helpContent.advancedYoutube.sections))return;
+    helpContent.advancedYoutube.sections=helpContent.advancedYoutube.sections.filter(function(section){
+      return ["僅限成人觀眾收看","Shorts 重混"].indexOf(section.title)===-1;
+    });
+  }
+
+  function removeUnsupportedYoutubeSettings(){
+    removeAdvancedHelpSections();
+
+    var ageSettings=document.querySelector(".age-settings");
+    removeElement(ageSettings);
+
+    var commentsField=document.querySelector("#commentsField");
+    removeElement(commentsField);
+
+    var remixInput=document.querySelector("#remixInput");
+    if(remixInput)removeElement(remixInput.closest(".field"));
+
+    Array.prototype.slice.call(document.querySelectorAll(".preview-setting")).forEach(function(row){
+      var label=row.querySelector("span");
+      if(label&&label.textContent.trim()==="年齡限制")removeElement(row);
+    });
+  }
+
+  syncAudienceRestrictions=function(madeForKids){
+    var notify=document.querySelector("#notifyInput");
+    var notifyLine=notify&&notify.closest(".check-line");
+    if(madeForKids){
+      if(notify){notify.checked=false;notify.disabled=true}
+      if(notifyLine)notifyLine.classList.add("is-disabled");
+    }else{
+      if(notify)notify.disabled=false;
+      if(notifyLine)notifyLine.classList.remove("is-disabled");
+    }
+  };
+
+  syncCommentsAvailability=function(){return ""};
+  ageRestrictionChoice=function(){return "false"};
+
+  var previousRenderComposer=renderComposer;
+  renderComposer=function(){
+    previousRenderComposer();
+    removeUnsupportedYoutubeSettings();
+  };
+
+  removeUnsupportedYoutubeSettings();
+  if(document.readyState==="loading"){
+    document.addEventListener("DOMContentLoaded",function(){
+      removeUnsupportedYoutubeSettings();
+      if(typeof renderComposer==="function")renderComposer();
+    });
+  }else if(typeof renderComposer==="function"){
+    renderComposer();
+  }
+})();
+
+/* Real YouTube publishing bridge. */
+(function(){
+  function byId(id){return document.getElementById(id)}
+  function inputValue(id,fallback){
+    var el=byId(id);
+    return el?el.value:(fallback||"");
+  }
+  function inputChecked(id){
+    var el=byId(id);
+    return !!(el&&el.checked);
+  }
+  function radioValue(name,fallback){
+    var el=document.querySelector('input[name="'+name+'"]:checked');
+    return el?el.value:(fallback||"");
+  }
+  function appendFile(form,key,inputId){
+    var input=byId(inputId);
+    if(input&&input.files&&input.files[0])form.append(key,input.files[0]);
+  }
+  function selectedIds(){
+    if(typeof selectedPublishAccountIds==="function")return selectedPublishAccountIds();
+    try{return JSON.parse(localStorage.getItem("mvp_publish_accounts")||"[]")}catch(error){return []}
+  }
+  function scheduledIso(){
+    var raw=inputValue("publishTime","");
+    if(!raw)return "";
+    var date=new Date(raw);
+    return Number.isNaN(date.getTime())?"":date.toISOString();
+  }
+  function toastSafe(message){
+    if(typeof toast==="function")toast(message);
+  }
+  function setFieldErrorSafe(id,message){
+    if(typeof setFieldError==="function")setFieldError(id,message);
+  }
+  async function hydratePublishTasks(){
+    try{
+      var response=await fetch("/api/publish-tasks",{cache:"no-store"});
+      if(!response.ok)return;
+      var data=await response.json();
+      if(!Array.isArray(data.tasks))return;
+      var activeStatuses=["queued","uploading","scheduled","failed"];
+      queue=data.tasks.filter(function(task){
+        return activeStatuses.indexOf(task.status)>-1;
+      }).map(function(task){
+        return {
+          id:task.id,
+          title:task.title,
+          platform:"YouTube",
+          accountId:task.socialAccountId,
+          accountIds:[task.socialAccountId],
+          accountName:task.socialAccount&&task.socialAccount.displayName||"YouTube",
+          time:task.scheduledAt||task.createdAt,
+          status:task.status==="uploading"?"上傳中":task.status==="failed"?"失敗":"排程發文",
+          visibility:task.visibility,
+          madeForKids:task.settings&&task.settings.madeForKids
+        };
+      });
+      if(typeof save==="function")save();
+      if(typeof renderQueue==="function")renderQueue();
+    }catch(error){
+      console.warn("SocialOps publish tasks fallback",error);
+    }
+  }
+  async function submitPublish(){
+    var button=byId("scheduleBtn");
+    if(!button)return;
+    var mode=inputValue("publishMode","排程發布");
+    if(typeof validateComposer==="function"&&!validateComposer(mode))return;
+
+    var form=new FormData();
+    form.append("accountIds",JSON.stringify(selectedIds()));
+    form.append("title",inputValue("titleInput",""));
+    form.append("description",inputValue("contentInput",""));
+    form.append("contentType",inputValue("contentType","一般影片"));
+    form.append("publishMode",mode);
+    form.append("visibility",inputValue("visibilityInput","private"));
+    form.append("scheduledAt",scheduledIso());
+    form.append("playlistId",inputValue("playlistInput",""));
+    form.append("madeForKids",radioValue("audienceChoice","")==="kids"?"true":"false");
+    form.append("paidPromo",inputChecked("paidPromoInput")?"true":"false");
+    form.append("aiDisclosure",inputChecked("aiDisclosureInput")?"true":"false");
+    form.append("embedAllowed",inputChecked("embedInput")?"true":"false");
+    form.append("notifySubscribers",inputChecked("notifyInput")?"true":"false");
+    form.append("categoryId",inputValue("categoryInput","22"));
+    form.append("tags",inputValue("tagsInput",""));
+    form.append("license",inputValue("licenseInput","youtube"));
+    appendFile(form,"media","mediaInput");
+    appendFile(form,"cover","coverInput");
+    appendFile(form,"caption","captionInput");
+
+    var original=button.textContent;
+    button.disabled=true;
+    button.textContent=mode==="立即發布"?"發布中...":mode==="儲存草稿"?"儲存中...":"建立中...";
+    try{
+      var response=await fetch("/api/youtube/publish",{method:"POST",body:form});
+      var payload=await response.json().catch(function(){return {}});
+      if(response.status===403&&payload.code==="youtube_upload_scope_required"){
+        toastSafe("需要重新連線 YouTube，補足上傳權限");
+        return;
+      }
+      if(!response.ok&&response.status!==207){
+        if(payload.error==="請輸入標題。"){
+          setFieldErrorSafe("title",payload.error);
+        }
+        if(payload.error==="請選擇影片檔案。"){
+          setFieldErrorSafe("media",payload.error);
+        }
+        toastSafe(payload.error||"發文任務建立失敗");
+        return;
+      }
+      await hydratePublishTasks();
+      if(payload.ok===false){
+        toastSafe("部分發布失敗，已保留任務紀錄");
+      }else if(mode==="立即發布"){
+        toastSafe("已送出到 YouTube");
+      }else if(mode==="儲存草稿"){
+        toastSafe("已儲存草稿");
+      }else{
+        toastSafe("已建立排程發布");
+      }
+    }catch(error){
+      console.warn("SocialOps publish failed",error);
+      toastSafe("發文流程失敗，請稍後再試");
+    }finally{
+      button.disabled=false;
+      if(typeof renderComposer==="function")renderComposer();
+      else button.textContent=original;
+    }
+  }
+  function install(){
+    var button=byId("scheduleBtn");
+    if(button)button.onclick=submitPublish;
+    hydratePublishTasks();
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",install);
+  else install();
+  setTimeout(install,300);
+})();
+
 /* Production data bridge: use real member accounts and YouTube metrics when available. */
 (function(){
   metricMeta={
