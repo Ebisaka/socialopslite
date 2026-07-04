@@ -92,6 +92,303 @@ boot();
   });
 })();
 
+/* 2026-07-05 regression guard.
+   This file still contains older demo code. Keep the stabilizing layer at EOF so
+   production/preview flags, chart rendering, target selection, and file buttons
+   cannot be overwritten by stale handlers above. */
+(function socialOpsStableRuntime(){
+  var cfg=window.SOCIALOPS_CONFIG||{};
+  var demoTools=!!cfg.demoTools;
+  var initialTab=cfg.initialTab||"dashboard";
+  var ready=false;
+  function $s(sel){return document.querySelector(sel)}
+  function $$s(sel){return Array.from(document.querySelectorAll(sel))}
+  function safeText(value){return String(value==null?"":value)}
+  function statusFromApi(status){
+    if(status==="authorized"||status==="connected"||status==="ok")return "已連線";
+    if(status==="permission"||status==="missing_scope"||status==="insufficient_scope")return "需補權限";
+    return "需重新確認";
+  }
+  function normalizeBars(values){
+    var nums=values.map(function(v){return Number(v)||0});
+    var max=Math.max.apply(null,nums),min=Math.min.apply(null,nums);
+    var span=Math.max(1,max-min);
+    return nums.map(function(v){return 22+((v-min)/span)*58});
+  }
+  function niceAxis(values,metric){
+    var nums=values.map(function(v){return Number(v)||0});
+    var max=Math.max.apply(null,nums),min=Math.min.apply(null,nums);
+    if(!Number.isFinite(max)||!Number.isFinite(min)){max=100;min=0}
+    if(max===min){max=max+1;min=Math.max(0,min-1)}
+    var span=max-min;
+    var ticks=[max,min+span*.66,min+span*.33,min];
+    var y=$s("#chartYAxis");
+    if(!y)return;
+    y.innerHTML=ticks.map(function(v){
+      var text=metric==="engagement"?Number(v).toFixed(1)+"%":Math.round(v).toLocaleString("zh-TW");
+      return "<span>"+text+"</span>";
+    }).join("");
+  }
+  function drawLine(values){
+    var svg=$s("#chartLine");
+    if(!svg)return;
+    var nums=values.map(function(v){return Number(v)||0});
+    var max=Math.max.apply(null,nums),min=Math.min.apply(null,nums);
+    var span=Math.max(1,max-min);
+    var points=nums.map(function(v,i){
+      var x=nums.length===1?50:6+i*(88/(nums.length-1));
+      var y=86-((v-min)/span)*72;
+      return {x:x,y:y};
+    });
+    var d=points.map(function(p,i){return (i?"L":"M")+p.x.toFixed(2)+" "+p.y.toFixed(2)}).join(" ");
+    svg.innerHTML='<path class="line-stroke" d="'+d+'"></path><g class="line-hit-points">'+points.map(function(p,i){
+      return '<circle data-point-index="'+i+'" cx="'+p.x.toFixed(2)+'" cy="'+p.y.toFixed(2)+'" r="1.35"></circle>';
+    }).join("")+'</g>';
+  }
+  function metricTitle(metric){
+    if(metric==="subscribers")return "訂閱者";
+    if(metric==="engagement")return "平均互動率";
+    return "觀看次數";
+  }
+  function stableRenderChart(range){
+    if(typeof renderAnalytics==="function")try{renderAnalytics(range)}catch(_){}
+    var account=typeof activeAccount==="function"?activeAccount():(accounts&&accounts[0]);
+    var metric=typeof activeChartMetric==="function"?activeChartMetric():"views";
+    var type=typeof activeChartType==="function"?activeChartType():"bar";
+    var fallback=accountStats.main&&accountStats.main[range]||accountStats.main&&accountStats.main["7"];
+    var data=(account&&accountStats[account.id]&&accountStats[account.id][range])||fallback;
+    if(!data)return;
+    var values=(data.series&&data.series[metric])||data.series.views||[];
+    var chart=$s("#viewsChart"),bars=$s("#chartBars"),line=$s("#chartLine"),title=$s("#chartTitle");
+    if(chart)chart.dataset.chartType=type;
+    if(title)title.textContent=metricTitle(metric);
+    niceAxis(values,metric);
+    if($s("#subscriberMetric"))$s("#subscriberMetric").textContent=data.subscribers||"--";
+    if($s("#viewMetric"))$s("#viewMetric").textContent=data.views||"--";
+    if($s("#engagementMetric"))$s("#engagementMetric").textContent=data.engagement||"--";
+    if(typeof setDelta==="function"){
+      try{setDelta("subscriberDelta",data.subscriberDelta||"+0.0%");setDelta("viewDelta",data.viewDelta||"+0.0%");setDelta("engagementDelta",data.engagementDelta||"+0.0%")}catch(_){}
+    }
+    if(bars){
+      bars.hidden=type!=="bar";
+      bars.style.display=type==="bar"?"grid":"none";
+      var heights=normalizeBars(values);
+      bars.innerHTML=heights.map(function(h,i){return '<div class="bar" data-point-index="'+i+'" style="height:'+h.toFixed(2)+'%"></div>'}).join("");
+    }
+    if(line){
+      line.hidden=type!=="line";
+      line.style.display=type==="line"?"block":"none";
+      drawLine(values);
+    }
+    var labels=(data.labels||[]).map(function(label){return '<span>'+safeText(label)+'</span>'}).join("");
+    if($s("#chartLabels"))$s("#chartLabels").innerHTML=labels;
+    if(typeof bindChartTooltip==="function")try{bindChartTooltip(values)}catch(_){}
+    if(typeof renderHealth==="function")try{renderHealth()}catch(_){}
+    if($s("#rangeSelect"))$s("#rangeSelect").value=range;
+    $$s("#chartTypeTabs button").forEach(function(btn){btn.classList.toggle("active",btn.dataset.chartType===type)});
+    $$s("[data-chart-metric]").forEach(function(card){card.classList.toggle("active",card.dataset.chartMetric===metric)});
+    try{localStorage.setItem("mvp_chart_range",range)}catch(_){}
+  }
+  renderChart=stableRenderChart;
+  renderLine=drawLine;
+
+  function selectedIdsStable(){
+    try{
+      var stored=JSON.parse(localStorage.getItem("mvp_publish_accounts")||"[]");
+      if(Array.isArray(stored)&&stored.length)return stored.filter(function(id){return accounts.some(function(a){return a.id===id})});
+    }catch(_){}
+    return accounts[0]?[accounts[0].id]:[];
+  }
+  function saveSelectedIds(ids){
+    if(!ids.length&&accounts[0])ids=[accounts[0].id];
+    localStorage.setItem("mvp_publish_accounts",JSON.stringify(ids));
+    if(ids[0])localStorage.setItem("mvp_publish_account",ids[0]);
+  }
+  function accountLabel(account){
+    if(!account)return "未選擇";
+    return account.name||account.displayName||"YouTube";
+  }
+  function closeTargetDialog(){
+    var old=$s("#publishTargetDialog");
+    if(old)old.remove();
+  }
+  function openTargetDialog(){
+    closeTargetDialog();
+    var ids=selectedIdsStable();
+    var dialog=document.createElement("div");
+    dialog.id="publishTargetDialog";
+    dialog.className="target-modal-backdrop open";
+    dialog.innerHTML='<div class="target-dialog" role="dialog" aria-modal="true"><div class="target-dialog-head"><h3>發布目標</h3><button class="target-dialog-close" type="button" aria-label="關閉">×</button></div><div class="target-dialog-list">'+accounts.map(function(a){
+      var active=ids.indexOf(a.id)>-1;
+      return '<button class="target-dialog-option '+(active?'active':'')+'" type="button" data-target-id="'+a.id+'"><span class="target-option-icon">'+youtubeIcon()+'</span><strong>'+accountLabel(a)+'</strong><span class="target-option-check">'+(active?'✓':'')+'</span></button>';
+    }).join("")+'</div><div class="target-dialog-actions"><button class="btn primary target-dialog-done" type="button">完成</button></div></div>';
+    document.body.appendChild(dialog);
+    dialog.onclick=function(event){if(event.target===dialog)closeTargetDialog()};
+    dialog.querySelector(".target-dialog-close").onclick=closeTargetDialog;
+    dialog.querySelector(".target-dialog-done").onclick=function(){closeTargetDialog();renderPublishTargets();if(typeof renderComposer==="function")renderComposer()};
+    dialog.querySelectorAll("[data-target-id]").forEach(function(btn){
+      btn.onclick=function(){
+        var id=btn.dataset.targetId;
+        var next=selectedIdsStable();
+        if(next.indexOf(id)>-1){
+          if(next.length===1){if(typeof toast==="function")toast("至少保留一個發布目標");return}
+          next=next.filter(function(item){return item!==id});
+        }else next.push(id);
+        saveSelectedIds(next);
+        openTargetDialog();
+      };
+    });
+  }
+  renderPublishTargets=function(){
+    var host=$s("#publishTargets");
+    if(!host)return;
+    var selected=selectedIdsStable().map(function(id){return accounts.find(function(a){return a.id===id})}).filter(Boolean);
+    var text=selected.length>1?selected.length+" 個帳戶":accountLabel(selected[0]);
+    host.innerHTML='<button class="target-summary-button" type="button"><span class="target-summary-icon">'+youtubeIcon()+'</span><strong>'+text+'</strong><span class="target-summary-action">選擇</span></button>';
+    host.querySelector("button").onclick=openTargetDialog;
+  };
+
+  function syncRemoveButton(inputId,buttonId){
+    var input=$s("#"+inputId),btn=$s("#"+buttonId);
+    if(!btn)return;
+    var hasFile=!!(input&&input.files&&input.files.length);
+    var wrap=btn.closest(".upload-item")||btn.closest(".caption-file-row");
+    if(wrap)wrap.classList.toggle("has-file",hasFile);
+    btn.hidden=!hasFile;
+    btn.setAttribute("aria-hidden",hasFile?"false":"true");
+    btn.classList.toggle("is-hidden",!hasFile);
+    btn.textContent="";
+    btn.setAttribute("aria-label","移除檔案");
+    btn.title="移除檔案";
+  }
+  var oldRenderComposer=renderComposer;
+  renderComposer=function(){
+    if(typeof oldRenderComposer==="function")oldRenderComposer();
+    syncRemoveButton("mediaInput","removeMediaBtn");
+    syncRemoveButton("coverInput","removeCoverBtn");
+    syncRemoveButton("captionInput","removeCaptionBtn");
+  };
+
+  async function hydrateRealAccounts(){
+    try{
+      var response=await fetch("/api/accounts",{cache:"no-store"});
+      if(!response.ok)return;
+      var data=await response.json();
+      if(!Array.isArray(data.accounts))return;
+      if(data.accounts.length){
+        accounts=data.accounts.map(function(a,i){
+          return {
+            id:a.id,
+            name:a.displayName||"YouTube",
+            platform:"YouTube",
+            group:a.groupName||"",
+            favorite:!!a.favorite,
+            status:statusFromApi(a.status),
+            expires:a.tokenExpiresAt?String(a.tokenExpiresAt).slice(0,10):"",
+            color:"transparent",
+            avatar:"play",
+            dataStart:"2026-06-01",
+            dataEnd:"2026-06-30",
+            sortOrder:a.sortOrder||i
+          };
+        });
+      }else if(!demoTools){
+        accounts=[];
+      }
+      if(!demoTools&&$s("#addDemoAccountBtn"))$s("#addDemoAccountBtn").remove();
+      if(typeof save==="function")save();
+      if(typeof renderAccounts==="function")renderAccounts();
+      if(typeof renderAccountSwitcher==="function")renderAccountSwitcher();
+      renderPublishTargets();
+      if(typeof renderPlaylistOptions==="function")renderPlaylistOptions();
+    }catch(_){}
+  }
+  async function hydrateMetrics(){
+    try{
+      var response=await fetch("/api/youtube/metrics",{cache:"no-store"});
+      if(!response.ok)return;
+      var data=await response.json();
+      if(!Array.isArray(data.accounts))return;
+      data.accounts.forEach(function(item){
+        var id=item.accountId;
+        if(!id||!item.ranges)return;
+        accountStats[id]=item.ranges;
+        Object.keys(item.ranges).forEach(function(range){
+          var r=item.ranges[range];
+          if(r&&r.series&&r.series.engagement&&item.metrics&&item.metrics.videoCount!=null){
+            r.engagement=r.engagement||String(item.metrics.videoCount);
+          }
+        });
+      });
+      renderChart(localStorage.getItem("mvp_chart_range")||"7");
+    }catch(_){}
+  }
+
+  function installRealPublishBridge(){
+    var button=$s("#scheduleBtn");
+    if(!button)return;
+    button.onclick=async function(event){
+      event.preventDefault();
+      var title=$s("#titleInput"),media=$s("#mediaInput");
+      if(!title||!title.value.trim()){if(typeof setFieldError==="function")setFieldError("title","請輸入標題。");title&&title.focus();return}
+      var modeText=$s("#publishMode")?$s("#publishMode").value:"排程發布";
+      var mode=modeText.indexOf("立即")>-1?"immediate":modeText.indexOf("草稿")>-1?"draft":"scheduled";
+      if(mode!=="draft"&&(!media||!media.files||!media.files[0])){if(typeof setFieldError==="function")setFieldError("media","請選擇影片檔案。");return}
+      var form=new FormData();
+      selectedIdsStable().forEach(function(id){form.append("accountIds",id)});
+      form.set("title",title.value.trim());
+      form.set("description",$s("#contentInput")?$s("#contentInput").value:"");
+      form.set("contentType",$s("#contentType")?$s("#contentType").value:"一般影片");
+      form.set("publishMode",mode);
+      form.set("visibility",$s("#visibilityInput")?$s("#visibilityInput").value:"private");
+      if($s("#publishTime")&&$s("#publishTime").value)form.set("scheduledAt",new Date($s("#publishTime").value).toISOString());
+      form.set("playlistId",$s("#playlistInput")?$s("#playlistInput").value:"");
+      form.set("madeForKids",isMadeForKids()?"true":"false");
+      form.set("paidPromo",$s("#paidPromoInput")&&$s("#paidPromoInput").checked?"true":"false");
+      form.set("aiDisclosure",$s("#aiDisclosureInput")&&$s("#aiDisclosureInput").checked?"true":"false");
+      form.set("embedAllowed",$s("#embedInput")&&$s("#embedInput").checked?"true":"false");
+      form.set("notifySubscribers",$s("#notifyInput")&&$s("#notifyInput").checked?"true":"false");
+      form.set("categoryId",$s("#categoryInput")?$s("#categoryInput").value:"24");
+      form.set("tags",$s("#tagsInput")?$s("#tagsInput").value:"");
+      form.set("license",$s("#licenseInput")?$s("#licenseInput").value:"youtube");
+      if(media&&media.files&&media.files[0])form.set("media",media.files[0]);
+      var cover=$s("#coverInput"),caption=$s("#captionInput");
+      if(cover&&cover.files&&cover.files[0])form.set("cover",cover.files[0]);
+      if(caption&&caption.files&&caption.files[0])form.set("caption",caption.files[0]);
+      button.disabled=true;
+      var old=button.textContent;
+      button.textContent=mode==="draft"?"儲存中":"上傳中";
+      try{
+        var response=await fetch("/api/youtube/publish",{method:"POST",body:form});
+        var result=await response.json().catch(function(){return {}});
+        if(!response.ok){if(typeof toast==="function")toast(result.error||"發布失敗，請稍後再試。");return}
+        if(typeof toast==="function")toast(mode==="draft"?"已儲存草稿":"已送出發布任務");
+      }catch(_){
+        if(typeof toast==="function")toast("發布失敗，請稍後再試。");
+      }finally{
+        button.disabled=false;
+        button.textContent=old;
+      }
+    };
+  }
+
+  function install(){
+    if(ready)return;
+    ready=true;
+    if(!demoTools&&$s("#addDemoAccountBtn"))$s("#addDemoAccountBtn").remove();
+    if(initialTab&&typeof tab==="function"){tab(initialTab);try{localStorage.setItem("mvp_active_tab",initialTab)}catch(_){}}
+    var activeRange=localStorage.getItem("mvp_chart_range")||"7";
+    renderChart(activeRange);
+    renderPublishTargets();
+    renderComposer();
+    installRealPublishBridge();
+    hydrateRealAccounts().then(hydrateMetrics);
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",install,{once:true});
+  else install();
+  setTimeout(install,50);
+})();
+
 /* Dashboard platform icon dropdown override */
 (function(){
   var btn=document.querySelector('#platformSwitchBtn');
