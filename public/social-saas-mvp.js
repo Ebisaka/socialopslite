@@ -665,6 +665,190 @@ boot();
   renderPublishTargets();
 })();
 
+/* Production data bridge: use real member accounts and YouTube metrics when available. */
+(function(){
+  metricMeta={
+    subscribers:{title:"訂閱者",unit:"人"},
+    views:{title:"觀看次數",unit:"次"},
+    engagement:{title:"互動率",unit:"%"}
+  };
+  rangeMeta={
+    "7":{title:"近 7 天"},
+    "30":{title:"近 30 天"},
+    "90":{title:"近 90 天"},
+    "custom":{title:"自訂"}
+  };
+
+  function statusText(status){
+    if(status==="authorized"||status==="已連線")return "已連線";
+    if(status==="reconnect"||status==="需重新確認")return "需重新確認";
+    if(status==="insufficient_scope"||status==="需補權限")return "需補權限";
+    return "需重新確認";
+  }
+
+  function mapApiAccount(account,index){
+    var tags=String(account.groupName||"").split(",").map(function(tag){return tag.trim()}).filter(Boolean);
+    return {
+      id:account.id,
+      platform:"YouTube",
+      platformAccountId:account.platformAccountId,
+      name:account.displayName||"YouTube",
+      group:tags[0]||"",
+      tags:tags,
+      favorite:!!account.favorite,
+      status:statusText(account.status),
+      expires:account.tokenExpiresAt?String(account.tokenExpiresAt).slice(0,10):"",
+      color:"transparent",
+      avatar:"play",
+      sortOrder:typeof account.sortOrder==="number"?account.sortOrder:index,
+      dataStart:"2026-01-01",
+      dataEnd:"2026-12-31",
+      source:"api"
+    };
+  }
+
+  function ensureActiveAccount(){
+    var current=localStorage.getItem("mvp_active_account");
+    if(accounts.some(function(account){return account.id===current}))return;
+    if(accounts[0])localStorage.setItem("mvp_active_account",accounts[0].id);
+  }
+
+  activeAccount=function(){
+    var id=activeAccountId();
+    return accounts.find(function(account){return account.id===id})||accounts[0]||{
+      id:"none",
+      name:"YouTube",
+      platform:"YouTube",
+      avatar:"play",
+      color:"transparent",
+      status:"需重新確認",
+      tags:[]
+    };
+  };
+
+  function syncAccountHealth(){
+    accounts.forEach(function(account){
+      var ok=account.status==="已連線";
+      accountHealth[account.id]=[
+        {
+          key:"auth",
+          state:ok?"ok":"warn",
+          icon:ok?"✓":"!",
+          title:ok?"連線正常":account.status,
+          text:ok?"可同步資料與發布內容":"需要處理"
+        }
+      ];
+    });
+  }
+
+  function setEmptyAccountsState(){
+    accounts=[];
+    localStorage.removeItem("mvp_active_account");
+    localStorage.setItem("mvp_publish_accounts",JSON.stringify([]));
+    if(typeof renderAccounts==="function")renderAccounts();
+    var list=document.querySelector("#accountList");
+    if(list)list.innerHTML='<div class="hint">尚未連線 YouTube 帳號。</div>';
+    var target=document.querySelector("#publishTargets");
+    if(target)target.innerHTML='<button class="publish-target-summary" type="button">尚未連線帳號</button>';
+  }
+
+  function normalizeRange(rangePayload){
+    if(!rangePayload)return null;
+    return {
+      labels:Array.isArray(rangePayload.labels)?rangePayload.labels:[],
+      subscribers:rangePayload.subscribers||"--",
+      subscriberDelta:rangePayload.subscriberDelta||"+0.0%",
+      views:rangePayload.views||"--",
+      viewDelta:rangePayload.viewDelta||"+0.0%",
+      engagement:rangePayload.engagement||"--",
+      engagementDelta:rangePayload.engagementDelta||"+0.0%",
+      series:{
+        subscribers:(rangePayload.series&&rangePayload.series.subscribers)||[],
+        views:(rangePayload.series&&rangePayload.series.views)||[],
+        engagement:(rangePayload.series&&rangePayload.series.engagement)||[]
+      }
+    };
+  }
+
+  function applyMetricsPayload(payload){
+    if(!payload||!Array.isArray(payload.accounts))return false;
+    payload.accounts.forEach(function(account){
+      var ranges={};
+      ["7","30","90"].forEach(function(range){
+        ranges[range]=normalizeRange(account.ranges&&account.ranges[range]);
+      });
+      if(ranges["7"])accountStats[account.accountId]=ranges;
+    });
+    return payload.accounts.length>0;
+  }
+
+  function rerenderCurrentScreen(){
+    ensureActiveAccount();
+    syncAccountHealth();
+    renderAccountSwitcher();
+    renderAccounts();
+    renderPublishTargets();
+    renderPlaylistOptions();
+    renderComposer();
+    renderChart(localStorage.getItem("mvp_chart_range")||"7");
+  }
+
+  async function loadRealAccounts(){
+    try{
+      var response=await fetch("/api/accounts",{cache:"no-store"});
+      if(response.status===401)return false;
+      if(!response.ok)throw new Error("accounts failed");
+      var data=await response.json();
+      if(!Array.isArray(data.accounts))return false;
+      if(data.accounts.length===0){
+        if(isProductionHost())setEmptyAccountsState();
+        return false;
+      }
+      accounts=data.accounts.map(mapApiAccount);
+      localStorage.setItem("mvp_accounts_youtube",JSON.stringify(accounts));
+      ensureActiveAccount();
+      var publishIds=selectedPublishAccountIds().filter(function(id){
+        return accounts.some(function(account){return account.id===id});
+      });
+      if(!publishIds.length&&accounts[0])publishIds=[accounts[0].id];
+      localStorage.setItem("mvp_publish_accounts",JSON.stringify(publishIds));
+      localStorage.setItem("mvp_publish_account",publishIds[0]||"");
+      rerenderCurrentScreen();
+      return true;
+    }catch(error){
+      console.warn("SocialOps accounts fallback",error);
+      return false;
+    }
+  }
+
+  async function loadRealMetrics(){
+    try{
+      var response=await fetch("/api/youtube/metrics",{cache:"no-store"});
+      if(response.status===401)return false;
+      if(!response.ok)throw new Error("metrics failed");
+      var data=await response.json();
+      if(applyMetricsPayload(data)){
+        renderChart(localStorage.getItem("mvp_chart_range")||"7");
+        return true;
+      }
+    }catch(error){
+      console.warn("SocialOps metrics fallback",error);
+    }
+    return false;
+  }
+
+  async function hydrateProductionData(){
+    var hasAccounts=await loadRealAccounts();
+    if(hasAccounts)await loadRealMetrics();
+  }
+
+  if(document.readyState==="loading"){
+    document.addEventListener("DOMContentLoaded",hydrateProductionData);
+  }else{
+    hydrateProductionData();
+  }
+})();
+
 /* Member account controls. */
 (function(){
   function ensureLogoutButton(){

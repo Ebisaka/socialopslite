@@ -36,7 +36,7 @@ export default function LoginClient() {
           <img src="/socialops-logo.png" alt="SocialOps Lite" />
           <strong>SocialOps Lite</strong>
         </div>
-        <h1>{mode === "login" ? "登入" : "建立帳戶"}</h1>
+        <h1>{mode === "login" ? "登入" : "註冊帳戶"}</h1>
         <form className="auth-form" onSubmit={submit}>
           <label>
             <span>Email</span>
@@ -53,7 +53,7 @@ export default function LoginClient() {
         </form>
         <a className="auth-google" href="/api/auth/google/start">使用 Google 登入</a>
         <button className="auth-toggle" type="button" onClick={() => setMode(mode === "login" ? "register" : "login")}>
-          {mode === "login" ? "還沒有帳戶？建立帳戶" : "已經有帳戶？登入"}
+          {mode === "login" ? "還沒有帳戶？建立一個帳戶" : "已經有帳戶？回到登入"}
         </button>
       </section>
     </main>

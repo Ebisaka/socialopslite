@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
   };
 
   const channelResponse = await fetch("https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true", {
-    headers: { authorization: "Bearer " + token.access_token },
+    headers: { authorization: `Bearer ${token.access_token}` },
     cache: "no-store"
   });
 
