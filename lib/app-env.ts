@@ -16,5 +16,6 @@ export function isProductionApp() {
 }
 
 export function demoToolsEnabled() {
-  return process.env.NEXT_PUBLIC_ENABLE_DEMO_TOOLS === "1" || !isProductionApp();
+  if (isProductionApp()) return false;
+  return process.env.NEXT_PUBLIC_ENABLE_DEMO_TOOLS === "1" || appEnvironment() === "preview" || appEnvironment() === "development";
 }

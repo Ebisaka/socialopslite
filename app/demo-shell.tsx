@@ -30,12 +30,15 @@ export default function DemoShell({
   useEffect(() => {
     localStorage.setItem("mvp_active_tab", initialTab);
     window.SOCIALOPS_CONFIG = { appEnv, demoTools, initialTab };
+    if (!demoTools) {
+      document.querySelector("#addDemoAccountBtn")?.remove();
+    }
     if (mountedRef.current) return;
     mountedRef.current = true;
     const previous = document.querySelector('script[data-socialops-demo="true"]');
     if (previous) previous.remove();
     const script = document.createElement("script");
-    script.src = "/social-saas-mvp.js?v=" + Date.now();
+    script.src = "/social-saas-mvp.js?v=20260705-fix-02";
     script.dataset.socialopsDemo = "true";
     script.async = false;
     document.body.appendChild(script);
@@ -46,7 +49,7 @@ export default function DemoShell({
 
   return (
     <div
-      data-socialops-build="demo-parity-20260704-accounts-live-0158"
+      data-socialops-build="demo-parity-20260705-stable-runtime-0205"
       data-socialops-env={appEnv}
       data-demo-tools={demoTools ? "true" : "false"}
       dangerouslySetInnerHTML={{ __html: demoMarkup }}
