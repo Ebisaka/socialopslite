@@ -3179,8 +3179,8 @@ button.btn:not(.icon-action):not(.account-action):not(.theme-btn),
 a.btn:not(.primary):not(.danger):not(.danger-fill):not(.icon-action):not(.account-action):not(.theme-btn),
 button.btn:not(.primary):not(.danger):not(.danger-fill):not(.icon-action):not(.account-action):not(.theme-btn),
 .confirm-actions .confirm-cancel {
-  background: transparent !important;
-  border: 1px solid rgba(148, 163, 184, .34) !important;
+  background: var(--panel) !important;
+  border: 1px solid var(--line) !important;
   color: var(--ink) !important;
 }
 
