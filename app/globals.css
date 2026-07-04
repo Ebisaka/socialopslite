@@ -1686,10 +1686,10 @@ aside.menu-open .brand-copy {
 .chart-line .line-stroke {
   fill: none !important;
   stroke: #cbd5e1 !important;
-  stroke-width: 2.2 !important;
+  stroke-width: 2.2px !important;
   stroke-linecap: round !important;
   stroke-linejoin: round !important;
-  vector-effect: non-scaling-stroke;
+  vector-effect: non-scaling-stroke !important;
 }
 
 .chart-line .line-hit-points circle {
@@ -2148,4 +2148,25 @@ aside .more-switch,
 aside .more-menu {
   z-index: 100 !important;
   pointer-events: auto !important;
+}
+
+/* Final guardrail: keep the line chart from falling back to the old thick demo stroke. */
+.chart[data-chart-type="line"] .chart-line path {
+  fill: none !important;
+  stroke: #cbd5e1 !important;
+  stroke-width: 2.2px !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  vector-effect: non-scaling-stroke !important;
+}
+
+.chart[data-chart-type="line"] .chart-line circle {
+  fill: transparent !important;
+  stroke: transparent !important;
+  opacity: 0 !important;
+  pointer-events: auto !important;
+}
+
+body[data-resolved-theme="light"] .chart[data-chart-type="line"] .chart-line path {
+  stroke: #64748b !important;
 }
