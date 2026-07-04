@@ -4794,3 +4794,104 @@ body[data-resolved-theme="light"] .security-row.danger-zone strong{
     width:max-content;
   }
 }
+
+/* Member center compact revision. */
+.profile-row-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+.profile-row-icon{
+  width:28px;
+  height:28px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  display:inline-grid!important;
+  place-items:center;
+  flex:0 0 auto;
+  margin:0!important;
+  color:var(--muted)!important;
+  background:rgba(148,163,184,.08);
+  font-size:14px!important;
+  line-height:1!important;
+}
+.profile-row-title strong{
+  margin:0;
+  line-height:1.25;
+}
+.profile-theme-option{
+  min-height:38px;
+  min-width:auto;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:0 12px;
+}
+.profile-theme-option span{
+  margin:0;
+}
+.theme-choice-icon{
+  width:18px;
+  height:18px;
+  display:inline-grid!important;
+  place-items:center;
+  color:var(--muted)!important;
+  font-size:14px!important;
+  line-height:1!important;
+}
+.profile-setting-row span:not(.profile-row-icon):not(.profile-static-pill):not(.theme-choice-icon),
+.security-row span:not(.profile-row-icon){
+  margin-top:0;
+}
+.profile-password-section{
+  padding:0;
+  overflow:hidden;
+}
+.profile-section-toggle{
+  width:100%;
+  min-height:52px;
+  border:0;
+  background:transparent;
+  color:var(--ink);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:0 16px;
+  font-weight:700;
+  text-align:left;
+}
+.profile-section-toggle:hover{
+  background:rgba(148,163,184,.08);
+}
+.compact-form{
+  padding:0 16px 16px;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  align-items:end;
+}
+.compact-form .profile-actions{
+  grid-column:1 / -1;
+}
+.global-message{
+  margin:12px 0 0;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:10px 12px;
+  background:rgba(148,163,184,.06);
+}
+.bottom-actions{
+  margin-top:12px;
+}
+@media(max-width:760px){
+  .profile-theme-options{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+  .profile-theme-option{
+    justify-content:flex-start;
+  }
+  .compact-form{
+    grid-template-columns:1fr;
+  }
+}
