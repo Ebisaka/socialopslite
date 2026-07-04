@@ -117,12 +117,13 @@ boot();
   function routeForTab(id){
     if(id==='accounts')return '/accounts';
     if(id==='composer')return '/composer';
-    return '/';
+    return '/app';
   }
 
   function tabForRoute(path){
     if(path.indexOf('/accounts')===0)return 'accounts';
     if(path.indexOf('/composer')===0)return 'composer';
+    if(path.indexOf('/app')===0)return 'dashboard';
     return 'dashboard';
   }
 
@@ -515,12 +516,13 @@ boot();
   function routeForTab(id){
     if(id==='accounts')return '/accounts';
     if(id==='composer')return '/composer';
-    return '/';
+    return '/app';
   }
 
   function tabForRoute(path){
     if(path.indexOf('/accounts')===0)return 'accounts';
     if(path.indexOf('/composer')===0)return 'composer';
+    if(path.indexOf('/app')===0)return 'dashboard';
     return 'dashboard';
   }
 
@@ -661,6 +663,31 @@ boot();
   };
 
   renderPublishTargets();
+})();
+
+/* Member account controls. */
+(function(){
+  function ensureLogoutButton(){
+    var menu=document.querySelector('#moreMenu');
+    if(!menu || document.querySelector('#logoutBtn'))return;
+    var button=document.createElement('button');
+    button.className='more-item-title logout-menu-button';
+    button.id='logoutBtn';
+    button.type='button';
+    button.innerHTML='<span class="more-row-icon">↪</span><span>登出</span>';
+    button.onclick=function(event){
+      event.preventDefault();
+      event.stopPropagation();
+      fetch('/api/auth/logout',{method:'POST'}).finally(function(){
+        window.location.href='/login';
+      });
+    };
+    menu.appendChild(button);
+  }
+
+  ensureLogoutButton();
+  setTimeout(ensureLogoutButton,0);
+  setTimeout(ensureLogoutButton,300);
 })();
 
 /* Final publish target picker override: clean copy, no icon-only done button. */
