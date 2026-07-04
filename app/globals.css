@@ -2967,6 +2967,7 @@ body[data-resolved-theme="light"] button.btn.primary:not(.landing-cta-button):ho
   position: absolute;
   top: 50%;
   right: 8px;
+  transform: translateY(-50%);
   width: 30px;
   height: 30px;
   padding: 0;
