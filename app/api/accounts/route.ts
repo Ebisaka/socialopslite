@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { ensureDemoUser } from "@/lib/demo-user";
+import { requireApiUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const user = await ensureDemoUser();
+  const auth = await requireApiUser();
+  if (auth.response) return auth.response;
+  const user = auth.user;
   const accounts = await prisma.socialAccount.findMany({
     where: { userId: user.id },
     orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],

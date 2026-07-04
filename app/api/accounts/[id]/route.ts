@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { ensureDemoUser } from "@/lib/demo-user";
+import { requireApiUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +19,9 @@ function cleanGroupName(value: unknown) {
 }
 
 export async function PATCH(request: NextRequest, { params }: Params) {
-  const user = await ensureDemoUser();
+  const auth = await requireApiUser();
+  if (auth.response) return auth.response;
+  const user = auth.user;
   const body = await request.json().catch(() => null) as null | {
     favorite?: unknown;
     groupName?: unknown;
@@ -70,7 +72,9 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 }
 
 export async function DELETE(_request: NextRequest, { params }: Params) {
-  const user = await ensureDemoUser();
+  const auth = await requireApiUser();
+  if (auth.response) return auth.response;
+  const user = auth.user;
   const account = await prisma.socialAccount.findFirst({
     where: { id: params.id, userId: user.id },
     select: { id: true }
