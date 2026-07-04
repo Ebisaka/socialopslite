@@ -49,6 +49,56 @@ aside.menu-open .nav-label{display:block!important;opacity:1!important;white-spa
   aside .more-icon,aside:hover .more-icon,aside:not(:hover) .more-icon,aside.menu-open .more-icon{width:22px!important;height:16px!important;justify-self:center!important}
 }
 
+/* Upload remove control: hide until a file exists, then show as a compact corner X. */
+.upload-item {
+  position: relative;
+}
+
+.upload-item .file-remove {
+  display: none !important;
+}
+
+.upload-item:not(.has-file) .file-remove,
+.upload-item .file-remove[hidden],
+.upload-item .file-remove.is-hidden {
+  display: none !important;
+}
+
+.upload-item.has-file > .file-remove:not([hidden]):not(.is-hidden) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: absolute !important;
+  top: 10px !important;
+  right: 10px !important;
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  min-height: 30px !important;
+  padding: 0 !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(248, 113, 113, 0.72) !important;
+  background: rgba(239, 68, 68, 0.12) !important;
+  color: #fb7185 !important;
+  font-size: 0 !important;
+  line-height: 1 !important;
+  overflow: hidden !important;
+  z-index: 3 !important;
+}
+
+.upload-item.has-file > .file-remove::before {
+  content: "×";
+  display: block;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1;
+  transform: translateY(-1px);
+}
+
+.upload-item.has-file > .upload-card {
+  padding-right: 52px;
+}
+
     .more-menu{overflow:visible}
     .more-menu.open{display:grid;gap:4px;overflow:visible}
     .appearance-panel.open{display:grid;gap:4px}
@@ -4342,4 +4392,50 @@ body[data-resolved-theme="light"] .landing-cta a.landing-cta-primary {
     line-height: 1;
     transform: translateY(-1px);
   }
+}
+
+/* Final upload remove behavior. Keep this at EOF so older mobile overrides cannot revive text buttons. */
+.upload-item {
+  position: relative !important;
+}
+
+.upload-item:not(.has-file) > .file-remove,
+.upload-item > .file-remove[hidden],
+.upload-item > .file-remove.is-hidden {
+  display: none !important;
+}
+
+.upload-item.has-file > .file-remove {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: absolute !important;
+  top: 10px !important;
+  right: 10px !important;
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  min-height: 30px !important;
+  padding: 0 !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(248, 113, 113, 0.72) !important;
+  background: rgba(239, 68, 68, 0.12) !important;
+  color: #fb7185 !important;
+  font-size: 0 !important;
+  line-height: 1 !important;
+  overflow: hidden !important;
+  z-index: 4 !important;
+}
+
+.upload-item.has-file > .file-remove:not([hidden]):not(.is-hidden)::before {
+  content: "\00d7" !important;
+  display: block;
+  font-size: 19px !important;
+  font-weight: 700;
+  line-height: 1;
+  transform: translateY(-1px);
+}
+
+.upload-item.has-file > .upload-card {
+  padding-right: 52px !important;
 }
