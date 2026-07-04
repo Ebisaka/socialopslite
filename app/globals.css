@@ -2759,10 +2759,10 @@ body[data-resolved-theme="light"] .health-strip .health-item {
 }
 
 .target-dialog-done {
-  min-width: 52px;
-  min-height: 28px;
-  border-radius: 999px;
-  padding: 0 12px;
+  min-width: 48px;
+  min-height: 30px;
+  border-radius: 10px;
+  padding: 0 11px;
   border-color: rgba(248, 250, 252, .92);
   background: rgba(248, 250, 252, .96);
   color: #111827;
