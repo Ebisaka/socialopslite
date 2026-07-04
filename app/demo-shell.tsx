@@ -7,6 +7,7 @@ declare global {
     SOCIALOPS_CONFIG?: {
       appEnv: "production" | "preview" | "development";
       demoTools: boolean;
+      initialTab: "dashboard" | "accounts" | "composer";
     };
   }
 }
@@ -28,7 +29,7 @@ export default function DemoShell({
 
   useEffect(() => {
     localStorage.setItem("mvp_active_tab", initialTab);
-    window.SOCIALOPS_CONFIG = { appEnv, demoTools };
+    window.SOCIALOPS_CONFIG = { appEnv, demoTools, initialTab };
     if (mountedRef.current) return;
     mountedRef.current = true;
     const previous = document.querySelector('script[data-socialops-demo="true"]');

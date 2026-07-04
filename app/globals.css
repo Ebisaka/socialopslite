@@ -2519,3 +2519,109 @@ body[data-resolved-theme="light"] .health-strip .health-item {
 .advanced-settings summary .advanced-summary-title > span {
   font-weight: 700;
 }
+
+/* Final interaction polish: content filters should not inherit summary-chip styling. */
+.content-type-summary.is-filterable {
+  align-items: center !important;
+}
+
+.content-type-summary.is-filterable > .content-type-filter {
+  min-height: 32px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 999px !important;
+  background: rgba(148, 163, 184, .08) !important;
+  color: var(--muted) !important;
+  padding: 0 13px !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  box-shadow: none !important;
+}
+
+.content-type-summary.is-filterable > .content-type-filter:hover,
+.content-type-summary.is-filterable > .content-type-filter.active {
+  background: rgba(148, 163, 184, .16) !important;
+  color: var(--ink) !important;
+}
+
+.content-type-summary.is-filterable > .content-type-filter > span {
+  min-height: auto !important;
+  display: inline !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: inherit !important;
+  padding: 0 !important;
+  font-size: 12px !important;
+  margin: 0 !important;
+}
+
+.content-type-summary.is-filterable > .content-type-filter > strong {
+  color: inherit !important;
+  font-size: 13px !important;
+  line-height: 1 !important;
+}
+
+/* Composer target cards: remove nested/subtitle feel and align icon, text, and custom check. */
+.target-list {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)) !important;
+  gap: 10px !important;
+}
+
+.target-account-card {
+  min-height: 58px !important;
+  grid-template-columns: 18px 34px minmax(0, 1fr) !important;
+  gap: 11px !important;
+  align-items: center !important;
+  padding: 10px 13px !important;
+}
+
+.target-checkmark {
+  width: 17px !important;
+  height: 17px !important;
+  border-radius: 4px !important;
+  border: 1px solid var(--line) !important;
+  background: transparent !important;
+  color: #fff !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+}
+
+.target-account-card.active .target-checkmark {
+  border-color: #3b82f6 !important;
+  background: #3b82f6 !important;
+}
+
+.target-account-card .target-avatar {
+  width: 34px !important;
+  height: 34px !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+.target-account-card .yt-play {
+  width: 31px !important;
+  height: 22px !important;
+}
+
+.target-copy {
+  min-width: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.target-copy strong {
+  display: block !important;
+  font-size: 13px !important;
+  line-height: 1.2 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.target-copy small {
+  display: none !important;
+}

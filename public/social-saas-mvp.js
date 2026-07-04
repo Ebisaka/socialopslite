@@ -112,6 +112,83 @@ boot();
   });
 })();
 
+/* Final route and composer-target overrides. Keep refreshes on the current app page. */
+(function(){
+  function routeForTab(id){
+    if(id==='accounts')return '/accounts';
+    if(id==='composer')return '/composer';
+    return '/';
+  }
+
+  function tabForRoute(path){
+    if(path.indexOf('/accounts')===0)return 'accounts';
+    if(path.indexOf('/composer')===0)return 'composer';
+    return 'dashboard';
+  }
+
+  function applyRouteTab(){
+    if(typeof tab!=='function')return;
+    tab(tabForRoute(window.location.pathname));
+  }
+
+  function bindRouteButtons(){
+    Array.prototype.slice.call(document.querySelectorAll('.nav button')).forEach(function(button){
+      button.onclick=function(){
+        var nextTab=button.dataset.tab||'dashboard';
+        tab(nextTab);
+        var nextPath=routeForTab(nextTab);
+        if(window.location.pathname!==nextPath){
+          window.history.pushState({tab:nextTab},'',nextPath);
+        }
+      };
+    });
+    Array.prototype.slice.call(document.querySelectorAll('[data-open-composer]')).forEach(function(button){
+      button.onclick=function(){
+        tab('composer');
+        if(window.location.pathname!=='/composer')window.history.pushState({tab:'composer'},'','/composer');
+      };
+    });
+  }
+
+  if(typeof renderPublishTargets==='function'){
+    renderPublishTargets=function(){
+      var selectedIds=selectedPublishAccountIds();
+      var host=document.querySelector('#publishTargets');
+      if(!host)return;
+      host.innerHTML=accounts.map(function(account){
+        var active=selectedIds.indexOf(account.id)>-1;
+        return '<button class="target-card target-account-card '+(active?'active':'')+'" type="button" data-publish-account="'+escapeAttr(account.id)+'" aria-pressed="'+(active?'true':'false')+'">'+
+          '<span class="target-checkmark" aria-hidden="true">'+(active?'✓':'')+'</span>'+
+          '<span class="target-avatar">'+youtubeIcon()+'</span>'+
+          '<span class="target-copy"><strong>'+escapeHtml(account.name)+'</strong></span>'+
+        '</button>';
+      }).join('');
+      Array.prototype.slice.call(host.querySelectorAll('[data-publish-account]')).forEach(function(button){
+        button.onclick=function(){
+          var ids=selectedPublishAccountIds();
+          var id=button.dataset.publishAccount;
+          if(ids.indexOf(id)>-1){
+            if(ids.length===1){toast('至少保留一個發布目標');return}
+            ids=ids.filter(function(item){return item!==id});
+          }else{
+            ids.push(id);
+          }
+          localStorage.setItem('mvp_publish_accounts',JSON.stringify(ids));
+          localStorage.setItem('mvp_publish_account',ids[0]);
+          renderPublishTargets();
+          renderPlaylistOptions();
+          renderComposer();
+        };
+      });
+    };
+    renderPublishTargets();
+  }
+
+  bindRouteButtons();
+  applyRouteTab();
+  window.addEventListener('popstate',applyRouteTab);
+})();
+
 /* Dashboard platform icon dropdown override */
 (function(){
   var btn=document.querySelector('#platformSwitchBtn');
@@ -431,4 +508,76 @@ boot();
   refreshPlatformComposerUi();
   setTimeout(refreshPlatformComposerUi,0);
   setTimeout(refreshPlatformComposerUi,300);
+})();
+
+/* Last-mile overrides: these intentionally run after all legacy demo patches. */
+(function(){
+  function routeForTab(id){
+    if(id==='accounts')return '/accounts';
+    if(id==='composer')return '/composer';
+    return '/';
+  }
+
+  function tabForRoute(path){
+    if(path.indexOf('/accounts')===0)return 'accounts';
+    if(path.indexOf('/composer')===0)return 'composer';
+    return 'dashboard';
+  }
+
+  function syncRouteTab(){
+    if(typeof tab==='function')tab(tabForRoute(window.location.pathname));
+  }
+
+  function bindRouteButtons(){
+    Array.prototype.slice.call(document.querySelectorAll('.nav button')).forEach(function(button){
+      button.onclick=function(){
+        var nextTab=button.dataset.tab||'dashboard';
+        tab(nextTab);
+        var nextPath=routeForTab(nextTab);
+        if(window.location.pathname!==nextPath)window.history.pushState({tab:nextTab},'',nextPath);
+      };
+    });
+    Array.prototype.slice.call(document.querySelectorAll('[data-open-composer]')).forEach(function(button){
+      button.onclick=function(){
+        tab('composer');
+        if(window.location.pathname!=='/composer')window.history.pushState({tab:'composer'},'','/composer');
+      };
+    });
+  }
+
+  renderPublishTargets=function(){
+    var selectedIds=selectedPublishAccountIds();
+    var host=document.querySelector('#publishTargets');
+    if(!host)return;
+    host.innerHTML=accounts.map(function(account){
+      var active=selectedIds.indexOf(account.id)>-1;
+      return '<button class="target-card target-account-card '+(active?'active':'')+'" type="button" data-publish-account="'+escapeAttr(account.id)+'" aria-pressed="'+(active?'true':'false')+'">'+
+        '<span class="target-checkmark" aria-hidden="true">'+(active?'✓':'')+'</span>'+
+        '<span class="target-avatar">'+youtubeIcon()+'</span>'+
+        '<span class="target-copy"><strong>'+escapeHtml(account.name)+'</strong></span>'+
+      '</button>';
+    }).join('');
+    Array.prototype.slice.call(host.querySelectorAll('[data-publish-account]')).forEach(function(button){
+      button.onclick=function(){
+        var ids=selectedPublishAccountIds();
+        var id=button.dataset.publishAccount;
+        if(ids.indexOf(id)>-1){
+          if(ids.length===1){toast('至少保留一個發布目標');return}
+          ids=ids.filter(function(item){return item!==id});
+        }else{
+          ids.push(id);
+        }
+        localStorage.setItem('mvp_publish_accounts',JSON.stringify(ids));
+        localStorage.setItem('mvp_publish_account',ids[0]);
+        renderPublishTargets();
+        renderPlaylistOptions();
+        renderComposer();
+      };
+    });
+  };
+
+  bindRouteButtons();
+  renderPublishTargets();
+  syncRouteTab();
+  window.addEventListener('popstate',syncRouteTab);
 })();
