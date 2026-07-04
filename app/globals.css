@@ -2987,6 +2987,34 @@ body[data-resolved-theme="light"] button.btn.primary:hover {
   min-width: 86px !important;
 }
 
+.landing-actions .btn:not(.primary),
+.landing-cta .btn:not(.primary) {
+  background: #1b222c !important;
+  border-color: #2d3745 !important;
+  color: #f2f4f7 !important;
+}
+
+.landing-actions .btn.primary,
+.landing-cta .btn.primary {
+  background: #f2f4f7 !important;
+  border-color: #f2f4f7 !important;
+  color: #111827 !important;
+}
+
+body[data-resolved-theme="light"] .landing-actions .btn:not(.primary),
+body[data-resolved-theme="light"] .landing-cta .btn:not(.primary) {
+  background: #ffffff !important;
+  border-color: #d8dee8 !important;
+  color: #111827 !important;
+}
+
+body[data-resolved-theme="light"] .landing-actions .btn.primary,
+body[data-resolved-theme="light"] .landing-cta .btn.primary {
+  background: #111827 !important;
+  border-color: #111827 !important;
+  color: #ffffff !important;
+}
+
 .landing-hero {
   max-width: 1120px;
   min-height: calc(100vh - 120px);
@@ -3224,4 +3252,53 @@ body[data-resolved-theme="light"] button.btn.primary:not(.icon-action):not(.acco
 body[data-resolved-theme="light"] .target-dialog-done:hover {
   background: #020617 !important;
   border-color: #020617 !important;
+}
+
+/* Landing CTA final override: same button geometry, color is the only difference. */
+.landing-actions .btn,
+.landing-cta .btn {
+  width: 86px !important;
+  min-width: 86px !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  display: grid !important;
+  place-items: center !important;
+  line-height: 1 !important;
+  position: relative !important;
+  top: 0 !important;
+  margin: 0 !important;
+  font-size: 13px !important;
+  font-weight: 650 !important;
+}
+
+.landing-actions .btn:not(.primary),
+.landing-cta .btn:not(.primary) {
+  background: #1b222c !important;
+  color: #f2f4f7 !important;
+  box-shadow: inset 0 0 0 1px #2d3745 !important;
+}
+
+.landing-actions .btn.primary,
+.landing-cta .btn.primary {
+  background: #f2f4f7 !important;
+  color: #111827 !important;
+  box-shadow: inset 0 0 0 1px #f2f4f7 !important;
+}
+
+body[data-resolved-theme="light"] .landing-actions .btn:not(.primary),
+body[data-resolved-theme="light"] .landing-cta .btn:not(.primary) {
+  background: #ffffff !important;
+  color: #111827 !important;
+  box-shadow: inset 0 0 0 1px #d8dee8 !important;
+}
+
+body[data-resolved-theme="light"] .landing-actions .btn.primary,
+body[data-resolved-theme="light"] .landing-cta .btn.primary {
+  background: #111827 !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 0 0 1px #111827 !important;
 }
