@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { ensureDemoUser } from "@/lib/demo-user";
+import { getCurrentUser } from "@/lib/auth";
 import { encrypt } from "@/lib/crypto";
 import { requiredEnv } from "@/lib/env";
+import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +14,11 @@ export async function GET(request: NextRequest) {
 
   if (!code || !state || !savedState || state !== savedState) {
     return NextResponse.json({ error: "OAuth 驗證失敗，請重新連線 YouTube。" }, { status: 400 });
+  }
+
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
@@ -41,7 +46,8 @@ export async function GET(request: NextRequest) {
   };
 
   const channelResponse = await fetch("https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true", {
-    headers: { authorization: "Bearer " + token.access_token }
+    headers: { authorization: "Bearer " + token.access_token },
+    cache: "no-store"
   });
 
   if (!channelResponse.ok) {
@@ -58,7 +64,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "找不到可連線的 YouTube 頻道。" }, { status: 404 });
   }
 
-  const user = await ensureDemoUser();
   const expiresAt = token.expires_in ? new Date(Date.now() + token.expires_in * 1000) : null;
   const scopes = token.scope ? token.scope.split(" ") : [];
 

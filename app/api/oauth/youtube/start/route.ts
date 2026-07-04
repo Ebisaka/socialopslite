@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { randomBytes } from "crypto";
+import { getCurrentUser } from "@/lib/auth";
 import { requiredEnv } from "@/lib/env";
 
 export const dynamic = "force-dynamic";
@@ -10,6 +11,11 @@ const scopes = [
 ];
 
 export async function GET(request: Request) {
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
   const clientId = requiredEnv("GOOGLE_CLIENT_ID");
   const redirectUri = new URL("/api/oauth/youtube/callback", request.url).toString();
   const state = randomBytes(24).toString("hex");

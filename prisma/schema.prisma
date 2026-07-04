@@ -11,10 +11,26 @@ datasource db {
 model User {
   id             String          @id @default(cuid())
   email          String          @unique
+  passwordHash   String?
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   socialAccounts SocialAccount[]
   issueReports   IssueReport[]
+  sessions       UserSession[]
+}
+
+model UserSession {
+  id           String   @id @default(cuid())
+  userId       String
+  tokenHash    String   @unique
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  lastSeenAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+  @@index([expiresAt])
 }
 
 model SocialAccount {

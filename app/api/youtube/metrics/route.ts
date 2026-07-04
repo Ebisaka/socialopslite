@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { SocialAccount } from "@prisma/client";
+import { requireApiUser } from "@/lib/auth";
 import { decrypt, encrypt } from "@/lib/crypto";
-import { ensureDemoUser } from "@/lib/demo-user";
 import { requiredEnv } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 
@@ -229,7 +229,9 @@ function buildRangePayload(
 
 export async function GET() {
   try {
-    const user = await ensureDemoUser();
+    const auth = await requireApiUser();
+    if (auth.response) return auth.response;
+    const user = auth.user;
     const accounts = await prisma.socialAccount.findMany({
       where: {
         userId: user.id,
