@@ -2,8 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-type ThemeChoice = "system" | "light" | "dark";
-
 type ProfilePayload = {
   user: {
     email: string;
@@ -18,10 +16,6 @@ const copy = {
   account: "\u5e33\u6236",
   joinedAt: "\u52a0\u5165\u6642\u9593",
   preferences: "\u504f\u597d\u8a2d\u5b9a",
-  appearance: "\u5916\u89c0\u6a21\u5f0f",
-  system: "\u8ddf\u96a8\u7cfb\u7d71",
-  dark: "\u6df1\u8272\u6a21\u5f0f",
-  light: "\u6dfa\u8272\u6a21\u5f0f",
   language: "\u8a9e\u8a00",
   traditionalChinese: "\u7e41\u9ad4\u4e2d\u6587",
   dataSecurity: "\u8cc7\u6599\u8207\u5b89\u5168",
@@ -45,28 +39,8 @@ const copy = {
   deletionSent: "\u5df2\u6536\u5230\u522a\u9664\u6703\u54e1\u5e33\u6236\u7533\u8acb\u3002"
 };
 
-const themeOptions: Array<{ value: ThemeChoice; label: string; icon: string }> = [
-  { value: "system", label: copy.system, icon: "\u25d0" },
-  { value: "dark", label: copy.dark, icon: "\u263e" },
-  { value: "light", label: copy.light, icon: "\u2600" }
-];
-
-function resolveTheme(choice: ThemeChoice) {
-  if (choice !== "system") return choice;
-  if (typeof window === "undefined") return "dark";
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-}
-
-function applyTheme(choice: ThemeChoice) {
-  const resolved = resolveTheme(choice);
-  document.body.dataset.themeMode = choice;
-  document.body.dataset.resolvedTheme = resolved;
-  localStorage.setItem("mvp_theme_mode", choice);
-}
-
 export default function ProfileClient() {
   const [profile, setProfile] = useState<ProfilePayload | null>(null);
-  const [theme, setTheme] = useState<ThemeChoice>("system");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -84,24 +58,7 @@ export default function ProfileClient() {
       .then((response) => response.json())
       .then((body) => setProfile(body))
       .catch(() => setMessage(copy.loadFailed));
-
-    const stored = localStorage.getItem("mvp_theme_mode");
-    const nextTheme = stored === "light" || stored === "dark" || stored === "system" ? stored : "system";
-    setTheme(nextTheme);
-    applyTheme(nextTheme);
-
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const onSystemThemeChange = () => {
-      if ((localStorage.getItem("mvp_theme_mode") || "system") === "system") applyTheme("system");
-    };
-    media.addEventListener("change", onSystemThemeChange);
-    return () => media.removeEventListener("change", onSystemThemeChange);
   }, []);
-
-  function updateTheme(choice: ThemeChoice) {
-    setTheme(choice);
-    applyTheme(choice);
-  }
 
   async function changePassword(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -184,25 +141,6 @@ export default function ProfileClient() {
 
         <div className="profile-section">
           <h2>{copy.preferences}</h2>
-          <div className="profile-setting-row">
-            <div className="profile-row-title">
-              <span className="profile-row-icon" aria-hidden="true">{"\u25d0"}</span>
-              <strong>{copy.appearance}</strong>
-            </div>
-            <div className="profile-theme-options" role="group" aria-label={copy.appearance}>
-              {themeOptions.map((option) => (
-                <button
-                  key={option.value}
-                  className={`profile-theme-option ${theme === option.value ? "active" : ""}`}
-                  type="button"
-                  onClick={() => updateTheme(option.value)}
-                >
-                  <span className="theme-choice-icon" aria-hidden="true">{option.icon}</span>
-                  <strong>{option.label}</strong>
-                </button>
-              ))}
-            </div>
-          </div>
           <div className="profile-setting-row compact">
             <div className="profile-row-title">
               <span className="profile-row-icon" aria-hidden="true">{"\u6587"}</span>
@@ -244,7 +182,11 @@ export default function ProfileClient() {
         <div className="profile-section profile-password-section">
           <button className="profile-section-toggle" type="button" onClick={() => setPasswordOpen((open) => !open)}>
             <span>{copy.changePassword}</span>
-            <span aria-hidden="true">{passwordOpen ? "\u2303" : "\u2304"}</span>
+            <span className="profile-section-chevron" aria-hidden="true">
+              <svg viewBox="0 0 20 20" focusable="false">
+                <path d={passwordOpen ? "M5.5 12.2 10 7.8l4.5 4.4" : "M5.5 7.8 10 12.2l4.5-4.4"} />
+              </svg>
+            </span>
           </button>
           {passwordOpen ? (
             <form className="profile-form compact-form" onSubmit={changePassword}>

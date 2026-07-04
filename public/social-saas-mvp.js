@@ -1,4 +1,4 @@
-var metricMeta={subscribers:{title:"訂閱者",unit:"人"},views:{title:"觀看次數",unit:"次"},engagement:{title:"平均互動率",unit:"%"}};
+﻿var metricMeta={subscribers:{title:"訂閱者",unit:"人"},views:{title:"觀看次數",unit:"次"},engagement:{title:"平均互動率",unit:"%"}};
 var defaultAccounts=[
   {id:"main",name:"YouTube",platform:"YouTube",group:"",favorite:true,status:"已連線",expires:"2026-07-25",color:"transparent",avatar:"play",dataStart:"2026-04-01",dataEnd:"2026-06-30"},
   {id:"studio",name:"工作用 YouTube",platform:"YouTube",group:"",favorite:false,status:"已連線",expires:"2026-08-12",color:"transparent",avatar:"play",dataStart:"2026-05-10",dataEnd:"2026-06-30"}
@@ -38,7 +38,7 @@ var contentAnalytics={
 };
 function createDemoContentAnalytics(accountId,index){var base=18+index*5;contentAnalytics.youtube[accountId]={"7":{content:String(4+index),contentDelta:"近 7 天 +1",views:(base*8200).toLocaleString("zh-TW"),viewsDelta:"近 7 天 +"+(3+index%5)+".%",engagement:(4.2+index*.3).toFixed(1)+"%",engagementDelta:"近 7 天 +0."+(index%7)+"%",items:[{title:"測試帳號 "+index+" 近期最佳內容",type:"一般影片",views:(base*2100).toLocaleString("zh-TW"),engagement:(5.1+index*.2).toFixed(1)+"%"},{title:"測試帳號 "+index+" Shorts",type:"Shorts",views:(base*1400).toLocaleString("zh-TW"),engagement:(4.8+index*.2).toFixed(1)+"%"},{title:"測試帳號 "+index+" 更新公告",type:"一般影片",views:(base*760).toLocaleString("zh-TW"),engagement:(3.9+index*.2).toFixed(1)+"%"}]},"30":{content:String(15+index*2),contentDelta:"近 30 天 +"+(2+index),views:(base*31000).toLocaleString("zh-TW"),viewsDelta:"近 30 天 +"+(6+index%6)+".%",engagement:(4.5+index*.25).toFixed(1)+"%",engagementDelta:"近 30 天 +0."+(index%6)+"%",items:[{title:"測試帳號 "+index+" 月度代表作",type:"一般影片",views:(base*7200).toLocaleString("zh-TW"),engagement:(5.8+index*.2).toFixed(1)+"%"},{title:"測試帳號 "+index+" 月度短片",type:"Shorts",views:(base*5100).toLocaleString("zh-TW"),engagement:(5.0+index*.2).toFixed(1)+"%"},{title:"測試帳號 "+index+" 內容整理",type:"一般影片",views:(base*3300).toLocaleString("zh-TW"),engagement:(4.2+index*.2).toFixed(1)+"%"}]},"90":{content:String(44+index*6),contentDelta:"近 90 天 +"+(6+index),views:(base*95000).toLocaleString("zh-TW"),viewsDelta:"近 90 天 +"+(10+index%8)+".%",engagement:(4.7+index*.2).toFixed(1)+"%",engagementDelta:"近 90 天 +0."+(index%5)+"%",items:[{title:"測試帳號 "+index+" 季度精選",type:"一般影片",views:(base*18800).toLocaleString("zh-TW"),engagement:(6.0+index*.2).toFixed(1)+"%"},{title:"測試帳號 "+index+" 高互動短片",type:"Shorts",views:(base*12200).toLocaleString("zh-TW"),engagement:(5.4+index*.2).toFixed(1)+"%"},{title:"測試帳號 "+index+" 長片整理",type:"一般影片",views:(base*9400).toLocaleString("zh-TW"),engagement:(4.6+index*.2).toFixed(1)+"%"}]},"custom":{content:String(24+index*3),contentDelta:"+"+(3+index),views:(base*42000).toLocaleString("zh-TW"),viewsDelta:"+"+(7+index%7)+".%",engagement:(4.4+index*.2).toFixed(1)+"%",engagementDelta:"-0."+(index%4)+"%",items:[{title:"測試帳號 "+index+" 自訂期間最佳",type:"一般影片",views:(base*8600).toLocaleString("zh-TW"),engagement:(5.5+index*.2).toFixed(1)+"%"},{title:"測試帳號 "+index+" 自訂短片",type:"Shorts",views:(base*5400).toLocaleString("zh-TW"),engagement:(4.9+index*.2).toFixed(1)+"%"},{title:"測試帳號 "+index+" 自訂整理",type:"一般影片",views:(base*3100).toLocaleString("zh-TW"),engagement:(4.1+index*.2).toFixed(1)+"%"}]}};}
 var rangeMeta={"7":{title:"近 7 天觀看",hint:"用來觀察影片發布後的整體趨勢。"},"30":{title:"近 30 天觀看",hint:"用週期切片觀察這段時間的觀看變化。"},"90":{title:"近 90 天觀看",hint:"用較長時間範圍觀察內容走勢。"},"custom":{title:"自訂範圍觀看",hint:"依你選擇的日期範圍查看趨勢。"}};
-var accounts=load("mvp_accounts_youtube",defaultAccounts),queue=load("mvp_queue_youtube",defaultQueue);accounts=accounts.filter(function(a){return a.platform==="YouTube"}).map(function(a,i){a.id=a.id||("account"+i);a.platform="YouTube";a.avatar="play";a.color="transparent";if(a.status==="已串接")a.status="已連線";if(a.status==="需續期")a.status="需重新確認";if(a.status==="權限不足")a.status="需補權限";if(a.group==="影音內容")a.group="";return a});if(!accounts.length)accounts=defaultAccounts.slice();queue=queue.filter(function(t){return t.title!=="YouTube Shorts 開場測試"});save();var pageCopy={dashboard:"營運總覽",accounts:"帳號管理",composer:"內容發文",analytics:"內容分析"};var activeGroupIndex=null,dragIndex=null,accountEditMode=false;var helpContent={accountConnected:{title:"已連線",description:"這個 YouTube 帳號目前可以正常同步資料與發布內容。",action:"不需要處理。"},accountReconnect:{title:"需重新確認",description:"為了維持資料同步與發布功能，這個帳號需要重新登入 YouTube 確認連線。",action:"點選重新確認，依照 YouTube 畫面完成確認即可。"},accountPermission:{title:"需補權限",description:"這個帳號已連上，但部分功能尚未開啟，例如發布影片或讀取分析資料。",action:"重新連線時開啟需要的功能權限。"},advancedYoutube:{title:"進階設定說明",sections:[{title:"兒童專屬內容",body:"無論所在地區，發布前都需要說明影片是否屬於兒童專屬內容。若設為兒童專屬，部分功能可能會依 YouTube 規則調整。"},{title:"僅限成人觀眾收看",body:"可將影片設為僅限年滿 18 歲的觀眾收看。設有年齡限制的影片不會顯示在 YouTube 的特定版面中，並可能影響廣告顯示。"},{title:"內容包含付費宣傳",body:"如果影片含有第三方提供的有價品，並據以製作相關影片，發布時需要標記，例如置入性行銷、贊助或代言。"},{title:"內容包含需揭露的 AI 內容",body:"若影片使用 AI 生成或編輯，且呈現真人言論、真實事件或地點經過加工，或看似真實但未發生的場景，發布時需要揭露。"},{title:"允許嵌入",body:"允許他人在網站上嵌入你的影片。"},{title:"Shorts 重混",body:"允許他人使用這部影片的內容製作 Shorts。"}]}};var fileState={media:null,cover:null,caption:null};var accountPlaylists={main:["新品 / 新企劃","教學內容","Shorts 精選"],studio:["客戶案例","品牌素材","直播回放"]};
+var accounts=load("mvp_accounts_youtube",defaultAccounts),queue=load("mvp_queue_youtube",defaultQueue);accounts=accounts.filter(function(a){return a.platform==="YouTube"}).map(function(a,i){a.id=a.id||("account"+i);a.platform="YouTube";a.avatar="play";a.color="transparent";if(a.status==="已串接")a.status="已連線";if(a.status==="需續期")a.status="需重新確認";if(a.status==="權限不足")a.status="需補權限";if(a.group==="影音內容")a.group="";return a});if(!accounts.length)accounts=defaultAccounts.slice();queue=queue.filter(function(t){return t.title!=="YouTube Shorts 開場測試"});save();var pageCopy={dashboard:"營運總覽",accounts:"帳號管理",composer:"內容發文",analytics:"內容分析"};var activeGroupIndex=null,dragIndex=null,accountEditMode=false;var helpContent={accountConnected:{title:"已連線",description:"這個 YouTube 帳號目前可以正常同步資料與發布內容。",action:"不需要處理。"},accountReconnect:{title:"需重新確認",description:"為了維持資料同步與發布功能，這個帳號需要重新登入 YouTube 確認連線。",action:"點選重新確認，依照 YouTube 畫面完成確認即可。"},accountPermission:{title:"需補權限",description:"這個帳號已連上，但部分功能尚未開啟，例如發布影片或讀取分析資料。",action:"重新連線時開啟需要的功能權限。"},advancedYoutube:{title:"YT 設定說明",sections:[{title:"兒童專屬內容",body:"無論所在地區，發布前都需要說明影片是否屬於兒童專屬內容。若設為兒童專屬，部分功能可能會依 YouTube 規則調整。"},{title:"僅限成人觀眾收看",body:"可將影片設為僅限年滿 18 歲的觀眾收看。設有年齡限制的影片不會顯示在 YouTube 的特定版面中，並可能影響廣告顯示。"},{title:"內容包含付費宣傳",body:"如果影片含有第三方提供的有價品，並據以製作相關影片，發布時需要標記，例如置入性行銷、贊助或代言。"},{title:"內容包含需揭露的 AI 內容",body:"若影片使用 AI 生成或編輯，且呈現真人言論、真實事件或地點經過加工，或看似真實但未發生的場景，發布時需要揭露。"},{title:"允許嵌入",body:"允許他人在網站上嵌入你的影片。"},{title:"Shorts 重混",body:"允許他人使用這部影片的內容製作 Shorts。"}]}};var fileState={media:null,cover:null,caption:null};var accountPlaylists={main:["新品 / 新企劃","教學內容","Shorts 精選"],studio:["客戶案例","品牌素材","直播回放"]};
 function syncFileInput(id,key){var input=q("#"+id),file=input&&input.files&&input.files[0];if(!file)return;if(fileState[key]&&fileState[key].url)URL.revokeObjectURL(fileState[key].url);fileState[key]={name:file.name,type:file.type,url:URL.createObjectURL(file)}}function clearFileInput(id,key){var input=q("#"+id);if(fileState[key]&&fileState[key].url)URL.revokeObjectURL(fileState[key].url);fileState[key]=null;if(input)input.value="";renderComposer()}function fileEntry(key){return fileState[key]}function previewFileHtml(key,label,emptyText){var entry=fileEntry(key);if(!entry||!entry.url)return '<div class="preview-slot"><span>'+escapeHtml(emptyText)+'</span></div>';var isVideo=entry.type.indexOf("video/")===0,isImage=entry.type.indexOf("image/")===0;if(isVideo)return '<div class="preview-slot"><video src="'+escapeAttr(entry.url)+'" muted controls></video><span class="preview-label">'+escapeHtml(label)+'</span></div>';if(isImage)return '<div class="preview-slot '+(label==="封面"?"cover":"")+'"><img src="'+escapeAttr(entry.url)+'" alt="'+escapeAttr(label)+'"><span class="preview-label">'+escapeHtml(label)+'</span></div>';return '<div class="preview-slot"><span>'+escapeHtml(entry.name)+'</span></div>'}
 function selectedPublishAccountIds(){var stored=load("mvp_publish_accounts",null);if(!Array.isArray(stored)||!stored.length){var legacy=localStorage.getItem("mvp_publish_account")||activeAccountId();stored=[legacy]}var valid=stored.filter(function(id){return accounts.some(function(a){return a.id===id})});if(!valid.length)valid=[activeAccountId()];localStorage.setItem("mvp_publish_accounts",JSON.stringify(valid));return valid}function selectedPublishAccounts(){var ids=selectedPublishAccountIds();return ids.map(function(id){return accounts.find(function(a){return a.id===id})}).filter(Boolean)}function selectedPublishAccount(){return selectedPublishAccounts()[0]||activeAccount()}
 function load(k,fallback){try{return JSON.parse(localStorage.getItem(k))||fallback}catch(e){return fallback}}function save(){localStorage.setItem("mvp_accounts_youtube",JSON.stringify(accounts));localStorage.setItem("mvp_queue_youtube",JSON.stringify(queue))}function q(s){return document.querySelector(s)}function qa(s){return Array.from(document.querySelectorAll(s))}function escapeHtml(v){return String(v||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}function escapeAttr(v){return escapeHtml(v).replace(/'/g,"&#39;")}var toastTimer=null;function toast(t){var el=q("#toast");if(!el)return;if(toastTimer)clearTimeout(toastTimer);el.innerHTML="<div class=\"toast-inner\"><span class=\"toast-message\">"+escapeHtml(t)+"</span></div>";el.classList.add("show");toastTimer=setTimeout(function(){el.classList.remove("show")},2600)}function updateReportSwitchLabel(id){qa("[data-report-tab]").forEach(function(b){b.classList.toggle("active",b.dataset.reportTab===id)});var btn=q("#reportSwitchBtn");if(btn){btn.innerHTML="洞察報告 <span class=\"chevron\" aria-hidden=\"true\"></span>"}}function tab(id){if(!pageCopy[id])id="dashboard";localStorage.setItem("mvp_active_tab",id);var main=q("main");if(main)main.dataset.activeTab=id;var topAccountWrap=q(".top-account-wrap");if(topAccountWrap)topAccountWrap.classList.toggle("is-hidden",id!=="dashboard"&&id!=="analytics");qa(".nav button").forEach(function(b){var navId=b.dataset.tab;var active=navId===id||(navId==="dashboard"&&id==="analytics");b.classList.toggle("active",active)});qa(".section").forEach(function(s){s.classList.toggle("active",s.id===id)});var pageTitle=q("#pageTitle");if(pageTitle)pageTitle.textContent=pageCopy[id];qa("[data-report-tab]").forEach(function(b){b.classList.toggle("active",b.dataset.reportTab===id)});updateReportSwitchLabel(id);var menu=q("#reportMenu");if(menu)menu.classList.remove("open")}function cls(s){return s==="已連線"?"ok":s==="需重新確認"?"warn":"bad"}function accountStatusIconHtml(status){var kind=status==="已連線"?"ok":status==="需重新確認"?"warn":"bad";var icon=kind==="ok"?'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M8.3 12.2l2.4 2.4 5-5.3"></path></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7.8v5.2"></path><path d="M12 16.4h.01"></path></svg>';return '<button class="account-status-icon status-icon-'+kind+'" type="button" data-status-help="'+escapeAttr(status)+'" title="'+escapeAttr(status)+'" aria-label="'+escapeAttr(status)+'">'+icon+'</button>'}function deltaClass(text){return String(text).indexOf("+")>-1?"delta-up":String(text).indexOf("-")>-1?"delta-down":"delta-neutral"}function compactDelta(text){return String(text||"").replace(/近\s*7\s*天|近\s*30\s*天|近\s*90\s*天|自訂範圍/g,"").trim()}function setDelta(id,text){var el=q("#"+id);el.textContent=compactDelta(text);el.className=deltaClass(text)}
@@ -90,6 +90,465 @@ boot();
       if(typeof renderAccounts==='function')renderAccounts();
     }
   });
+})();
+
+/* 2026-07-05 final regression lock.
+   This must stay after every older renderer/bridge above. */
+(function socialOpsUltimateRegressionLock(){
+  var cfg=window.SOCIALOPS_CONFIG||{};
+  var isProduction=cfg.appEnv==="production";
+  function $(selector,root){return (root||document).querySelector(selector)}
+  function $$(selector,root){return Array.from((root||document).querySelectorAll(selector))}
+  function text(value){return String(value==null?"":value)}
+  function safe(value){
+    return text(value).replace(/[&<>"']/g,function(ch){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch];
+    });
+  }
+  function accountName(account){
+    return account?(account.name||account.displayName||"YouTube"):"YouTube";
+  }
+  function currentAccount(){
+    try{
+      if(typeof activeAccount==="function")return activeAccount();
+      return Array.isArray(accounts)?accounts[0]:null;
+    }catch(_){return null}
+  }
+  function hasStatsForActive(){
+    try{
+      var account=currentAccount();
+      return !!(account&&window.accountStats&&accountStats[account.id]);
+    }catch(_){return false}
+  }
+  function setMetricEmpty(){
+    var empty={subscriberMetric:"0",viewMetric:"0",engagementMetric:"0%"};
+    Object.keys(empty).forEach(function(id){var el=$("#"+id);if(el)el.textContent=empty[id]});
+    ["subscriberDelta","viewDelta","engagementDelta"].forEach(function(id){var el=$("#"+id);if(el)el.textContent="-";});
+    var y=$("#chartYAxis"),labels=$("#chartLabels"),bars=$("#chartBars"),line=$("#chartLine"),title=$("#chartTitle");
+    if(title)title.textContent="觀看次數";
+    if(y)y.innerHTML=["0","0","0","0"].map(function(item){return "<span>"+item+"</span>"}).join("");
+    if(labels)labels.innerHTML="";
+    if(bars)bars.innerHTML="";
+    if(line)line.innerHTML="";
+  }
+  function normalizeChart(){
+    var chart=$("#viewsChart"),bars=$("#chartBars"),line=$("#chartLine");
+    if(!chart)return;
+    var type=localStorage.getItem("mvp_chart_type")||"bar";
+    chart.dataset.chartType=type;
+    if(bars){bars.hidden=type!=="bar";bars.style.display=type==="bar"?"grid":"none";}
+    if(line){
+      line.hidden=type!=="line";
+      line.style.display=type==="line"?"block":"none";
+      line.querySelectorAll("path").forEach(function(path){path.classList.add("line-stroke")});
+      var circles=line.querySelectorAll("circle");
+      if(circles.length&&!line.querySelector(".line-hit-points")){
+        var group=document.createElementNS("http://www.w3.org/2000/svg","g");
+        group.setAttribute("class","line-hit-points");
+        circles.forEach(function(circle){group.appendChild(circle)});
+        line.appendChild(group);
+      }
+    }
+    if(isProduction&&!hasStatsForActive())setMetricEmpty();
+  }
+  function normalizeUploadRemove(inputId,buttonId){
+    var input=$("#"+inputId),button=$("#"+buttonId);
+    if(!button)return;
+    var hasFile=!!(input&&input.files&&input.files.length);
+    var wrap=button.closest(".upload-item")||button.closest(".caption-file-row");
+    if(wrap)wrap.classList.toggle("has-file",hasFile);
+    button.hidden=!hasFile;
+    button.classList.toggle("is-hidden",!hasFile);
+    button.setAttribute("aria-hidden",hasFile?"false":"true");
+    button.setAttribute("aria-label","移除檔案");
+    button.title="移除檔案";
+    button.textContent="";
+    button.style.display=hasFile?"grid":"none";
+  }
+  function normalizeUploads(){
+    normalizeUploadRemove("mediaInput","removeMediaBtn");
+    normalizeUploadRemove("coverInput","removeCoverBtn");
+    normalizeUploadRemove("captionInput","removeCaptionBtn");
+  }
+  function normalizeYoutubeSettingsLabel(){
+    var title=$(".advanced-summary-title > span");
+    if(title)title.textContent="YT 設定";
+    var info=$(".advanced-summary-title [data-help], .summary-info");
+    if(info){
+      info.dataset.help="advancedYoutube";
+      info.setAttribute("aria-label","YT 設定說明");
+    }
+    try{
+      if(window.helpContent&&helpContent.advancedYoutube){
+        helpContent.advancedYoutube.title="YT 設定說明";
+      }
+    }catch(_){}
+  }
+  function normalizeStatusActions(){
+    $$(".account-status-action,.status-action").forEach(function(el){
+      el.classList.remove("btn");
+      el.style.transform="none";
+      el.style.textDecoration="none";
+    });
+  }
+  function contentItems(){
+    var account=currentAccount();
+    var name=accountName(account);
+    return [
+      {type:"shorts",title:name+" 近期最佳 Shorts",views:"87,400",engagement:"7.5%",cover:"S"},
+      {type:"video",title:name+" 更新公告",views:"42,800",engagement:"5.9%",cover:"V"},
+      {type:"shorts",title:name+" 製作流程幕後分享",views:"58,200",engagement:"6.8%",cover:"S"}
+    ];
+  }
+  function renderContentAnalyticsFinal(){
+    var list=$("#contentRankList");
+    if(!list)return;
+    var filter=localStorage.getItem("mvp_content_filter")||"all";
+    var items=contentItems();
+    var shown=items.filter(function(item){return filter==="all"||item.type===filter});
+    var total=items.length;
+    var videos=items.filter(function(item){return item.type==="video"}).length;
+    var shorts=items.filter(function(item){return item.type==="shorts"}).length;
+    list.innerHTML='<div class="content-type-summary is-filterable">'
+      +'<button type="button" class="content-type-filter '+(filter==="all"?"active":"")+'" data-content-filter="all"><span>全部</span><strong>'+total+'</strong></button>'
+      +'<button type="button" class="content-type-filter '+(filter==="video"?"active":"")+'" data-content-filter="video"><span>一般影片</span><strong>'+videos+'</strong></button>'
+      +'<button type="button" class="content-type-filter '+(filter==="shorts"?"active":"")+'" data-content-filter="shorts"><span>Shorts</span><strong>'+shorts+'</strong></button>'
+      +'</div>'
+      +shown.map(function(item,index){
+        return '<article class="content-rank-card with-cover"><span class="rank-index">'+(index+1)+'</span><div class="rank-cover">'+safe(item.cover)+'</div><div class="rank-copy"><strong>'+safe(item.title)+'</strong><span>'+(item.type==="shorts"?"Shorts":"一般影片")+'</span></div><div><strong>'+safe(item.views)+'</strong><span>觀看</span></div><div><strong>'+safe(item.engagement)+'</strong><span>互動</span></div></article>';
+      }).join("");
+    $$("[data-content-filter]",list).forEach(function(btn){
+      btn.onclick=function(){
+        localStorage.setItem("mvp_content_filter",btn.dataset.contentFilter||"all");
+        renderContentAnalyticsFinal();
+      };
+    });
+  }
+  function openIssueModal(){
+    $("#issueModalBackdrop")&&$("#issueModalBackdrop").remove();
+    var modal=document.createElement("div");
+    modal.id="issueModalBackdrop";
+    modal.className="issue-modal-backdrop";
+    modal.innerHTML='<div class="issue-modal" role="dialog" aria-modal="true" aria-label="問題回報">'
+      +'<div class="issue-modal-head"><h3>問題回報</h3><button type="button" class="issue-modal-close" aria-label="關閉">×</button></div>'
+      +'<form class="issue-modal-body"><label><span>類型</span><select name="category"><option value="bug">功能異常</option><option value="ui">畫面顯示</option><option value="idea">建議</option><option value="other">其他</option></select></label>'
+      +'<label><span>描述</span><textarea name="message" rows="5" placeholder="請描述你遇到的問題"></textarea></label>'
+      +'<div class="issue-modal-actions"><button class="btn" type="button" data-close>取消</button><button class="btn primary" type="submit">送出</button></div></form></div>';
+    document.body.appendChild(modal);
+    var close=function(){modal.remove()};
+    modal.addEventListener("click",function(event){if(event.target===modal)close()});
+    $(".issue-modal-close",modal).onclick=close;
+    $("[data-close]",modal).onclick=close;
+    $("form",modal).onsubmit=async function(event){
+      event.preventDefault();
+      var form=event.currentTarget;
+      var payload={category:form.category.value,page:location.pathname,message:form.message.value.trim()};
+      if(!payload.message){if(typeof toast==="function")toast("請輸入問題描述");return}
+      try{
+        var response=await fetch("/api/reports",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload)});
+        if(!response.ok)throw new Error("failed");
+        close();
+        if(typeof toast==="function")toast("已送出問題回報");
+      }catch(_){
+        if(typeof toast==="function")toast("問題回報送出失敗，請稍後再試");
+      }
+    };
+  }
+  function bindIssueButton(){
+    var btn=$("#reportIssueBtn");
+    if(!btn||btn.dataset.issueBound==="true")return;
+    btn.dataset.issueBound="true";
+    btn.addEventListener("click",function(event){
+      event.preventDefault();
+      event.stopPropagation();
+      openIssueModal();
+    });
+  }
+  function runAll(){
+    normalizeChart();
+    normalizeUploads();
+    normalizeYoutubeSettingsLabel();
+    normalizeStatusActions();
+    renderContentAnalyticsFinal();
+    bindIssueButton();
+    if(!cfg.demoTools){
+      var demo=$("#addDemoAccountBtn");
+      if(demo)demo.remove();
+    }
+  }
+  var oldRenderChart=typeof renderChart==="function"?renderChart:null;
+  if(oldRenderChart){
+    renderChart=function(range){
+      oldRenderChart(range);
+      runAll();
+    };
+  }
+  var oldRenderComposer=typeof renderComposer==="function"?renderComposer:null;
+  if(oldRenderComposer){
+    renderComposer=function(){
+      oldRenderComposer();
+      runAll();
+    };
+  }
+  var oldRenderAnalytics=typeof renderAnalytics==="function"?renderAnalytics:null;
+  renderAnalytics=function(range){
+    if(oldRenderAnalytics)try{oldRenderAnalytics(range)}catch(_){}
+    renderContentAnalyticsFinal();
+  };
+  document.addEventListener("change",function(event){
+    if(event.target&&event.target.matches&&event.target.matches("#mediaInput,#coverInput,#captionInput")){
+      setTimeout(runAll,0);
+    }
+  });
+  document.addEventListener("click",function(){setTimeout(runAll,0)});
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",runAll,{once:true});
+  else runAll();
+  setTimeout(runAll,80);
+  setTimeout(runAll,400);
+})();
+
+/* 2026-07-05 final regression fixes. This intentionally runs after every
+   previous demo bridge because the legacy script still mutates the DOM. */
+(function socialOpsFinalFixes(){
+  var cfg=window.SOCIALOPS_CONFIG||{};
+  var demoTools=!!cfg.demoTools;
+  var contentFilter=localStorage.getItem("mvp_content_filter")||"all";
+  function $(sel,root){return (root||document).querySelector(sel)}
+  function $$(sel,root){return Array.from((root||document).querySelectorAll(sel))}
+  function text(value){return String(value==null?"":value)}
+  function html(value){
+    return text(value).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+  function isShort(item){
+    return /shorts/i.test(text(item&&item.type));
+  }
+  function normalizeType(item){
+    return isShort(item)?"Shorts":"一般影片";
+  }
+  function coverFor(index,type){
+    var label=type==="Shorts"?"S":"YT";
+    return '<div class="rank-cover" aria-hidden="true"><span>'+label+'</span></div>';
+  }
+  function activeAccountSafe(){
+    try{return typeof activeAccount==="function"?activeAccount():accounts&&accounts[0]}catch(_){return accounts&&accounts[0]}
+  }
+  function activeRangeSafe(){
+    return localStorage.getItem("mvp_chart_range")||($("#rangeSelect")&&$("#rangeSelect").value)||"7";
+  }
+  function normalizeRemoveButton(inputId,buttonId){
+    var input=$("#"+inputId),button=$("#"+buttonId);
+    if(!button)return;
+    var hasFile=!!(input&&input.files&&input.files.length);
+    var wrap=button.closest(".upload-item")||button.closest(".caption-file-row");
+    if(wrap)wrap.classList.toggle("has-file",hasFile);
+    button.hidden=!hasFile;
+    button.classList.toggle("is-hidden",!hasFile);
+    button.setAttribute("aria-hidden",hasFile?"false":"true");
+    button.setAttribute("aria-label","移除檔案");
+    button.title="移除檔案";
+    button.textContent="";
+    button.style.display=hasFile?"grid":"none";
+  }
+  function normalizeUploadButtons(){
+    normalizeRemoveButton("mediaInput","removeMediaBtn");
+    normalizeRemoveButton("coverInput","removeCoverBtn");
+    normalizeRemoveButton("captionInput","removeCaptionBtn");
+  }
+  function normalizeAdvancedLabels(){
+    var title=$(".advanced-summary-title > span");
+    if(title)title.textContent="YT 設定";
+    var info=$(".advanced-summary-title .summary-info");
+    if(info){
+      info.setAttribute("aria-label","YT 設定說明");
+      info.dataset.help="advancedYoutube";
+    }
+    try{
+      if(typeof helpContent==="object"&&helpContent.advancedYoutube){
+        helpContent.advancedYoutube.title="YT 設定說明";
+      }
+    }catch(_){}
+  }
+  function normalizeAccountStatusActions(){
+    $$(".account-status-action,.status-action").forEach(function(el){
+      el.style.transform="none";
+      el.style.textDecoration="none";
+    });
+  }
+  function normalizeChartMode(){
+    var chart=$("#viewsChart"),bars=$("#chartBars"),line=$("#chartLine");
+    var type=localStorage.getItem("mvp_chart_type")||"bar";
+    if(chart)chart.dataset.chartType=type;
+    if(bars){
+      bars.hidden=type!=="bar";
+      bars.style.display=type==="bar"?"grid":"none";
+    }
+    if(line){
+      line.hidden=type!=="line";
+      line.style.display=type==="line"?"block":"none";
+      if(type==="line"){
+        var path=line.querySelector("path:not(.line-stroke)");
+        if(path)path.classList.add("line-stroke");
+        var circles=$$("circle",line);
+        if(circles.length&&!line.querySelector(".line-hit-points")){
+          var group=document.createElementNS("http://www.w3.org/2000/svg","g");
+          group.setAttribute("class","line-hit-points");
+          circles.forEach(function(circle){group.appendChild(circle)});
+          line.appendChild(group);
+        }
+      }
+    }
+  }
+  function normalizeMetricsWhenNoRealData(){
+    if(demoTools)return;
+    var hasAccount=Array.isArray(window.accounts?window.accounts:accounts)&&((window.accounts||accounts).length>0);
+    if(!hasAccount){
+      ["subscriberMetric","viewMetric","engagementMetric"].forEach(function(id){
+        var el=$("#"+id); if(el)el.textContent=id==="engagementMetric"?"0%":"0";
+      });
+      ["subscriberDelta","viewDelta","engagementDelta"].forEach(function(id){
+        var el=$("#"+id); if(el)el.textContent="";
+      });
+    }
+  }
+  function dataForAnalytics(range){
+    try{
+      var account=activeAccountSafe();
+      var platformData=(contentAnalytics&&contentAnalytics.youtube)||{};
+      if(account&&platformData[account.id])return platformData[account.id][range]||platformData[account.id]["7"];
+      return platformData.main&&(platformData.main[range]||platformData.main["7"]);
+    }catch(_){return null}
+  }
+  function renderContentAnalytics(range){
+    range=range||activeRangeSafe();
+    var data=dataForAnalytics(range);
+    if(!data)return;
+    var items=(data.items||[]).map(function(item,i){return Object.assign({rank:i+1},item,{type:normalizeType(item)})});
+    var visible=items.filter(function(item){
+      if(contentFilter==="shorts")return item.type==="Shorts";
+      if(contentFilter==="video")return item.type!=="Shorts";
+      return true;
+    });
+    var summary=$("#contentRankList");
+    if($("#analyticsContentMetric"))$("#analyticsContentMetric").textContent=String(visible.length||items.length||0);
+    if($("#analyticsViewsMetric"))$("#analyticsViewsMetric").textContent=data.views||"0";
+    if($("#analyticsEngagementMetric"))$("#analyticsEngagementMetric").textContent=data.engagement||"0%";
+    if(!summary)return;
+    var total=items.length;
+    var videos=items.filter(function(item){return item.type!=="Shorts"}).length;
+    var shorts=items.filter(function(item){return item.type==="Shorts"}).length;
+    summary.innerHTML='<div class="content-type-summary is-filterable">'
+      +'<button type="button" class="content-type-filter '+(contentFilter==="all"?"active":"")+'" data-content-filter="all"><span>全部</span><strong>'+total+'</strong></button>'
+      +'<button type="button" class="content-type-filter '+(contentFilter==="video"?"active":"")+'" data-content-filter="video"><span>一般影片</span><strong>'+videos+'</strong></button>'
+      +'<button type="button" class="content-type-filter '+(contentFilter==="shorts"?"active":"")+'" data-content-filter="shorts"><span>Shorts</span><strong>'+shorts+'</strong></button>'
+      +'</div>'
+      +visible.map(function(item,i){
+        var type=item.type;
+        return '<article class="content-rank-card with-cover">'
+          +'<div class="rank-index">'+(i+1)+'</div>'
+          +coverFor(i,type)
+          +'<div class="rank-main"><strong>'+html(item.title||"未命名內容")+'</strong><span>'+html(type)+'</span></div>'
+          +'<div class="rank-stats"><span>'+html(item.views||"0")+'</span><small>觀看</small></div>'
+          +'<div class="rank-stats"><span>'+html(item.engagement||"0%")+'</span><small>互動</small></div>'
+          +'</article>';
+      }).join("");
+    $$("[data-content-filter]",summary).forEach(function(btn){
+      btn.onclick=function(){
+        contentFilter=btn.dataset.contentFilter||"all";
+        localStorage.setItem("mvp_content_filter",contentFilter);
+        renderContentAnalytics(range);
+      };
+    });
+  }
+  var oldRenderAnalytics=typeof renderAnalytics==="function"?renderAnalytics:null;
+  renderAnalytics=function(range){
+    if(oldRenderAnalytics)try{oldRenderAnalytics(range)}catch(_){}
+    renderContentAnalytics(range);
+  };
+  function closeReportModal(){
+    var modal=$("#issueReportModal");
+    if(modal)modal.remove();
+  }
+  function openReportModal(){
+    closeReportModal();
+    var modal=document.createElement("div");
+    modal.id="issueReportModal";
+    modal.className="issue-modal-backdrop";
+    modal.innerHTML='<div class="issue-modal" role="dialog" aria-modal="true" aria-label="問題回報">'
+      +'<div class="issue-modal-head"><h3>問題回報</h3><button type="button" class="issue-modal-close" aria-label="關閉">×</button></div>'
+      +'<form class="issue-modal-body"><label><span>類型</span><select name="category"><option value="bug">功能異常</option><option value="ui">畫面顯示</option><option value="account">帳戶連線</option><option value="other">其他</option></select></label>'
+      +'<label><span>描述</span><textarea name="message" rows="5" placeholder="簡單說明你遇到的問題"></textarea></label>'
+      +'<div class="issue-modal-actions"><button type="button" class="btn issue-cancel">取消</button><button type="submit" class="btn primary">送出</button></div></form>'
+      +'</div>';
+    document.body.appendChild(modal);
+    modal.onclick=function(event){if(event.target===modal)closeReportModal()};
+    $(".issue-modal-close",modal).onclick=closeReportModal;
+    $(".issue-cancel",modal).onclick=closeReportModal;
+    $("form",modal).onsubmit=async function(event){
+      event.preventDefault();
+      var form=event.currentTarget;
+      var payload={category:form.category.value,page:location.pathname,message:form.message.value.trim()};
+      if(!payload.message){if(typeof toast==="function")toast("請先輸入問題描述");return}
+      try{
+        var response=await fetch("/api/reports",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload)});
+        if(!response.ok)throw new Error("failed");
+        closeReportModal();
+        if(typeof toast==="function")toast("已送出問題回報");
+      }catch(_){
+        if(typeof toast==="function")toast("問題回報送出失敗，請稍後再試");
+      }
+    };
+  }
+  function installReportButton(){
+    var btn=$("#reportIssueBtn");
+    if(btn&&!btn.dataset.issueBound){
+      btn.dataset.issueBound="true";
+      btn.onclick=function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        openReportModal();
+      };
+    }
+  }
+  function syncAll(){
+    normalizeUploadButtons();
+    normalizeAdvancedLabels();
+    normalizeAccountStatusActions();
+    normalizeChartMode();
+    normalizeMetricsWhenNoRealData();
+    installReportButton();
+    if(($("main")&&$("main").dataset.activeTab)==="analytics")renderContentAnalytics(activeRangeSafe());
+  }
+  var oldRenderComposer2=typeof renderComposer==="function"?renderComposer:null;
+  renderComposer=function(){
+    if(oldRenderComposer2)oldRenderComposer2();
+    normalizeUploadButtons();
+    normalizeAdvancedLabels();
+  };
+  var oldRenderChart2=typeof renderChart==="function"?renderChart:null;
+  renderChart=function(range){
+    if(oldRenderChart2)oldRenderChart2(range);
+    normalizeChartMode();
+    normalizeMetricsWhenNoRealData();
+    if(($("main")&&$("main").dataset.activeTab)==="analytics")renderContentAnalytics(range);
+  };
+  document.addEventListener("change",function(event){
+    if(event.target&&/^(mediaInput|coverInput|captionInput)$/.test(event.target.id)){
+      setTimeout(normalizeUploadButtons,0);
+    }
+  },true);
+  document.addEventListener("click",function(event){
+    var filter=event.target&&event.target.closest&&event.target.closest("[data-content-filter]");
+    if(filter){
+      event.preventDefault();
+      contentFilter=filter.dataset.contentFilter||"all";
+      localStorage.setItem("mvp_content_filter",contentFilter);
+      renderContentAnalytics(activeRangeSafe());
+    }
+    setTimeout(syncAll,0);
+  },true);
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",syncAll,{once:true});
+  else syncAll();
+  setInterval(syncAll,800);
 })();
 
 /* 2026-07-05 regression guard.
@@ -551,3 +1010,540 @@ boot();
   else install();
   setTimeout(install, 300);
 })();
+
+/* 2026-07-05 EOF lock. Nothing that normalizes the demo shell should be placed
+   after this block unless it intentionally replaces these guarantees. */
+(function socialOpsEofLock(){
+  var cfg=window.SOCIALOPS_CONFIG||{};
+  function $(selector,root){return (root||document).querySelector(selector)}
+  function $$(selector,root){return Array.from((root||document).querySelectorAll(selector))}
+  function escapeHtml(value){
+    return String(value==null?"":value).replace(/[&<>"']/g,function(ch){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch];
+    });
+  }
+  function active(){
+    try{return typeof activeAccount==="function"?activeAccount():(Array.isArray(accounts)?accounts[0]:null)}catch(_){return null}
+  }
+  function selectedAccountIds(){
+    try{
+      var stored=JSON.parse(localStorage.getItem("mvp_publish_accounts")||"[]");
+      if(Array.isArray(stored)&&stored.length)return stored;
+    }catch(_){}
+    var account=active();
+    return account?[account.id]:[];
+  }
+  function normalizeRemove(inputId,buttonId){
+    var input=$("#"+inputId),button=$("#"+buttonId);
+    if(!button)return;
+    var hasFile=!!(input&&input.files&&input.files.length);
+    var wrap=button.closest(".upload-item")||button.closest(".caption-file-row");
+    if(wrap)wrap.classList.toggle("has-file",hasFile);
+    button.hidden=!hasFile;
+    button.classList.toggle("is-hidden",!hasFile);
+    button.setAttribute("aria-hidden",hasFile?"false":"true");
+    button.setAttribute("aria-label","移除檔案");
+    button.title="移除檔案";
+    button.textContent="";
+    button.style.display=hasFile?"grid":"none";
+  }
+  function normalizeComposerUi(){
+    normalizeRemove("mediaInput","removeMediaBtn");
+    normalizeRemove("coverInput","removeCoverBtn");
+    normalizeRemove("captionInput","removeCaptionBtn");
+    var title=$(".advanced-summary-title > span");
+    if(title)title.textContent="YT 設定";
+    var info=$(".summary-info");
+    if(info){info.dataset.help="advancedYoutube";info.setAttribute("aria-label","YT 設定說明");}
+    try{if(window.helpContent&&helpContent.advancedYoutube)helpContent.advancedYoutube.title="YT 設定說明";}catch(_){}
+  }
+  function normalizeChart(){
+    var chart=$("#viewsChart"),bars=$("#chartBars"),line=$("#chartLine");
+    if(!chart)return;
+    var type=localStorage.getItem("mvp_chart_type")||"bar";
+    chart.dataset.chartType=type;
+    if(bars){bars.hidden=type!=="bar";bars.style.display=type==="bar"?"grid":"none";}
+    if(line){
+      line.hidden=type!=="line";
+      line.style.display=type==="line"?"block":"none";
+      line.querySelectorAll("path").forEach(function(path){path.classList.add("line-stroke")});
+    }
+    if(cfg.appEnv==="production"){
+      var account=active();
+      if(account&&window.accountStats&&!accountStats[account.id]){
+        ["subscriberMetric","viewMetric"].forEach(function(id){var el=$("#"+id);if(el)el.textContent="0";});
+        var e=$("#engagementMetric");if(e)e.textContent="0%";
+        ["subscriberDelta","viewDelta","engagementDelta"].forEach(function(id){var el=$("#"+id);if(el)el.textContent="-";});
+      }
+    }
+  }
+  function normalizeAccountStatus(){
+    $$(".account-status-action,.status-action").forEach(function(el){
+      el.classList.remove("btn");
+      el.style.transform="none";
+      el.style.textDecoration="none";
+    });
+  }
+  function contentData(){
+    var account=active();
+    var base=account?(account.name||"YouTube"):"YouTube";
+    return [
+      {type:"shorts",title:base+" 近期最佳 Shorts",views:"87,400",rate:"7.5%",cover:"S"},
+      {type:"video",title:base+" 更新公告",views:"42,800",rate:"5.9%",cover:"V"},
+      {type:"shorts",title:base+" 製作流程幕後分享",views:"58,200",rate:"6.8%",cover:"S"}
+    ];
+  }
+  function renderContentTab(){
+    var list=$("#contentRankList");
+    if(!list)return;
+    var filter=localStorage.getItem("mvp_content_filter")||"all";
+    var data=contentData();
+    var shown=data.filter(function(item){return filter==="all"||item.type===filter});
+    var count=function(type){return data.filter(function(item){return item.type===type}).length};
+    list.innerHTML='<div class="content-type-summary is-filterable">'
+      +'<button type="button" class="content-type-filter '+(filter==="all"?"active":"")+'" data-content-filter="all"><span>全部</span><strong>'+data.length+'</strong></button>'
+      +'<button type="button" class="content-type-filter '+(filter==="video"?"active":"")+'" data-content-filter="video"><span>一般影片</span><strong>'+count("video")+'</strong></button>'
+      +'<button type="button" class="content-type-filter '+(filter==="shorts"?"active":"")+'" data-content-filter="shorts"><span>Shorts</span><strong>'+count("shorts")+'</strong></button>'
+      +'</div>'+shown.map(function(item,index){
+        return '<article class="content-rank-card with-cover"><span class="rank-index">'+(index+1)+'</span><div class="rank-cover">'+escapeHtml(item.cover)+'</div><div class="rank-copy"><strong>'+escapeHtml(item.title)+'</strong><span>'+(item.type==="shorts"?"Shorts":"一般影片")+'</span></div><div><strong>'+escapeHtml(item.views)+'</strong><span>觀看</span></div><div><strong>'+escapeHtml(item.rate)+'</strong><span>互動</span></div></article>';
+      }).join("");
+    $$("[data-content-filter]",list).forEach(function(button){
+      button.onclick=function(){
+        localStorage.setItem("mvp_content_filter",button.dataset.contentFilter||"all");
+        renderContentTab();
+      };
+    });
+  }
+  function openIssueModal(){
+    var old=$("#issueModalBackdrop");if(old)old.remove();
+    var modal=document.createElement("div");
+    modal.id="issueModalBackdrop";
+    modal.className="issue-modal-backdrop";
+    modal.innerHTML='<div class="issue-modal" role="dialog" aria-modal="true" aria-label="問題回報"><div class="issue-modal-head"><h3>問題回報</h3><button class="issue-modal-close" type="button" aria-label="關閉">×</button></div><form class="issue-modal-body"><label><span>類型</span><select name="category"><option value="bug">功能異常</option><option value="ui">畫面顯示</option><option value="account">帳戶連線</option><option value="other">其他</option></select></label><label><span>描述</span><textarea name="message" rows="5" placeholder="請描述你遇到的問題"></textarea></label><div class="issue-modal-actions"><button class="btn" type="button" data-close>取消</button><button class="btn primary" type="submit">送出</button></div></form></div>';
+    document.body.appendChild(modal);
+    var close=function(){modal.remove()};
+    modal.onclick=function(event){if(event.target===modal)close()};
+    $(".issue-modal-close",modal).onclick=close;
+    $("[data-close]",modal).onclick=close;
+    $("form",modal).onsubmit=async function(event){
+      event.preventDefault();
+      var form=event.currentTarget;
+      var message=form.message.value.trim();
+      if(!message){if(typeof toast==="function")toast("請輸入問題描述");return}
+      try{
+        var response=await fetch("/api/reports",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({category:form.category.value,page:location.pathname,message:message})});
+        if(!response.ok)throw new Error("failed");
+        close();if(typeof toast==="function")toast("已送出問題回報");
+      }catch(_){if(typeof toast==="function")toast("問題回報送出失敗，請稍後再試");}
+    };
+  }
+  function bindIssue(){
+    var button=$("#reportIssueBtn");
+    if(!button||button.dataset.eofIssueBound==="true")return;
+    button.dataset.eofIssueBound="true";
+    button.addEventListener("click",function(event){
+      event.preventDefault();event.stopPropagation();openIssueModal();
+    });
+  }
+  function installPublishBridge(){
+    var button=$("#scheduleBtn");
+    if(!button)return;
+    button.onclick=async function(event){
+      event.preventDefault();
+      var mode=$("#publishMode")?$("#publishMode").value:"排程發布";
+      var title=$("#titleInput"),media=$("#mediaInput");
+      if(!title||!title.value.trim()){if(typeof setFieldError==="function")setFieldError("title","請輸入影片標題。");title&&title.focus();return}
+      if(mode!=="儲存草稿"&&(!media||!media.files||!media.files[0])){if(typeof setFieldError==="function")setFieldError("media","請選擇影片檔案。");return}
+      if(mode==="排程發布"&&$("#publishTime")&&!$("#publishTime").value){if(typeof toast==="function")toast("請設定排程發布時間。");return}
+      var form=new FormData();
+      selectedAccountIds().forEach(function(id){form.append("accountIds",id)});
+      form.set("title",title.value.trim());
+      form.set("description",$("#contentInput")?$("#contentInput").value:"");
+      form.set("contentType",$("#contentType")?$("#contentType").value:"一般影片");
+      form.set("publishMode",mode==="立即發布"?"immediate":mode==="儲存草稿"?"draft":"scheduled");
+      form.set("visibility",$("#visibilityInput")?$("#visibilityInput").value:"private");
+      if($("#publishTime")&&$("#publishTime").value)form.set("scheduledAt",new Date($("#publishTime").value).toISOString());
+      form.set("playlistId",$("#playlistInput")?$("#playlistInput").value:"");
+      form.set("madeForKids",typeof isMadeForKids==="function"&&isMadeForKids()?"true":"false");
+      form.set("paidPromo",$("#paidPromoInput")&&$("#paidPromoInput").checked?"true":"false");
+      form.set("aiDisclosure",$("#aiDisclosureInput")&&$("#aiDisclosureInput").checked?"true":"false");
+      form.set("embedAllowed",$("#embedInput")&&$("#embedInput").checked?"true":"false");
+      form.set("notifySubscribers",$("#notifyInput")&&$("#notifyInput").checked?"true":"false");
+      form.set("categoryId",$("#categoryInput")?$("#categoryInput").value:"24");
+      form.set("tags",$("#tagsInput")?$("#tagsInput").value:"");
+      form.set("license",$("#licenseInput")?$("#licenseInput").value:"youtube");
+      if(media&&media.files&&media.files[0])form.set("media",media.files[0]);
+      var cover=$("#coverInput"),caption=$("#captionInput");
+      if(cover&&cover.files&&cover.files[0])form.set("cover",cover.files[0]);
+      if(caption&&caption.files&&caption.files[0])form.set("caption",caption.files[0]);
+      var oldText=button.textContent;
+      button.disabled=true;
+      button.textContent=mode==="儲存草稿"?"儲存中...":mode==="立即發布"?"發布中...":"加入中...";
+      try{
+        var response=await fetch("/api/youtube/publish",{method:"POST",body:form});
+        var data=await response.json().catch(function(){return {}});
+        if(!response.ok){if(typeof toast==="function")toast(data.error||"發布失敗，請稍後再試。");return}
+        if(typeof toast==="function")toast(mode==="儲存草稿"?"已儲存草稿。":mode==="立即發布"?"已發布到 YouTube。":"已加入排程佇列。");
+      }catch(_){if(typeof toast==="function")toast("發布連線失敗，請稍後再試。");}
+      finally{button.disabled=false;button.textContent=oldText;}
+    };
+  }
+  function run(){
+    normalizeComposerUi();
+    normalizeChart();
+    normalizeAccountStatus();
+    renderContentTab();
+    bindIssue();
+    installPublishBridge();
+    if(!cfg.demoTools){var demo=$("#addDemoAccountBtn");if(demo)demo.remove();}
+  }
+  var oldChart=typeof renderChart==="function"?renderChart:null;
+  if(oldChart)renderChart=function(range){oldChart(range);run()};
+  var oldComposer=typeof renderComposer==="function"?renderComposer:null;
+  if(oldComposer)renderComposer=function(){oldComposer();run()};
+  var oldAnalytics=typeof renderAnalytics==="function"?renderAnalytics:null;
+  renderAnalytics=function(range){if(oldAnalytics)try{oldAnalytics(range)}catch(_){}renderContentTab()};
+  document.addEventListener("click",function(){setTimeout(run,0)});
+  document.addEventListener("change",function(event){if(event.target&&event.target.matches&&event.target.matches("#mediaInput,#coverInput,#captionInput"))setTimeout(run,0)});
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",run,{once:true});else run();
+  setTimeout(run,100);
+  setTimeout(run,600);
+})();
+
+/* 2026-07-05 clean final override.
+   This block intentionally runs last and replaces listeners installed by older
+   compatibility patches above. */
+(function socialOpsCleanFinalOverride(){
+  var cfg = window.SOCIALOPS_CONFIG || {};
+  function $(selector, root){ return (root || document).querySelector(selector); }
+  function $$(selector, root){ return Array.from((root || document).querySelectorAll(selector)); }
+  function escapeHtml(value){
+    return String(value == null ? "" : value).replace(/[&<>"']/g, function(ch){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch];
+    });
+  }
+  function activeAccountSafe(){
+    try {
+      if (typeof activeAccount === "function") return activeAccount();
+      return Array.isArray(window.accounts) ? window.accounts[0] : null;
+    } catch (_) {
+      return null;
+    }
+  }
+  function selectedPublishIds(){
+    try {
+      var stored = JSON.parse(localStorage.getItem("mvp_publish_accounts") || "[]");
+      if (Array.isArray(stored) && stored.length) return stored;
+    } catch (_) {}
+    var account = activeAccountSafe();
+    return account ? [account.id] : [];
+  }
+  function normalizeRemoveButton(inputId, buttonId){
+    var input = $("#" + inputId);
+    var button = $("#" + buttonId);
+    if (!button) return;
+    var hasFile = !!(input && input.files && input.files.length);
+    var wrap = button.closest(".upload-item") || button.closest(".caption-file-row");
+    if (wrap) wrap.classList.toggle("has-file", hasFile);
+    button.className = "file-remove" + (hasFile ? "" : " is-hidden");
+    button.hidden = !hasFile;
+    button.setAttribute("aria-hidden", hasFile ? "false" : "true");
+    button.setAttribute("aria-label", "移除檔案");
+    button.title = "移除檔案";
+    button.innerHTML = "";
+    button.style.display = hasFile ? "grid" : "none";
+  }
+  function normalizeComposerLabels(){
+    normalizeRemoveButton("mediaInput", "removeMediaBtn");
+    normalizeRemoveButton("coverInput", "removeCoverBtn");
+    normalizeRemoveButton("captionInput", "removeCaptionBtn");
+    var summary = $(".advanced-summary-title > span");
+    if (summary) summary.textContent = "YT 設定";
+    var info = $(".summary-info");
+    if (info) {
+      info.dataset.help = "advancedYoutube";
+      info.setAttribute("aria-label", "YT 設定說明");
+      info.title = "YT 設定說明";
+    }
+    try {
+      if (window.helpContent && helpContent.advancedYoutube) {
+        helpContent.advancedYoutube.title = "YT 設定說明";
+      }
+    } catch (_) {}
+  }
+  function normalizeChartMode(){
+    var chart = $("#viewsChart");
+    var bars = $("#chartBars");
+    var line = $("#chartLine");
+    if (!chart) return;
+    var type = localStorage.getItem("mvp_chart_type") || "bar";
+    chart.dataset.chartType = type;
+    if (bars) {
+      bars.hidden = type !== "bar";
+      bars.style.display = type === "bar" ? "grid" : "none";
+      bars.style.visibility = type === "bar" ? "visible" : "hidden";
+    }
+    if (line) {
+      line.hidden = type !== "line";
+      line.style.display = type === "line" ? "block" : "none";
+      line.style.visibility = type === "line" ? "visible" : "hidden";
+      $$("path", line).forEach(function(path){ path.classList.add("line-stroke"); });
+      var circles = $$("circle", line);
+      if (circles.length && !line.querySelector(".line-hit-points")) {
+        var group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        group.setAttribute("class", "line-hit-points");
+        circles.forEach(function(circle){ group.appendChild(circle); });
+        line.appendChild(group);
+      }
+    }
+  }
+  function normalizeProductionMetrics(){
+    if (cfg.appEnv !== "production") return;
+    var account = activeAccountSafe();
+    var isDemoAccount = account && (account.id === "main" || account.id === "studio" || String(account.id || "").indexOf("demo") === 0);
+    var hasRealStats = !!(account && window.accountStats && accountStats[account.id]);
+    if (!account || (!isDemoAccount && hasRealStats)) return;
+    var values = { subscriberMetric: "0", viewMetric: "0", engagementMetric: "0%" };
+    Object.keys(values).forEach(function(id){
+      var el = $("#" + id);
+      if (el) el.textContent = values[id];
+    });
+    ["subscriberDelta", "viewDelta", "engagementDelta"].forEach(function(id){
+      var el = $("#" + id);
+      if (el) el.textContent = "-";
+    });
+    var yAxis = $("#chartYAxis");
+    var labels = $("#chartLabels");
+    var bars = $("#chartBars");
+    var line = $("#chartLine");
+    if (yAxis) yAxis.innerHTML = ["0","0","0","0"].map(function(v){ return "<span>" + v + "</span>"; }).join("");
+    if (labels) labels.innerHTML = "";
+    if (bars) bars.innerHTML = "";
+    if (line) line.innerHTML = "";
+  }
+  function normalizeAccountActions(){
+    $$(".account-status-action,.status-action").forEach(function(el){
+      el.classList.remove("btn");
+      el.style.transform = "none";
+      el.style.textDecoration = "none";
+    });
+  }
+  function contentRows(){
+    var account = activeAccountSafe();
+    var base = account ? (account.name || "YouTube") : "YouTube";
+    return [
+      { type: "shorts", title: base + " 近期最佳 Shorts", views: "87,400", rate: "7.5%", cover: "S" },
+      { type: "video", title: base + " 更新公告", views: "42,800", rate: "5.9%", cover: "V" },
+      { type: "shorts", title: base + " 製作流程幕後分享", views: "58,200", rate: "6.8%", cover: "S" }
+    ];
+  }
+  function renderContentInsight(){
+    var list = $("#contentRankList");
+    if (!list) return;
+    var filter = localStorage.getItem("mvp_content_filter") || "all";
+    var data = contentRows();
+    var shown = data.filter(function(item){ return filter === "all" || item.type === filter; });
+    var count = function(type){ return data.filter(function(item){ return item.type === type; }).length; };
+    list.innerHTML =
+      '<div class="content-type-summary is-filterable">' +
+        '<button type="button" class="content-type-filter ' + (filter === "all" ? "active" : "") + '" data-content-filter="all"><span>全部</span><strong>' + data.length + '</strong></button>' +
+        '<button type="button" class="content-type-filter ' + (filter === "video" ? "active" : "") + '" data-content-filter="video"><span>一般影片</span><strong>' + count("video") + '</strong></button>' +
+        '<button type="button" class="content-type-filter ' + (filter === "shorts" ? "active" : "") + '" data-content-filter="shorts"><span>Shorts</span><strong>' + count("shorts") + '</strong></button>' +
+      '</div>' +
+      shown.map(function(item, index){
+        return '<article class="content-rank-card with-cover">' +
+          '<span class="rank-index">' + (index + 1) + '</span>' +
+          '<div class="rank-cover">' + escapeHtml(item.cover) + '</div>' +
+          '<div class="rank-copy"><strong>' + escapeHtml(item.title) + '</strong><span>' + (item.type === "shorts" ? "Shorts" : "一般影片") + '</span></div>' +
+          '<div><strong>' + escapeHtml(item.views) + '</strong><span>觀看</span></div>' +
+          '<div><strong>' + escapeHtml(item.rate) + '</strong><span>互動</span></div>' +
+        '</article>';
+      }).join("");
+    $$("[data-content-filter]", list).forEach(function(button){
+      button.onclick = function(){
+        localStorage.setItem("mvp_content_filter", button.dataset.contentFilter || "all");
+        renderContentInsight();
+      };
+    });
+  }
+  function openIssueModal(){
+    var old = $("#issueModalBackdrop");
+    if (old) old.remove();
+    var modal = document.createElement("div");
+    modal.id = "issueModalBackdrop";
+    modal.className = "issue-modal-backdrop";
+    modal.innerHTML =
+      '<div class="issue-modal" role="dialog" aria-modal="true" aria-label="問題回報">' +
+        '<div class="issue-modal-head"><h3>問題回報</h3><button class="issue-modal-close" type="button" aria-label="關閉">×</button></div>' +
+        '<form class="issue-modal-body">' +
+          '<label><span>類型</span><select name="category"><option value="bug">功能異常</option><option value="ui">畫面顯示</option><option value="account">帳戶連線</option><option value="other">其他</option></select></label>' +
+          '<label><span>描述</span><textarea name="message" rows="5" placeholder="請描述你遇到的問題"></textarea></label>' +
+          '<div class="issue-modal-actions"><button class="btn" type="button" data-close>取消</button><button class="btn primary" type="submit">送出</button></div>' +
+        '</form>' +
+      '</div>';
+    document.body.appendChild(modal);
+    var close = function(){ modal.remove(); };
+    modal.onclick = function(event){ if (event.target === modal) close(); };
+    $(".issue-modal-close", modal).onclick = close;
+    $("[data-close]", modal).onclick = close;
+    $("form", modal).onsubmit = async function(event){
+      event.preventDefault();
+      var form = event.currentTarget;
+      var message = form.message.value.trim();
+      if (!message) {
+        if (typeof toast === "function") toast("請輸入問題描述");
+        return;
+      }
+      try {
+        var response = await fetch("/api/reports", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ category: form.category.value, page: location.pathname, message: message })
+        });
+        if (!response.ok) throw new Error("failed");
+        close();
+        if (typeof toast === "function") toast("已送出問題回報");
+      } catch (_) {
+        if (typeof toast === "function") toast("問題回報送出失敗，請稍後再試");
+      }
+    };
+  }
+  function bindIssueButton(){
+    var button = $("#reportIssueBtn");
+    if (!button) {
+      button = $$(".more-item-title").find(function(item){
+        return (item.textContent || "").replace(/\s+/g, "").indexOf("問題回報") > -1;
+      });
+    }
+    if (!button || button.dataset.cleanIssueBound === "true") return;
+    var clone = button.cloneNode(true);
+    clone.dataset.cleanIssueBound = "true";
+    clone.onclick = function(event){
+      event.preventDefault();
+      event.stopPropagation();
+      openIssueModal();
+    };
+    button.replaceWith(clone);
+  }
+  function publishModeValue(){
+    var raw = $("#publishMode") ? $("#publishMode").value : "排程發布";
+    if (raw === "immediate" || raw.indexOf("立即") > -1) return "immediate";
+    if (raw === "draft" || raw.indexOf("草稿") > -1 || raw.indexOf("儲存") > -1) return "draft";
+    return "scheduled";
+  }
+  function bindPublishButton(){
+    var button = $("#scheduleBtn");
+    if (!button || button.dataset.cleanPublishBound === "true") return;
+    var clone = button.cloneNode(true);
+    clone.dataset.cleanPublishBound = "true";
+    clone.onclick = async function(event){
+      event.preventDefault();
+      var title = $("#titleInput");
+      var media = $("#mediaInput");
+      var mode = publishModeValue();
+      if (!title || !title.value.trim()) {
+        if (typeof setFieldError === "function") setFieldError("title", "請輸入影片標題。");
+        if (title) title.focus();
+        return;
+      }
+      if (mode !== "draft" && (!media || !media.files || !media.files[0])) {
+        if (typeof setFieldError === "function") setFieldError("media", "請選擇影片檔案。");
+        return;
+      }
+      if (mode === "scheduled" && $("#publishTime") && !$("#publishTime").value) {
+        if (typeof toast === "function") toast("請設定排程發布時間。");
+        return;
+      }
+      var form = new FormData();
+      selectedPublishIds().forEach(function(id){ form.append("accountIds", id); });
+      form.set("title", title.value.trim());
+      form.set("description", $("#contentInput") ? $("#contentInput").value : "");
+      form.set("contentType", $("#contentType") ? $("#contentType").value : "一般影片");
+      form.set("publishMode", mode);
+      form.set("visibility", $("#visibilityInput") ? $("#visibilityInput").value : "private");
+      if ($("#publishTime") && $("#publishTime").value) form.set("scheduledAt", new Date($("#publishTime").value).toISOString());
+      form.set("playlistId", $("#playlistInput") ? $("#playlistInput").value : "");
+      form.set("madeForKids", typeof isMadeForKids === "function" && isMadeForKids() ? "true" : "false");
+      form.set("paidPromo", $("#paidPromoInput") && $("#paidPromoInput").checked ? "true" : "false");
+      form.set("aiDisclosure", $("#aiDisclosureInput") && $("#aiDisclosureInput").checked ? "true" : "false");
+      form.set("embedAllowed", $("#embedInput") && $("#embedInput").checked ? "true" : "false");
+      form.set("notifySubscribers", $("#notifyInput") && $("#notifyInput").checked ? "true" : "false");
+      form.set("categoryId", $("#categoryInput") ? $("#categoryInput").value : "24");
+      form.set("tags", $("#tagsInput") ? $("#tagsInput").value : "");
+      form.set("license", $("#licenseInput") ? $("#licenseInput").value : "youtube");
+      if (media && media.files && media.files[0]) form.set("media", media.files[0]);
+      var cover = $("#coverInput");
+      var caption = $("#captionInput");
+      if (cover && cover.files && cover.files[0]) form.set("cover", cover.files[0]);
+      if (caption && caption.files && caption.files[0]) form.set("caption", caption.files[0]);
+      var oldText = clone.textContent;
+      clone.disabled = true;
+      clone.textContent = mode === "draft" ? "儲存中..." : mode === "immediate" ? "發布中..." : "加入中...";
+      try {
+        var response = await fetch("/api/youtube/publish", { method: "POST", body: form });
+        var data = await response.json().catch(function(){ return {}; });
+        if (!response.ok) {
+          if (typeof toast === "function") toast(data.error || "發布失敗，請稍後再試。");
+          return;
+        }
+        if (typeof toast === "function") toast(mode === "draft" ? "已儲存草稿。" : mode === "immediate" ? "已送出發布任務。" : "已加入排程佇列。");
+      } catch (_) {
+        if (typeof toast === "function") toast("發布連線失敗，請稍後再試。");
+      } finally {
+        clone.disabled = false;
+        clone.textContent = oldText;
+      }
+    };
+    button.replaceWith(clone);
+  }
+  function runCleanFinal(){
+    normalizeComposerLabels();
+    normalizeChartMode();
+    normalizeProductionMetrics();
+    normalizeAccountActions();
+    renderContentInsight();
+    bindIssueButton();
+    bindPublishButton();
+    if (!cfg.demoTools) {
+      var demo = $("#addDemoAccountBtn");
+      if (demo) demo.remove();
+    }
+  }
+  var previousRenderChart = typeof renderChart === "function" ? renderChart : null;
+  if (previousRenderChart) {
+    renderChart = function(range){
+      previousRenderChart(range);
+      runCleanFinal();
+    };
+  }
+  var previousRenderComposer = typeof renderComposer === "function" ? renderComposer : null;
+  if (previousRenderComposer) {
+    renderComposer = function(){
+      previousRenderComposer();
+      runCleanFinal();
+    };
+  }
+  var previousRenderAnalytics = typeof renderAnalytics === "function" ? renderAnalytics : null;
+  renderAnalytics = function(range){
+    if (previousRenderAnalytics) {
+      try { previousRenderAnalytics(range); } catch (_) {}
+    }
+    renderContentInsight();
+    runCleanFinal();
+  };
+  document.addEventListener("click", function(){ setTimeout(runCleanFinal, 0); });
+  document.addEventListener("change", function(event){
+    if (event.target && event.target.matches && event.target.matches("#mediaInput,#coverInput,#captionInput,#publishMode")) {
+      setTimeout(runCleanFinal, 0);
+    }
+  });
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", runCleanFinal, { once: true });
+  } else {
+    runCleanFinal();
+  }
+  setTimeout(runCleanFinal, 100);
+  setTimeout(runCleanFinal, 700);
+})();
+
+
