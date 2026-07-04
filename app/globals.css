@@ -4425,6 +4425,8 @@ body[data-resolved-theme="light"] .landing-cta a.landing-cta-primary {
   line-height: 1 !important;
   overflow: hidden !important;
   z-index: 4 !important;
+  text-indent: 0 !important;
+  white-space: nowrap !important;
 }
 
 .upload-item.has-file > .file-remove:not([hidden]):not(.is-hidden)::before {
@@ -4438,4 +4440,10 @@ body[data-resolved-theme="light"] .landing-cta a.landing-cta-primary {
 
 .upload-item.has-file > .upload-card {
   padding-right: 52px !important;
+}
+
+.upload-item.has-file > .file-remove:not([hidden]):not(.is-hidden):hover {
+  border-color: rgba(248, 113, 113, 0.95) !important;
+  background: rgba(239, 68, 68, 0.18) !important;
+  color: #fecaca !important;
 }
