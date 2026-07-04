@@ -670,6 +670,10 @@ boot();
   function addProfileEntry(){
     var menu=document.querySelector("#moreMenu");
     var report=document.querySelector("#reportIssueBtn");
+    var appearance=document.querySelector("#appearanceBtn");
+    var appearancePanel=document.querySelector("#appearancePanel");
+    if(appearance)appearance.remove();
+    if(appearancePanel)appearancePanel.remove();
     if(!menu||document.querySelector("#profileCenterBtn"))return;
     var btn=document.createElement("button");
     btn.className="more-item-title";

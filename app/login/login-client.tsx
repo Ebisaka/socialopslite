@@ -43,6 +43,7 @@ export default function LoginClient() {
   }
 
   const title = mode === "login" ? "登入" : mode === "register" ? "建立帳戶" : "重設密碼";
+  const submitLabel = busy ? "處理中" : mode === "login" ? "登入" : mode === "register" ? "建立帳戶" : "送出";
 
   return (
     <main className="auth-page">
@@ -79,6 +80,11 @@ export default function LoginClient() {
                   {showPassword ? <EyeOffIcon /> : <EyeIcon />}
                 </button>
               </div>
+              {mode === "login" ? (
+                <button className="forgot-password-link" type="button" onClick={() => setMode("forgot")}>
+                  忘記密碼？
+                </button>
+              ) : null}
             </label>
           ) : null}
           {message ? <p className="auth-message">{message}</p> : null}
@@ -88,16 +94,13 @@ export default function LoginClient() {
             </a>
           ) : null}
           <button className="btn primary auth-submit" type="submit" disabled={busy}>
-            {busy ? "處理中" : mode === "login" ? "登入" : mode === "register" ? "建立帳戶" : "送出"}
+            {submitLabel}
           </button>
         </form>
         {mode !== "forgot" ? <a className="auth-google" href="/api/auth/google/start">使用 Google 登入</a> : null}
         <div className="auth-actions">
           {mode === "login" ? (
-            <>
-              <button className="auth-toggle" type="button" onClick={() => setMode("forgot")}>忘記密碼</button>
-              <button className="auth-toggle" type="button" onClick={() => setMode("register")}>建立新帳戶</button>
-            </>
+            <button className="auth-toggle" type="button" onClick={() => setMode("register")}>建立新帳戶</button>
           ) : (
             <button className="auth-toggle" type="button" onClick={() => setMode("login")}>回到登入</button>
           )}

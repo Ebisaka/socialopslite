@@ -9,20 +9,11 @@ export async function GET() {
   if (auth.response) return auth.response;
   const user = auth.user;
 
-  const [socialAccounts, publishTasks] = await Promise.all([
-    prisma.socialAccount.count({ where: { userId: user.id } }),
-    prisma.publishTask.count({ where: { userId: user.id } })
-  ]);
-
   return NextResponse.json({
     user: {
       id: user.id,
       email: user.email,
       createdAt: user.createdAt
-    },
-    stats: {
-      socialAccounts,
-      publishTasks
     }
   });
 }
