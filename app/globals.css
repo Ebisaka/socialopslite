@@ -3418,3 +3418,545 @@ body[data-resolved-theme="light"] .landing-cta a.landing-cta-primary {
   color: #ffffff !important;
   box-shadow: inset 0 0 0 1px #111827 !important;
 }
+
+/* Mobile final override: keep the app usable as a compact mobile workspace. */
+@media (max-width: 760px) {
+  html,
+  body {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  body {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .app {
+    display: block !important;
+    min-height: 100vh !important;
+  }
+
+  .app > aside,
+  .app > aside:hover,
+  .app > aside.menu-open {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    top: auto !important;
+    z-index: 70 !important;
+    width: 100% !important;
+    height: 64px !important;
+    min-height: 64px !important;
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom)) !important;
+    border-top: 1px solid var(--sideLine) !important;
+    background: rgba(8, 11, 15, .96) !important;
+    overflow: visible !important;
+    transition: none !important;
+  }
+
+  body[data-resolved-theme="light"] .app > aside,
+  body[data-resolved-theme="light"] .app > aside:hover,
+  body[data-resolved-theme="light"] .app > aside.menu-open {
+    background: rgba(255, 255, 255, .96) !important;
+    border-top-color: #d8dee8 !important;
+  }
+
+  aside .brand,
+  aside:hover .brand,
+  aside.menu-open .brand,
+  aside .platform-switch,
+  aside:hover .platform-switch,
+  aside.menu-open .platform-switch {
+    display: none !important;
+  }
+
+  aside .nav,
+  aside:hover .nav,
+  aside.menu-open .nav {
+    width: calc(100% - 56px) !important;
+    height: 48px !important;
+    margin: 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    align-items: center !important;
+    align-content: center !important;
+  }
+
+  aside .nav button,
+  aside:hover .nav button,
+  aside:not(:hover) .nav button,
+  aside.menu-open .nav button {
+    width: 100% !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    display: grid !important;
+    grid-template-columns: 20px auto !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 0 8px !important;
+    border-radius: 8px !important;
+  }
+
+  aside .nav-icon,
+  aside:hover .nav-icon,
+  aside:not(:hover) .nav-icon,
+  aside.menu-open .nav-icon {
+    width: 20px !important;
+    height: 20px !important;
+    display: grid !important;
+    place-items: center !important;
+    flex: 0 0 20px !important;
+    line-height: 0 !important;
+  }
+
+  aside .nav-svg,
+  aside:hover .nav-svg,
+  aside.menu-open .nav-svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  aside .nav-label,
+  aside:hover .nav-label,
+  aside.menu-open .nav-label {
+    display: block !important;
+    opacity: 1 !important;
+    transform: none !important;
+    font-size: 13px !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  aside .sidebar-controls,
+  aside:hover .sidebar-controls,
+  aside.menu-open .sidebar-controls {
+    position: absolute !important;
+    right: 12px !important;
+    left: auto !important;
+    top: 8px !important;
+    bottom: auto !important;
+    width: 46px !important;
+    height: 46px !important;
+    display: block !important;
+    margin: 0 !important;
+  }
+
+  aside .more-switch,
+  aside:hover .more-switch,
+  aside.menu-open .more-switch {
+    width: 46px !important;
+    height: 46px !important;
+  }
+
+  aside .more-btn,
+  aside:hover .more-btn,
+  aside:not(:hover) .more-btn,
+  aside.menu-open .more-btn {
+    width: 46px !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    place-items: center !important;
+    padding: 0 !important;
+    border-radius: 8px !important;
+  }
+
+  aside .more-label {
+    display: none !important;
+  }
+
+  aside .more-menu,
+  aside:hover .more-menu,
+  aside.menu-open .more-menu {
+    position: fixed !important;
+    left: 12px !important;
+    right: 12px !important;
+    bottom: calc(74px + env(safe-area-inset-bottom)) !important;
+    width: auto !important;
+    max-width: none !important;
+    padding: 8px !important;
+  }
+
+  .app > main {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    padding: 16px 14px calc(86px + env(safe-area-inset-bottom)) !important;
+  }
+
+  main > header {
+    display: block !important;
+    margin: 0 0 14px !important;
+  }
+
+  .insight-control-host,
+  .dashboard-control-row {
+    width: 100% !important;
+  }
+
+  .dashboard-control-row,
+  .insight-control-host .dashboard-control-row {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+    margin: 4px auto 12px !important;
+  }
+
+  .dashboard-control-row .top-account-wrap {
+    width: auto !important;
+    min-width: 0 !important;
+  }
+
+  .dashboard-control-row .top-account {
+    width: auto !important;
+    max-width: min(58vw, 220px) !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    padding: 0 12px 0 6px !important;
+    display: inline-flex !important;
+    gap: 7px !important;
+  }
+
+  .dashboard-control-row .top-account div:not(.profile-avatar) {
+    display: block !important;
+    min-width: 0 !important;
+  }
+
+  .dashboard-control-row .top-account strong {
+    display: block !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 150px !important;
+  }
+
+  .report-switch-btn,
+  #rangeSelect.top-range {
+    height: 38px !important;
+    min-height: 38px !important;
+    max-width: 44vw !important;
+    padding-left: 12px !important;
+    padding-right: 28px !important;
+    font-size: 14px !important;
+  }
+
+  .report-menu,
+  .top-account-menu {
+    position: fixed !important;
+    left: 14px !important;
+    right: 14px !important;
+    top: 72px !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+
+  .dashboard-report,
+  .analytics-report {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 8px auto 0 !important;
+  }
+
+  .dashboard-report .report-title {
+    display: none !important;
+  }
+
+  .report-metrics,
+  .analytics-metrics {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    border-top: 1px solid var(--line) !important;
+    border-bottom: 1px solid var(--line) !important;
+    margin: 8px 0 22px !important;
+  }
+
+  .metric.report-metric {
+    min-height: 112px !important;
+    padding: 18px 6px !important;
+    border-top: 0 !important;
+    border-right: 1px solid var(--line) !important;
+  }
+
+  .metric.report-metric:last-child {
+    border-right: 0 !important;
+  }
+
+  .metric.report-metric label .badge {
+    min-height: 22px !important;
+    padding: 0 8px !important;
+    font-size: 12px !important;
+  }
+
+  .metric.report-metric strong {
+    font-size: clamp(23px, 7vw, 31px) !important;
+    margin-top: 16px !important;
+  }
+
+  .metric.report-metric small {
+    font-size: 12px !important;
+    margin-top: 8px !important;
+  }
+
+  .report-chart-panel .panel-head {
+    margin-bottom: 16px !important;
+  }
+
+  .report-chart-panel .toolbar {
+    gap: 8px !important;
+  }
+
+  .chart {
+    width: 100% !important;
+    min-height: 292px !important;
+    grid-template-columns: 34px minmax(0, 1fr) !important;
+    column-gap: 8px !important;
+    overflow: hidden !important;
+  }
+
+  .chart-y-axis {
+    min-height: 210px !important;
+    font-size: 12px !important;
+    padding-top: 6px !important;
+  }
+
+  .chart-plot {
+    min-height: 210px !important;
+    padding: 6px 8px 0 !important;
+  }
+
+  .chart-bars {
+    height: 198px !important;
+    gap: 4px !important;
+  }
+
+  .chart-line {
+    left: 8px !important;
+    right: 8px !important;
+    width: calc(100% - 16px) !important;
+  }
+
+  .chart-labels {
+    font-size: 12px !important;
+    gap: 4px !important;
+  }
+
+  #accounts > .panel,
+  .composer-layout,
+  .composer-centered {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  #accounts > .panel,
+  .composer-editor,
+  .preview-panel,
+  .composer-queue,
+  .panel {
+    padding: 14px !important;
+  }
+
+  .panel-head {
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+
+  .panel-head .toolbar {
+    justify-content: flex-start !important;
+  }
+
+  .account-filter-row {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    gap: 8px !important;
+  }
+
+  .account-filter-actions {
+    gap: 6px !important;
+  }
+
+  .account-row,
+  .account-row.is-editing {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0 !important;
+  }
+
+  .account-drag-cell {
+    display: none !important;
+  }
+
+  .account-row .account,
+  .account-row.is-editing .account {
+    height: auto !important;
+    min-height: 72px !important;
+    padding: 12px !important;
+    overflow: visible !important;
+  }
+
+  .account-row .account-title,
+  .account-row.is-editing .account-title {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 22px 36px minmax(0, 1fr) !important;
+    gap: 8px !important;
+    align-items: center !important;
+  }
+
+  .account-row .account-copy strong {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .account-actions {
+    margin-top: 8px !important;
+  }
+
+  .tag-row,
+  .account-tags {
+    max-width: 100% !important;
+    flex-wrap: wrap !important;
+  }
+
+  .composer-layout {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .composer-main,
+  .composer-preview {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .composer-preview {
+    position: static !important;
+    order: 2 !important;
+  }
+
+  .composer-main {
+    order: 1 !important;
+  }
+
+  .composer-queue {
+    order: 3 !important;
+  }
+
+  .form-grid,
+  .composer-form,
+  .upload-grid,
+  .preview-media,
+  .advanced-groups,
+  .analytics-content {
+    grid-template-columns: 1fr !important;
+  }
+
+  textarea {
+    min-height: 150px !important;
+  }
+
+  .publish-target-summary {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .target-dialog,
+  .account-switch-dialog,
+  .report-dialog,
+  .help-dialog,
+  .confirm-dialog {
+    width: calc(100vw - 28px) !important;
+    max-width: calc(100vw - 28px) !important;
+    max-height: calc(100vh - 80px) !important;
+    overflow: auto !important;
+  }
+
+  .target-dialog-row,
+  .account-switch-row {
+    min-height: 54px !important;
+  }
+
+  .content-rank-row {
+    grid-template-columns: 30px 54px minmax(0, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .rank-stats {
+    grid-column: 2 / -1 !important;
+    justify-self: start !important;
+    display: flex !important;
+    gap: 18px !important;
+  }
+
+  .landing-page {
+    padding: 18px 14px 88px !important;
+  }
+
+  .landing-nav {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+  }
+
+  .landing-brand span {
+    display: block !important;
+    white-space: nowrap !important;
+  }
+
+  .landing-hero {
+    display: block !important;
+    padding-top: 44px !important;
+  }
+
+  .landing-hero h1 {
+    font-size: clamp(34px, 12vw, 48px) !important;
+    line-height: 1.08 !important;
+  }
+}
+
+@media (max-width: 420px) {
+  aside .nav button,
+  aside:hover .nav button,
+  aside:not(:hover) .nav button,
+  aside.menu-open .nav button {
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+  }
+
+  aside .nav-label {
+    display: none !important;
+  }
+
+  aside .nav {
+    width: calc(100% - 54px) !important;
+  }
+
+  .report-switch-btn,
+  #rangeSelect.top-range {
+    max-width: 42vw !important;
+    font-size: 13px !important;
+  }
+
+  .metric.report-metric {
+    min-height: 104px !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+
+  .metric.report-metric strong {
+    font-size: clamp(21px, 7vw, 27px) !important;
+  }
+
+  .chart {
+    grid-template-columns: 30px minmax(0, 1fr) !important;
+  }
+}
