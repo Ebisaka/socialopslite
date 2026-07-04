@@ -3419,6 +3419,263 @@ body[data-resolved-theme="light"] .landing-cta a.landing-cta-primary {
   box-shadow: inset 0 0 0 1px #111827 !important;
 }
 
+/* Mobile last guardrail: keep bottom nav buttons compact and upload remove actions tucked in. */
+@media (max-width: 760px) {
+  aside .nav {
+    justify-items: center !important;
+  }
+
+  aside .nav button,
+  aside:hover .nav button,
+  aside:not(:hover) .nav button,
+  aside.menu-open .nav button {
+    width: 46px !important;
+    min-width: 46px !important;
+    max-width: 46px !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    max-height: 46px !important;
+    justify-self: center !important;
+    padding: 0 !important;
+    border-radius: 8px !important;
+    background: transparent !important;
+    -webkit-tap-highlight-color: transparent !important;
+    touch-action: manipulation !important;
+  }
+
+  aside .nav button:hover,
+  aside .nav button:active,
+  aside .nav button.active,
+  aside:hover .nav button:hover,
+  aside:hover .nav button:active,
+  aside:hover .nav button.active,
+  aside.menu-open .nav button:hover,
+  aside.menu-open .nav button:active,
+  aside.menu-open .nav button.active {
+    background: #223044 !important;
+  }
+
+  body[data-resolved-theme="light"] aside .nav button:hover,
+  body[data-resolved-theme="light"] aside .nav button:active,
+  body[data-resolved-theme="light"] aside .nav button.active {
+    background: #e7edf6 !important;
+  }
+
+  aside .nav-icon,
+  aside:hover .nav-icon,
+  aside:not(:hover) .nav-icon,
+  aside.menu-open .nav-icon {
+    width: 46px !important;
+    height: 46px !important;
+    min-width: 46px !important;
+    min-height: 46px !important;
+    display: grid !important;
+    place-items: center !important;
+    justify-self: center !important;
+    align-self: center !important;
+  }
+
+  aside .nav-svg,
+  aside:hover .nav-svg,
+  aside:not(:hover) .nav-svg,
+  aside.menu-open .nav-svg {
+    width: 20px !important;
+    height: 20px !important;
+    margin: 0 !important;
+  }
+
+  aside .more-btn,
+  aside:hover .more-btn,
+  aside:not(:hover) .more-btn,
+  aside.menu-open .more-btn {
+    background: transparent !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  aside .more-btn:hover,
+  aside .more-btn:active,
+  aside .more-btn.active,
+  aside:hover .more-btn:hover,
+  aside:hover .more-btn:active,
+  aside:hover .more-btn.active,
+  aside.menu-open .more-btn:hover,
+  aside.menu-open .more-btn:active,
+  aside.menu-open .more-btn.active {
+    background: #223044 !important;
+  }
+
+  body[data-resolved-theme="light"] aside .more-btn:hover,
+  body[data-resolved-theme="light"] aside .more-btn:active,
+  body[data-resolved-theme="light"] aside .more-btn.active {
+    background: #e7edf6 !important;
+  }
+
+  .upload-item {
+    position: relative !important;
+  }
+
+  .upload-card {
+    min-height: 118px !important;
+    padding: 20px 48px 20px 18px !important;
+  }
+
+  .upload-item .file-remove:not(.is-hidden) {
+    position: absolute !important;
+    right: 10px !important;
+    top: 10px !important;
+    z-index: 3 !important;
+    width: 30px !important;
+    min-width: 30px !important;
+    height: 30px !important;
+    min-height: 30px !important;
+    padding: 0 !important;
+    border-radius: 8px !important;
+    font-size: 0 !important;
+    line-height: 1 !important;
+    display: grid !important;
+    place-items: center !important;
+    background: rgba(15, 23, 42, .38) !important;
+    border-color: rgba(148, 163, 184, .28) !important;
+    color: var(--ink) !important;
+  }
+
+  .upload-item .file-remove:not(.is-hidden)::before {
+    content: "×";
+    font-size: 18px;
+    line-height: 1;
+    transform: translateY(-1px);
+  }
+}
+
+/* Mobile polish: icon controls should feel like controls, not stretched desktop buttons. */
+@media (max-width: 760px) {
+  aside .nav {
+    justify-items: center !important;
+  }
+
+  aside .nav button,
+  aside:hover .nav button,
+  aside:not(:hover) .nav button,
+  aside.menu-open .nav button {
+    width: 46px !important;
+    min-width: 46px !important;
+    max-width: 46px !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    max-height: 46px !important;
+    justify-self: center !important;
+    padding: 0 !important;
+    border-radius: 8px !important;
+    background: transparent !important;
+    -webkit-tap-highlight-color: transparent !important;
+    touch-action: manipulation !important;
+    transition: background-color .12s ease !important;
+  }
+
+  aside .nav button:hover,
+  aside .nav button:active,
+  aside .nav button.active,
+  aside:hover .nav button:hover,
+  aside:hover .nav button:active,
+  aside:hover .nav button.active,
+  aside.menu-open .nav button:hover,
+  aside.menu-open .nav button:active,
+  aside.menu-open .nav button.active {
+    background: #223044 !important;
+  }
+
+  body[data-resolved-theme="light"] aside .nav button:hover,
+  body[data-resolved-theme="light"] aside .nav button:active,
+  body[data-resolved-theme="light"] aside .nav button.active {
+    background: #e7edf6 !important;
+  }
+
+  aside .nav-icon,
+  aside:hover .nav-icon,
+  aside:not(:hover) .nav-icon,
+  aside.menu-open .nav-icon {
+    width: 46px !important;
+    height: 46px !important;
+    min-width: 46px !important;
+    min-height: 46px !important;
+    display: grid !important;
+    place-items: center !important;
+    justify-self: center !important;
+    align-self: center !important;
+  }
+
+  aside .nav-svg,
+  aside:hover .nav-svg,
+  aside:not(:hover) .nav-svg,
+  aside.menu-open .nav-svg {
+    width: 20px !important;
+    height: 20px !important;
+    margin: 0 !important;
+  }
+
+  aside .more-btn,
+  aside:hover .more-btn,
+  aside:not(:hover) .more-btn,
+  aside.menu-open .more-btn {
+    background: transparent !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  aside .more-btn:hover,
+  aside .more-btn:active,
+  aside .more-btn.active,
+  aside:hover .more-btn:hover,
+  aside:hover .more-btn:active,
+  aside:hover .more-btn.active,
+  aside.menu-open .more-btn:hover,
+  aside.menu-open .more-btn:active,
+  aside.menu-open .more-btn.active {
+    background: #223044 !important;
+  }
+
+  body[data-resolved-theme="light"] aside .more-btn:hover,
+  body[data-resolved-theme="light"] aside .more-btn:active,
+  body[data-resolved-theme="light"] aside .more-btn.active {
+    background: #e7edf6 !important;
+  }
+
+  .upload-item {
+    position: relative !important;
+  }
+
+  .upload-card {
+    min-height: 118px !important;
+    padding: 20px 48px 20px 18px !important;
+  }
+
+  .upload-item .file-remove:not(.is-hidden) {
+    position: absolute !important;
+    right: 10px !important;
+    top: 10px !important;
+    z-index: 3 !important;
+    width: 30px !important;
+    min-width: 30px !important;
+    height: 30px !important;
+    min-height: 30px !important;
+    padding: 0 !important;
+    border-radius: 8px !important;
+    font-size: 0 !important;
+    line-height: 1 !important;
+    display: grid !important;
+    place-items: center !important;
+    background: rgba(15, 23, 42, .38) !important;
+    border-color: rgba(148, 163, 184, .28) !important;
+    color: var(--ink) !important;
+  }
+
+  .upload-item .file-remove:not(.is-hidden)::before {
+    content: "×";
+    font-size: 18px;
+    line-height: 1;
+    transform: translateY(-1px);
+  }
+}
+
 /* Mobile final override: keep the app usable as a compact mobile workspace. */
 @media (max-width: 760px) {
   html,
@@ -3952,5 +4209,133 @@ body[data-resolved-theme="light"] .landing-cta a.landing-cta-primary {
 
   .chart {
     grid-template-columns: 30px minmax(0, 1fr) !important;
+  }
+}
+
+/* Mobile last guardrail: compact bottom nav and tucked upload remove actions. */
+@media (max-width: 760px) {
+  aside .nav {
+    justify-items: center !important;
+  }
+
+  aside .nav button,
+  aside:hover .nav button,
+  aside:not(:hover) .nav button,
+  aside.menu-open .nav button {
+    width: 46px !important;
+    min-width: 46px !important;
+    max-width: 46px !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    max-height: 46px !important;
+    padding: 0 !important;
+    border-radius: 8px !important;
+    background: transparent !important;
+    -webkit-tap-highlight-color: transparent !important;
+    touch-action: manipulation !important;
+    transition: background-color .12s ease !important;
+  }
+
+  aside .nav button:hover,
+  aside .nav button:active,
+  aside .nav button.active,
+  aside:hover .nav button:hover,
+  aside:hover .nav button:active,
+  aside:hover .nav button.active,
+  aside.menu-open .nav button:hover,
+  aside.menu-open .nav button:active,
+  aside.menu-open .nav button.active {
+    background: #223044 !important;
+  }
+
+  body[data-resolved-theme="light"] aside .nav button:hover,
+  body[data-resolved-theme="light"] aside .nav button:active,
+  body[data-resolved-theme="light"] aside .nav button.active {
+    background: #e7edf6 !important;
+  }
+
+  aside .nav-icon,
+  aside:hover .nav-icon,
+  aside:not(:hover) .nav-icon,
+  aside.menu-open .nav-icon {
+    width: 46px !important;
+    min-width: 46px !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    display: grid !important;
+    place-items: center !important;
+    justify-self: center !important;
+    align-self: center !important;
+  }
+
+  aside .nav-svg,
+  aside:hover .nav-svg,
+  aside:not(:hover) .nav-svg,
+  aside.menu-open .nav-svg {
+    width: 20px !important;
+    height: 20px !important;
+    margin: 0 !important;
+  }
+
+  aside .more-btn,
+  aside:hover .more-btn,
+  aside:not(:hover) .more-btn,
+  aside.menu-open .more-btn {
+    background: transparent !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  aside .more-btn:hover,
+  aside .more-btn:active,
+  aside .more-btn.active,
+  aside:hover .more-btn:hover,
+  aside:hover .more-btn:active,
+  aside:hover .more-btn.active,
+  aside.menu-open .more-btn:hover,
+  aside.menu-open .more-btn:active,
+  aside.menu-open .more-btn.active {
+    background: #223044 !important;
+  }
+
+  body[data-resolved-theme="light"] aside .more-btn:hover,
+  body[data-resolved-theme="light"] aside .more-btn:active,
+  body[data-resolved-theme="light"] aside .more-btn.active {
+    background: #e7edf6 !important;
+  }
+
+  .upload-item {
+    position: relative !important;
+  }
+
+  .upload-card {
+    min-height: 118px !important;
+    padding: 20px 48px 20px 18px !important;
+  }
+
+  .upload-item .file-remove:not(.is-hidden) {
+    position: absolute !important;
+    right: 10px !important;
+    top: 10px !important;
+    z-index: 3 !important;
+    width: 30px !important;
+    min-width: 30px !important;
+    height: 30px !important;
+    min-height: 30px !important;
+    padding: 0 !important;
+    border-radius: 8px !important;
+    font-size: 0 !important;
+    line-height: 1 !important;
+    display: grid !important;
+    place-items: center !important;
+    background: rgba(15, 23, 42, .38) !important;
+    border-color: rgba(148, 163, 184, .28) !important;
+    color: var(--ink) !important;
+  }
+
+  .upload-item .file-remove:not(.is-hidden)::before {
+    content: "x";
+    font-size: 16px;
+    line-height: 1;
+    transform: translateY(-1px);
   }
 }
