@@ -43,7 +43,14 @@ export default function DemoShell({
     };
   }, [initialTab, appEnv, demoTools]);
 
-  return <div data-socialops-build="demo-parity-20260704-accounts-live-0158" dangerouslySetInnerHTML={{ __html: demoMarkup }} />;
+  return (
+    <div
+      data-socialops-build="demo-parity-20260704-accounts-live-0158"
+      data-socialops-env={appEnv}
+      data-demo-tools={demoTools ? "true" : "false"}
+      dangerouslySetInnerHTML={{ __html: demoMarkup }}
+    />
+  );
 }
 
 
