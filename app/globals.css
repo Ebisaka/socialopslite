@@ -2981,6 +2981,12 @@ body[data-resolved-theme="light"] button.btn.primary:hover {
   flex-wrap: wrap;
 }
 
+.landing-actions .btn,
+.landing-cta .btn {
+  width: 86px !important;
+  min-width: 86px !important;
+}
+
 .landing-hero {
   max-width: 1120px;
   min-height: calc(100vh - 120px);
@@ -3166,6 +3172,7 @@ button.btn:not(.icon-action):not(.account-action):not(.theme-btn),
   white-space: nowrap !important;
   box-shadow: none !important;
   transform: none !important;
+  vertical-align: middle !important;
 }
 
 .btn:not(.primary):not(.danger):not(.danger-fill):not(.icon-action):not(.account-action):not(.theme-btn),
