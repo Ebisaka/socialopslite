@@ -3421,6 +3421,10 @@ body[data-resolved-theme="light"] .landing-cta a.landing-cta-primary {
 
 /* Mobile last guardrail: keep bottom nav buttons compact and upload remove actions tucked in. */
 @media (max-width: 760px) {
+  .file-remove[hidden] {
+    display: none !important;
+  }
+
   aside .nav {
     justify-items: center !important;
   }
