@@ -300,3 +300,135 @@ boot();
   setTimeout(refreshDashboardControlOverrides,0);
   setTimeout(refreshDashboardControlOverrides,300);
 })();
+
+/* Platform-specific composer controls and content filter refinements. */
+(function(){
+  function currentContentFilter(){
+    return localStorage.getItem('mvp_content_type_filter')||'all';
+  }
+
+  function isShortsItem(item){
+    return String(item&&item.type||'').toLowerCase().indexOf('short')>-1;
+  }
+
+  function contentTypeButton(label,value,count,active){
+    return '<button class="content-type-filter '+(active?'active':'')+'" type="button" data-content-filter="'+value+'">'+
+      '<span>'+escapeHtml(label)+'</span><strong>'+count+'</strong>'+
+    '</button>';
+  }
+
+  function contentTypeSummaryButtons(items,filter){
+    var normal=items.filter(function(item){return !isShortsItem(item)}).length;
+    var shorts=items.filter(isShortsItem).length;
+    var buttons=[];
+    if(normal&&shorts)buttons.push(contentTypeButton('全部','all',items.length,filter==='all'));
+    if(normal)buttons.push(contentTypeButton('一般影片','normal',normal,filter==='normal'));
+    if(shorts)buttons.push(contentTypeButton('Shorts','shorts',shorts,filter==='shorts'));
+    return buttons.length?'<div class="content-type-summary is-filterable">'+buttons.join('')+'</div>':'';
+  }
+
+  function filteredContentItems(items,filter){
+    if(filter==='normal')return items.filter(function(item){return !isShortsItem(item)});
+    if(filter==='shorts')return items.filter(isShortsItem);
+    return items;
+  }
+
+  function contentThumb(item,index){
+    if(item&&item.thumbnail){
+      return '<img src="'+escapeAttr(item.thumbnail)+'" alt="">';
+    }
+    var label=isShortsItem(item)?'S':'▶';
+    return '<div class="rank-thumb-fallback"><span>'+escapeHtml(label)+'</span></div>';
+  }
+
+  renderAnalytics=function(range){
+    var account=activeAccount();
+    var platformData=(contentAnalytics.youtube||{});
+    if(!platformData[account.id])createDemoContentAnalytics(account.id,accounts.findIndex(function(a){return a.id===account.id})+1);
+    var data=(platformData[account.id]&&platformData[account.id][range])||(platformData[account.id]&&platformData[account.id]['7'])||(platformData.main&&platformData.main[range])||platformData.main['7'];
+    if(!data)return;
+    var allItems=data.items||[];
+    var filter=currentContentFilter();
+    if(filter==='normal'&&!allItems.some(function(item){return !isShortsItem(item)}))filter='all';
+    if(filter==='shorts'&&!allItems.some(isShortsItem))filter='all';
+    var items=filteredContentItems(allItems,filter);
+    var content=document.querySelector('#analyticsContentMetric');
+    var contentDelta=document.querySelector('#analyticsContentDelta');
+    var views=document.querySelector('#analyticsViewsMetric');
+    var viewsDelta=document.querySelector('#analyticsViewsDelta');
+    var engagement=document.querySelector('#analyticsEngagementMetric');
+    var engagementDelta=document.querySelector('#analyticsEngagementDelta');
+    var list=document.querySelector('#contentRankList');
+    if(content)content.textContent=data.content;
+    if(contentDelta){contentDelta.textContent=compactDelta(data.contentDelta);contentDelta.className=deltaClass(data.contentDelta)}
+    if(views)views.textContent=data.views;
+    if(viewsDelta){viewsDelta.textContent=compactDelta(data.viewsDelta);viewsDelta.className=deltaClass(data.viewsDelta)}
+    if(engagement)engagement.textContent=data.engagement;
+    if(engagementDelta){engagementDelta.textContent=compactDelta(data.engagementDelta);engagementDelta.className=deltaClass(data.engagementDelta)}
+    if(list){
+      list.innerHTML=contentTypeSummaryButtons(allItems,filter)+items.map(function(item,index){
+        return '<article class="content-rank-card with-cover">'+
+          '<div class="rank-index">'+(index+1)+'</div>'+
+          '<div class="rank-thumb">'+contentThumb(item,index)+'</div>'+
+          '<div class="rank-main"><strong>'+escapeHtml(item.title)+'</strong><span>'+escapeHtml(item.type)+'</span></div>'+
+          '<div class="rank-stats"><span>'+escapeHtml(item.views)+'</span><small>觀看</small></div>'+
+          '<div class="rank-stats"><span>'+escapeHtml(item.engagement)+'</span><small>互動</small></div>'+
+        '</article>';
+      }).join('');
+      Array.prototype.slice.call(list.querySelectorAll('[data-content-filter]')).forEach(function(button){
+        button.onclick=function(){
+          localStorage.setItem('mvp_content_type_filter',button.dataset.contentFilter);
+          renderAnalytics(localStorage.getItem('mvp_chart_range')||'7');
+        };
+      });
+    }
+  };
+
+  renderPublishTargets=function(){
+    var selectedIds=selectedPublishAccountIds();
+    var host=document.querySelector('#publishTargets');
+    if(!host)return;
+    host.innerHTML=accounts.map(function(account){
+      var active=selectedIds.indexOf(account.id)>-1;
+      return '<button class="target-card target-account-card '+(active?'active':'')+'" type="button" data-publish-account="'+escapeAttr(account.id)+'" aria-pressed="'+(active?'true':'false')+'">'+
+        '<span class="target-checkmark" aria-hidden="true">'+(active?'✓':'')+'</span>'+
+        '<span class="target-avatar">'+avatarHtml(account)+'</span>'+
+        '<span class="target-copy"><strong>'+escapeHtml(account.name)+'</strong><small>YouTube</small></span>'+
+      '</button>';
+    }).join('');
+    Array.prototype.slice.call(host.querySelectorAll('[data-publish-account]')).forEach(function(button){
+      button.onclick=function(){
+        var ids=selectedPublishAccountIds();
+        var id=button.dataset.publishAccount;
+        if(ids.indexOf(id)>-1){
+          if(ids.length===1){toast('至少保留一個發布目標');return}
+          ids=ids.filter(function(item){return item!==id});
+        }else{
+          ids.push(id);
+        }
+        localStorage.setItem('mvp_publish_accounts',JSON.stringify(ids));
+        localStorage.setItem('mvp_publish_account',ids[0]);
+        renderPublishTargets();
+        renderPlaylistOptions();
+        renderComposer();
+      };
+    });
+  };
+
+  function renamePlatformSettings(){
+    var summary=document.querySelector('.advanced-settings summary .advanced-summary-title span');
+    if(summary)summary.textContent='YouTube 設定';
+    var help=document.querySelector('.advanced-settings summary .summary-info');
+    if(help)help.setAttribute('aria-label','YouTube 設定說明');
+  }
+
+  function refreshPlatformComposerUi(){
+    renamePlatformSettings();
+    renderPublishTargets();
+    renderAnalytics(localStorage.getItem('mvp_chart_range')||'7');
+  }
+
+  refreshPlatformComposerUi();
+  setTimeout(refreshPlatformComposerUi,0);
+  setTimeout(refreshPlatformComposerUi,300);
+})();
