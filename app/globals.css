@@ -2740,33 +2740,31 @@ body[data-resolved-theme="light"] .health-strip .health-item {
 }
 
 .target-dialog-check {
-  width: 26px;
-  height: 26px;
-  border-radius: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
   display: grid;
   place-items: center;
   color: transparent;
-  border: 1px solid transparent;
-  font-size: 16px;
+  border: 1px solid rgba(148, 163, 184, .28);
+  font-size: 14px;
   font-weight: 900;
+  line-height: 1;
 }
 
 .target-dialog-row.active .target-dialog-check {
-  background: rgba(34, 197, 94, .16);
-  border-color: rgba(34, 197, 94, .45);
-  color: #22c55e;
+  background: rgba(34, 197, 94, .18);
+  border-color: rgba(34, 197, 94, .62);
+  color: #34d399;
 }
 
 .target-dialog-done {
-  width: 40px;
-  min-width: 40px;
-  padding: 0 !important;
-  border-radius: 999px !important;
-  font-size: 0;
-}
-
-.target-dialog-done::before {
-  content: "✓";
-  font-size: 18px;
-  line-height: 1;
+  min-width: 72px;
+  min-height: 38px;
+  border-radius: 8px;
+  padding: 0 18px;
+  font-family: "Microsoft JhengHei", "Segoe UI", Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0;
 }

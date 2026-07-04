@@ -662,3 +662,80 @@ boot();
 
   renderPublishTargets();
 })();
+
+/* Final publish target picker override: clean copy, no icon-only done button. */
+(function(){
+  function targetLabel(selectedAccounts){
+    if(!selectedAccounts.length)return '尚未選擇';
+    if(selectedAccounts.length===1)return selectedAccounts[0].name;
+    return selectedAccounts[0].name+' 等 '+selectedAccounts.length+' 個帳號';
+  }
+
+  function renderRows(container){
+    var selectedIds=selectedPublishAccountIds();
+    container.innerHTML=accounts.map(function(account){
+      var active=selectedIds.indexOf(account.id)>-1;
+      return '<button class="target-dialog-row '+(active?'active':'')+'" type="button" data-final-publish-account="'+escapeAttr(account.id)+'" aria-pressed="'+(active?'true':'false')+'">'+
+        '<span class="target-dialog-icon">'+youtubeIcon()+'</span>'+
+        '<span class="target-dialog-copy"><strong>'+escapeHtml(account.name)+'</strong></span>'+
+        '<span class="target-dialog-check" aria-hidden="true">✓</span>'+
+      '</button>';
+    }).join('');
+    Array.prototype.slice.call(container.querySelectorAll('[data-final-publish-account]')).forEach(function(button){
+      button.onclick=function(){
+        var ids=selectedPublishAccountIds();
+        var id=button.dataset.finalPublishAccount;
+        if(ids.indexOf(id)>-1){
+          if(ids.length===1){toast('至少保留一個發布目標');return}
+          ids=ids.filter(function(item){return item!==id});
+        }else{
+          ids.push(id);
+        }
+        localStorage.setItem('mvp_publish_accounts',JSON.stringify(ids));
+        localStorage.setItem('mvp_publish_account',ids[0]);
+        renderRows(container);
+        renderPublishTargets();
+        renderPlaylistOptions();
+        renderComposer();
+      };
+    });
+  }
+
+  function openTargetDialog(){
+    var pop=document.querySelector('#confirmPopover');
+    if(!pop)return;
+    pop.innerHTML='<div class="confirm-dialog target-dialog" role="dialog" aria-modal="true" aria-label="發布目標">'+
+      '<h3>發布目標</h3>'+
+      '<div class="confirm-body"><div class="target-dialog-list" id="targetDialogList"></div></div>'+
+      '<div class="confirm-actions"><button class="btn primary target-dialog-done" type="button">完成</button></div>'+
+    '</div>';
+    pop.onclick=function(event){if(event.target===pop)closeConfirmDialog()};
+    var dialog=pop.querySelector('.confirm-dialog');
+    if(dialog)dialog.onclick=function(event){event.stopPropagation()};
+    var done=pop.querySelector('.target-dialog-done');
+    if(done)done.onclick=closeConfirmDialog;
+    var list=pop.querySelector('#targetDialogList');
+    if(list)renderRows(list);
+    pop.classList.add('open');
+  }
+
+  renderPublishTargets=function(){
+    var host=document.querySelector('#publishTargets');
+    if(!host)return;
+    var selectedAccounts=selectedPublishAccounts();
+    var wrapper=host.closest('.publish-targets');
+    var label=wrapper&&wrapper.querySelector('label');
+    if(label)label.remove();
+    host.classList.add('target-summary-list');
+    host.innerHTML='<button class="publish-target-summary" type="button" id="publishTargetSummary">'+
+      '<span class="publish-target-summary-main">'+
+        '<span class="publish-target-summary-icons">'+youtubeIcon()+'</span>'+
+        '<span class="publish-target-summary-text"><strong>'+escapeHtml(targetLabel(selectedAccounts))+'</strong></span>'+
+      '</span>'+
+    '</button>';
+    var button=document.querySelector('#publishTargetSummary');
+    if(button)button.onclick=openTargetDialog;
+  };
+
+  renderPublishTargets();
+})();
