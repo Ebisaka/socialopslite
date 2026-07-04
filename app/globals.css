@@ -2101,3 +2101,51 @@ body[data-resolved-theme="light"] .more-option.active {
     grid-template-columns: 1fr;
   }
 }
+/* Chart layers are mutually exclusive. */
+.chart[data-chart-type="bar"] .chart-bars{display:grid!important}
+.chart[data-chart-type="bar"] .chart-line{display:none!important}
+.chart[data-chart-type="line"] .chart-bars{display:none!important}
+.chart[data-chart-type="line"] .chart-line{display:block!important}
+
+/* Issue report dialog. */
+.report-dialog{width:min(460px,calc(100vw - 48px))}
+.report-form{display:grid;gap:14px;padding:18px 20px 20px}
+.report-form label{display:grid;gap:7px;color:var(--muted);font-size:12px}
+.report-form input,.report-form select,.report-form textarea{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--bg);
+  color:var(--ink);
+  padding:10px 12px;
+  font:inherit;
+  outline:0;
+}
+.report-form textarea{min-height:120px;resize:vertical;line-height:1.55}
+.report-form input:focus,.report-form select:focus,.report-form textarea:focus{
+  border-color:rgba(148,163,184,.7);
+  box-shadow:0 0 0 3px rgba(148,163,184,.16);
+}
+
+/* Keep the expanded sidebar clickable above the main canvas. */
+.app > aside {
+  z-index: 80 !important;
+  pointer-events: auto !important;
+}
+
+.app > main {
+  position: relative;
+  z-index: 0 !important;
+}
+
+aside:hover,
+aside.menu-open {
+  z-index: 90 !important;
+}
+
+aside .sidebar-controls,
+aside .more-switch,
+aside .more-menu {
+  z-index: 100 !important;
+  pointer-events: auto !important;
+}
