@@ -28,8 +28,8 @@ export default function LandingPage() {
           <strong>SocialOps Lite</strong>
         </Link>
         <div className="landing-actions">
-          <Link className="btn" href="/login">登入</Link>
-          <Link className="btn primary" href="/login">開始使用</Link>
+          <Link className="btn landing-cta-button landing-cta-secondary" href="/login">登入</Link>
+          <Link className="btn primary landing-cta-button landing-cta-primary" href="/login">開始使用</Link>
         </div>
       </nav>
 
@@ -41,8 +41,8 @@ export default function LandingPage() {
             先專注把 YouTube 營運流程做得乾淨、省事、可追蹤。
           </p>
           <div className="landing-cta">
-            <Link className="btn primary" href="/login">開始使用</Link>
-            <Link className="btn" href="/login">登入</Link>
+            <Link className="btn primary landing-cta-button landing-cta-primary" href="/login">開始使用</Link>
+            <Link className="btn landing-cta-button landing-cta-secondary" href="/login">登入</Link>
           </div>
         </div>
         <div className="landing-preview" aria-hidden="true">

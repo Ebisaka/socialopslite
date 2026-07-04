@@ -3015,6 +3015,57 @@ body[data-resolved-theme="light"] .landing-cta .btn.primary {
   color: #ffffff !important;
 }
 
+/* Homepage CTA buttons: isolated from global .btn rules. */
+.landing-cta-button,
+a.landing-cta-button {
+  width: 86px !important;
+  min-width: 86px !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  display: grid !important;
+  place-items: center !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  font-family: "Segoe UI", "Microsoft JhengHei", Arial, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 650 !important;
+  letter-spacing: 0 !important;
+  text-decoration: none !important;
+  vertical-align: top !important;
+}
+
+.landing-cta-secondary,
+a.landing-cta-secondary {
+  background: #1b222c !important;
+  color: #f2f4f7 !important;
+  box-shadow: inset 0 0 0 1px #2d3745 !important;
+}
+
+.landing-cta-primary,
+a.landing-cta-primary {
+  background: #f2f4f7 !important;
+  color: #111827 !important;
+  box-shadow: inset 0 0 0 1px #f2f4f7 !important;
+}
+
+body[data-resolved-theme="light"] .landing-cta-secondary,
+body[data-resolved-theme="light"] a.landing-cta-secondary {
+  background: #ffffff !important;
+  color: #111827 !important;
+  box-shadow: inset 0 0 0 1px #d8dee8 !important;
+}
+
+body[data-resolved-theme="light"] .landing-cta-primary,
+body[data-resolved-theme="light"] a.landing-cta-primary {
+  background: #111827 !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 0 0 1px #111827 !important;
+}
+
 .landing-hero {
   max-width: 1120px;
   min-height: calc(100vh - 120px);
