@@ -2625,3 +2625,136 @@ body[data-resolved-theme="light"] .health-strip .health-item {
 .target-copy small {
   display: none !important;
 }
+
+/* Publish target picker: use a centered modal instead of checkbox cards. */
+.target-list.target-summary-list {
+  display: block !important;
+}
+
+.publish-target-summary {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.publish-target-summary:hover {
+  border-color: rgba(148, 163, 184, .42);
+  background: rgba(148, 163, 184, .08);
+}
+
+.publish-target-summary-main {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.publish-target-summary-icons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+}
+
+.publish-target-summary-icons .yt-play {
+  width: 30px;
+  height: 22px;
+}
+
+.publish-target-summary-text {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.publish-target-summary-text strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.publish-target-summary-text span {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.publish-target-summary-action {
+  color: var(--muted);
+  font-size: 13px;
+  flex: 0 0 auto;
+}
+
+.target-dialog {
+  width: min(560px, calc(100vw - 32px));
+}
+
+.target-dialog-list {
+  display: grid;
+  gap: 2px;
+}
+
+.target-dialog-row {
+  width: 100%;
+  min-height: 58px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) 28px;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.target-dialog-row:hover,
+.target-dialog-row.active {
+  background: rgba(148, 163, 184, .12);
+}
+
+.target-dialog-row .yt-play {
+  width: 32px;
+  height: 23px;
+}
+
+.target-dialog-copy {
+  min-width: 0;
+}
+
+.target-dialog-copy strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.target-dialog-check {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  color: transparent;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.target-dialog-row.active .target-dialog-check {
+  background: var(--ink);
+  color: var(--panel);
+}
