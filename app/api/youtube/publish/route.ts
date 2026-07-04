@@ -12,9 +12,29 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
+type PublishMode = "scheduled" | "immediate" | "draft";
+
 type YoutubeVideoResponse = {
   id?: string;
   error?: unknown;
+};
+
+const LABELS = {
+  scheduled: "\u6392\u7a0b\u767c\u5e03",
+  immediate: "\u7acb\u5373\u767c\u5e03",
+  draft: "\u5132\u5b58\u8349\u7a3f",
+  defaultContentType: "\u4e00\u822c\u5f71\u7247",
+  defaultTitle: "\u672a\u547d\u540d\u5f71\u7247",
+  caption: "\u5b57\u5e55",
+  missingAccount: "\u8acb\u9078\u64c7\u81f3\u5c11\u4e00\u500b\u767c\u5e03\u76ee\u6a19\u3002",
+  missingTitle: "\u8acb\u8f38\u5165\u5f71\u7247\u6a19\u984c\u3002",
+  missingMedia: "\u8acb\u9078\u64c7\u5f71\u7247\u6a94\u6848\u3002",
+  missingSchedule: "\u8acb\u8a2d\u5b9a\u6392\u7a0b\u767c\u5e03\u6642\u9593\u3002",
+  accountMismatch: "\u767c\u5e03\u76ee\u6a19\u4e0d\u5b58\u5728\uff0c\u8acb\u91cd\u65b0\u9078\u64c7\u5e33\u865f\u3002",
+  uploadScopeRequired:
+    "\u9019\u500b YouTube \u5e33\u865f\u7f3a\u5c11\u5f71\u7247\u4e0a\u50b3\u6b0a\u9650\uff0c\u8acb\u91cd\u65b0\u9023\u7dda YouTube\u3002",
+  uploadLocationMissing: "YouTube \u6c92\u6709\u56de\u50b3\u5f71\u7247\u4e0a\u50b3\u4f4d\u7f6e\u3002",
+  publishFailed: "YouTube \u767c\u5e03\u5931\u6557\u3002"
 };
 
 function text(form: FormData, key: string, fallback = "") {
@@ -30,6 +50,7 @@ function bool(form: FormData, key: string, fallback = false) {
 function parseAccountIds(form: FormData) {
   const raw = text(form, "accountIds");
   if (!raw) return [];
+
   try {
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed.filter((item) => typeof item === "string") : [];
@@ -44,22 +65,23 @@ function fileFromForm(form: FormData, key: string) {
   return value;
 }
 
-function normalizedPublishMode(value: string) {
-  if (value === "立即發布" || value === "immediate") return "immediate";
-  if (value === "儲存草稿" || value === "draft") return "draft";
+function normalizedPublishMode(value: string): PublishMode {
+  if (value === LABELS.immediate || value === "immediate") return "immediate";
+  if (value === LABELS.draft || value === "draft") return "draft";
   return "scheduled";
 }
 
-function visibilityForYoutube(visibility: string, publishMode: string) {
+function visibilityForYoutube(visibility: string, publishMode: PublishMode) {
   if (publishMode === "scheduled") return "private";
   if (visibility === "public" || visibility === "unlisted") return visibility;
   return "private";
 }
 
-function scheduledDate(form: FormData, publishMode: string) {
+function scheduledDate(form: FormData, publishMode: PublishMode) {
   if (publishMode !== "scheduled") return null;
   const value = text(form, "scheduledAt");
   if (!value) return null;
+
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? null : date;
 }
@@ -74,7 +96,7 @@ async function uploadVideo(params: {
   title: string;
   description: string;
   visibility: string;
-  publishMode: string;
+  publishMode: PublishMode;
   scheduledAt: Date | null;
   madeForKids: boolean;
   paidPromo: boolean;
@@ -130,7 +152,7 @@ async function uploadVideo(params: {
 
   const location = init.headers.get("location");
   if (!location) {
-    throw new Error("YouTube 沒有回傳影片上傳位置。");
+    throw new Error(LABELS.uploadLocationMissing);
   }
 
   const body = Buffer.from(await params.file.arrayBuffer());
@@ -212,7 +234,7 @@ async function uploadCaption(accessToken: string, videoId: string, file: File) {
     snippet: {
       videoId,
       language: "zh-TW",
-      name: file.name.replace(/\.[^/.]+$/, "") || "字幕",
+      name: file.name.replace(/\.[^/.]+$/, "") || LABELS.caption,
       isDraft: false
     }
   });
@@ -253,8 +275,8 @@ export async function POST(request: Request) {
   const accountIds = parseAccountIds(form);
   const title = text(form, "title");
   const description = text(form, "description");
-  const contentType = text(form, "contentType", "一般影片");
-  const publishMode = normalizedPublishMode(text(form, "publishMode", "排程發布"));
+  const contentType = text(form, "contentType", LABELS.defaultContentType);
+  const publishMode = normalizedPublishMode(text(form, "publishMode", LABELS.scheduled));
   const visibility = text(form, "visibility", "private");
   const scheduledAt = scheduledDate(form, publishMode);
   const media = fileFromForm(form, "media");
@@ -271,16 +293,16 @@ export async function POST(request: Request) {
   const playlistId = text(form, "playlistId");
 
   if (!accountIds.length) {
-    return NextResponse.json({ error: "請選擇發布目標。" }, { status: 400 });
+    return NextResponse.json({ error: LABELS.missingAccount }, { status: 400 });
   }
   if (publishMode !== "draft" && !title) {
-    return NextResponse.json({ error: "請輸入影片標題。" }, { status: 400 });
+    return NextResponse.json({ error: LABELS.missingTitle }, { status: 400 });
   }
   if (publishMode !== "draft" && !media) {
-    return NextResponse.json({ error: "請選擇要上傳的影片。" }, { status: 400 });
+    return NextResponse.json({ error: LABELS.missingMedia }, { status: 400 });
   }
   if (publishMode === "scheduled" && !scheduledAt) {
-    return NextResponse.json({ error: "請設定排程發布時間。" }, { status: 400 });
+    return NextResponse.json({ error: LABELS.missingSchedule }, { status: 400 });
   }
 
   const accounts = await prisma.socialAccount.findMany({
@@ -292,7 +314,7 @@ export async function POST(request: Request) {
   });
 
   if (accounts.length !== accountIds.length) {
-    return NextResponse.json({ error: "部分發布目標不存在，請重新選擇。" }, { status: 404 });
+    return NextResponse.json({ error: LABELS.accountMismatch }, { status: 404 });
   }
 
   const missingUploadScope = accounts.filter((account) => !hasYoutubeUploadScope(account));
@@ -301,8 +323,9 @@ export async function POST(request: Request) {
       where: { id: { in: missingUploadScope.map((account) => account.id) } },
       data: { status: "insufficient_scope" }
     });
+
     return NextResponse.json({
-      error: "這個 YouTube 帳號缺少影片上傳權限，請重新連線 YouTube。",
+      error: LABELS.uploadScopeRequired,
       code: "youtube_upload_scope_required"
     }, { status: 403 });
   }
@@ -328,7 +351,7 @@ export async function POST(request: Request) {
         userId: user.id,
         socialAccountId: account.id,
         platform: "youtube",
-        title: title || "未命名影片",
+        title: title || LABELS.defaultTitle,
         description,
         contentType,
         publishMode,
@@ -396,7 +419,7 @@ export async function POST(request: Request) {
 
       results.push({ taskId: task.id, status, youtubeVideoId: videoId, youtubeUrl, sideEffects });
     } catch (error) {
-      const message = error instanceof Error ? error.message : "YouTube 發布失敗。";
+      const message = error instanceof Error ? error.message : LABELS.publishFailed;
       await prisma.publishTask.update({
         where: { id: task.id },
         data: {

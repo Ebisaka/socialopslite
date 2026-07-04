@@ -4,9 +4,6 @@ var defaultAccounts=[
   {id:"studio",name:"工作用 YouTube",platform:"YouTube",group:"",favorite:false,status:"已連線",expires:"2026-08-12",color:"transparent",avatar:"play",dataStart:"2026-05-10",dataEnd:"2026-06-30"}
 ];
 var defaultQueue=[];
-function appConfig(){var root=document.querySelector("[data-socialops-env]");var domConfig=root?{appEnv:root.getAttribute("data-socialops-env"),demoTools:root.getAttribute("data-demo-tools")==="true"}:{};return window.SOCIALOPS_CONFIG||domConfig||{}}
-function isProductionHost(){var config=appConfig();if(config.appEnv)return config.appEnv==="production";return location.hostname==="socialopslite.com"}
-function demoToolsEnabled(){var config=appConfig();if(typeof config.demoTools==="boolean")return config.demoTools;return !isProductionHost()}
 var accountHealth={main:[{key:"auth",state:"ok",icon:"✓",title:"連線正常",text:"YouTube 已連線"},{key:"sync",state:"ok",icon:"↻",title:"資料已同步",text:"今天 13:08",action:true}],studio:[{key:"auth",state:"ok",icon:"✓",title:"連線正常",text:"YouTube 已連線"},{key:"sync",state:"warn",icon:"↻",title:"資料稍舊",text:"最後同步：昨天 22:10",action:true}]};
 var accountStats={
   main:{
@@ -42,29 +39,12 @@ var contentAnalytics={
 function createDemoContentAnalytics(accountId,index){var base=18+index*5;contentAnalytics.youtube[accountId]={"7":{content:String(4+index),contentDelta:"近 7 天 +1",views:(base*8200).toLocaleString("zh-TW"),viewsDelta:"近 7 天 +"+(3+index%5)+".%",engagement:(4.2+index*.3).toFixed(1)+"%",engagementDelta:"近 7 天 +0."+(index%7)+"%",items:[{title:"測試帳號 "+index+" 近期最佳內容",type:"一般影片",views:(base*2100).toLocaleString("zh-TW"),engagement:(5.1+index*.2).toFixed(1)+"%"},{title:"測試帳號 "+index+" Shorts",type:"Shorts",views:(base*1400).toLocaleString("zh-TW"),engagement:(4.8+index*.2).toFixed(1)+"%"},{title:"測試帳號 "+index+" 更新公告",type:"一般影片",views:(base*760).toLocaleString("zh-TW"),engagement:(3.9+index*.2).toFixed(1)+"%"}]},"30":{content:String(15+index*2),contentDelta:"近 30 天 +"+(2+index),views:(base*31000).toLocaleString("zh-TW"),viewsDelta:"近 30 天 +"+(6+index%6)+".%",engagement:(4.5+index*.25).toFixed(1)+"%",engagementDelta:"近 30 天 +0."+(index%6)+"%",items:[{title:"測試帳號 "+index+" 月度代表作",type:"一般影片",views:(base*7200).toLocaleString("zh-TW"),engagement:(5.8+index*.2).toFixed(1)+"%"},{title:"測試帳號 "+index+" 月度短片",type:"Shorts",views:(base*5100).toLocaleString("zh-TW"),engagement:(5.0+index*.2).toFixed(1)+"%"},{title:"測試帳號 "+index+" 內容整理",type:"一般影片",views:(base*3300).toLocaleString("zh-TW"),engagement:(4.2+index*.2).toFixed(1)+"%"}]},"90":{content:String(44+index*6),contentDelta:"近 90 天 +"+(6+index),views:(base*95000).toLocaleString("zh-TW"),viewsDelta:"近 90 天 +"+(10+index%8)+".%",engagement:(4.7+index*.2).toFixed(1)+"%",engagementDelta:"近 90 天 +0."+(index%5)+"%",items:[{title:"測試帳號 "+index+" 季度精選",type:"一般影片",views:(base*18800).toLocaleString("zh-TW"),engagement:(6.0+index*.2).toFixed(1)+"%"},{title:"測試帳號 "+index+" 高互動短片",type:"Shorts",views:(base*12200).toLocaleString("zh-TW"),engagement:(5.4+index*.2).toFixed(1)+"%"},{title:"測試帳號 "+index+" 長片整理",type:"一般影片",views:(base*9400).toLocaleString("zh-TW"),engagement:(4.6+index*.2).toFixed(1)+"%"}]},"custom":{content:String(24+index*3),contentDelta:"+"+(3+index),views:(base*42000).toLocaleString("zh-TW"),viewsDelta:"+"+(7+index%7)+".%",engagement:(4.4+index*.2).toFixed(1)+"%",engagementDelta:"-0."+(index%4)+"%",items:[{title:"測試帳號 "+index+" 自訂期間最佳",type:"一般影片",views:(base*8600).toLocaleString("zh-TW"),engagement:(5.5+index*.2).toFixed(1)+"%"},{title:"測試帳號 "+index+" 自訂短片",type:"Shorts",views:(base*5400).toLocaleString("zh-TW"),engagement:(4.9+index*.2).toFixed(1)+"%"},{title:"測試帳號 "+index+" 自訂整理",type:"一般影片",views:(base*3100).toLocaleString("zh-TW"),engagement:(4.1+index*.2).toFixed(1)+"%"}]}};}
 var rangeMeta={"7":{title:"近 7 天觀看",hint:"用來觀察影片發布後的整體趨勢。"},"30":{title:"近 30 天觀看",hint:"用週期切片觀察這段時間的觀看變化。"},"90":{title:"近 90 天觀看",hint:"用較長時間範圍觀察內容走勢。"},"custom":{title:"自訂範圍觀看",hint:"依你選擇的日期範圍查看趨勢。"}};
 var accounts=load("mvp_accounts_youtube",defaultAccounts),queue=load("mvp_queue_youtube",defaultQueue);accounts=accounts.filter(function(a){return a.platform==="YouTube"}).map(function(a,i){a.id=a.id||("account"+i);a.platform="YouTube";a.avatar="play";a.color="transparent";if(a.status==="已串接")a.status="已連線";if(a.status==="需續期")a.status="需重新確認";if(a.status==="權限不足")a.status="需補權限";if(a.group==="影音內容")a.group="";return a});if(!accounts.length)accounts=defaultAccounts.slice();queue=queue.filter(function(t){return t.title!=="YouTube Shorts 開場測試"});save();var pageCopy={dashboard:"營運總覽",accounts:"帳號管理",composer:"內容發文",analytics:"內容分析"};var activeGroupIndex=null,dragIndex=null,accountEditMode=false;var helpContent={accountConnected:{title:"已連線",description:"這個 YouTube 帳號目前可以正常同步資料與發布內容。",action:"不需要處理。"},accountReconnect:{title:"需重新確認",description:"為了維持資料同步與發布功能，這個帳號需要重新登入 YouTube 確認連線。",action:"點選重新確認，依照 YouTube 畫面完成確認即可。"},accountPermission:{title:"需補權限",description:"這個帳號已連上，但部分功能尚未開啟，例如發布影片或讀取分析資料。",action:"重新連線時開啟需要的功能權限。"},advancedYoutube:{title:"進階設定說明",sections:[{title:"兒童專屬內容",body:"無論所在地區，發布前都需要說明影片是否屬於兒童專屬內容。若設為兒童專屬，部分功能可能會依 YouTube 規則調整。"},{title:"僅限成人觀眾收看",body:"可將影片設為僅限年滿 18 歲的觀眾收看。設有年齡限制的影片不會顯示在 YouTube 的特定版面中，並可能影響廣告顯示。"},{title:"內容包含付費宣傳",body:"如果影片含有第三方提供的有價品，並據以製作相關影片，發布時需要標記，例如置入性行銷、贊助或代言。"},{title:"內容包含需揭露的 AI 內容",body:"若影片使用 AI 生成或編輯，且呈現真人言論、真實事件或地點經過加工，或看似真實但未發生的場景，發布時需要揭露。"},{title:"允許嵌入",body:"允許他人在網站上嵌入你的影片。"},{title:"Shorts 重混",body:"允許他人使用這部影片的內容製作 Shorts。"}]}};var fileState={media:null,cover:null,caption:null};var accountPlaylists={main:["新品 / 新企劃","教學內容","Shorts 精選"],studio:["客戶案例","品牌素材","直播回放"]};
-function syncFileInput(id,key){var input=q("#"+id),file=input&&input.files&&input.files[0];if(!file)return;if(fileState[key]&&fileState[key].url)URL.revokeObjectURL(fileState[key].url);fileState[key]={name:file.name,type:file.type,url:URL.createObjectURL(file)}}function clearFileInput(id,key){var input=q("#"+id);if(fileState[key]&&fileState[key].url)URL.revokeObjectURL(fileState[key].url);fileState[key]=null;if(input)input.value="";renderComposer()}function fileEntry(key){return fileState[key]}function setFileRemoveButton(button,entry){if(!button)return;var show=!!entry,item=button.closest&&button.closest(".upload-item");if(item)item.classList.toggle("has-file",show);button.classList.toggle("is-hidden",!show);button.hidden=!show;button.removeAttribute("title");button.setAttribute("aria-label",show?"Remove selected file":"");button.tabIndex=show?0:-1;if(!show){button.textContent="";button.style.setProperty("display","none","important");return}button.textContent="";button.style.setProperty("display","inline-flex","important");button.style.setProperty("align-items","center","important");button.style.setProperty("justify-content","center","important");button.style.setProperty("position","absolute","important");button.style.setProperty("top","10px","important");button.style.setProperty("right","10px","important");button.style.setProperty("width","30px","important");button.style.setProperty("height","30px","important");button.style.setProperty("min-width","30px","important");button.style.setProperty("min-height","30px","important");button.style.setProperty("padding","0","important");button.style.setProperty("border-radius","999px","important");button.style.setProperty("border","1px solid rgba(248,113,113,.72)","important");button.style.setProperty("background","rgba(239,68,68,.12)","important");button.style.setProperty("color","#fb7185","important");button.style.setProperty("font-size","19px","important");button.style.setProperty("font-weight","700","important");button.style.setProperty("line-height","1","important");button.style.setProperty("z-index","4","important")}function previewFileHtml(key,label,emptyText){var entry=fileEntry(key);if(!entry||!entry.url)return '<div class="preview-slot"><span>'+escapeHtml(emptyText)+'</span></div>';var isVideo=entry.type.indexOf("video/")===0,isImage=entry.type.indexOf("image/")===0;if(isVideo)return '<div class="preview-slot"><video src="'+escapeAttr(entry.url)+'" muted controls></video><span class="preview-label">'+escapeHtml(label)+'</span></div>';if(isImage)return '<div class="preview-slot '+(label==="封面"?"cover":"")+'"><img src="'+escapeAttr(entry.url)+'" alt="'+escapeAttr(label)+'"><span class="preview-label">'+escapeHtml(label)+'</span></div>';return '<div class="preview-slot"><span>'+escapeHtml(entry.name)+'</span></div>'}
+function syncFileInput(id,key){var input=q("#"+id),file=input&&input.files&&input.files[0];if(!file)return;if(fileState[key]&&fileState[key].url)URL.revokeObjectURL(fileState[key].url);fileState[key]={name:file.name,type:file.type,url:URL.createObjectURL(file)}}function clearFileInput(id,key){var input=q("#"+id);if(fileState[key]&&fileState[key].url)URL.revokeObjectURL(fileState[key].url);fileState[key]=null;if(input)input.value="";renderComposer()}function fileEntry(key){return fileState[key]}function previewFileHtml(key,label,emptyText){var entry=fileEntry(key);if(!entry||!entry.url)return '<div class="preview-slot"><span>'+escapeHtml(emptyText)+'</span></div>';var isVideo=entry.type.indexOf("video/")===0,isImage=entry.type.indexOf("image/")===0;if(isVideo)return '<div class="preview-slot"><video src="'+escapeAttr(entry.url)+'" muted controls></video><span class="preview-label">'+escapeHtml(label)+'</span></div>';if(isImage)return '<div class="preview-slot '+(label==="封面"?"cover":"")+'"><img src="'+escapeAttr(entry.url)+'" alt="'+escapeAttr(label)+'"><span class="preview-label">'+escapeHtml(label)+'</span></div>';return '<div class="preview-slot"><span>'+escapeHtml(entry.name)+'</span></div>'}
 function selectedPublishAccountIds(){var stored=load("mvp_publish_accounts",null);if(!Array.isArray(stored)||!stored.length){var legacy=localStorage.getItem("mvp_publish_account")||activeAccountId();stored=[legacy]}var valid=stored.filter(function(id){return accounts.some(function(a){return a.id===id})});if(!valid.length)valid=[activeAccountId()];localStorage.setItem("mvp_publish_accounts",JSON.stringify(valid));return valid}function selectedPublishAccounts(){var ids=selectedPublishAccountIds();return ids.map(function(id){return accounts.find(function(a){return a.id===id})}).filter(Boolean)}function selectedPublishAccount(){return selectedPublishAccounts()[0]||activeAccount()}
 function load(k,fallback){try{return JSON.parse(localStorage.getItem(k))||fallback}catch(e){return fallback}}function save(){localStorage.setItem("mvp_accounts_youtube",JSON.stringify(accounts));localStorage.setItem("mvp_queue_youtube",JSON.stringify(queue))}function q(s){return document.querySelector(s)}function qa(s){return Array.from(document.querySelectorAll(s))}function escapeHtml(v){return String(v||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}function escapeAttr(v){return escapeHtml(v).replace(/'/g,"&#39;")}var toastTimer=null;function toast(t){var el=q("#toast");if(!el)return;if(toastTimer)clearTimeout(toastTimer);el.innerHTML="<div class=\"toast-inner\"><span class=\"toast-message\">"+escapeHtml(t)+"</span></div>";el.classList.add("show");toastTimer=setTimeout(function(){el.classList.remove("show")},2600)}function updateReportSwitchLabel(id){qa("[data-report-tab]").forEach(function(b){b.classList.toggle("active",b.dataset.reportTab===id)});var btn=q("#reportSwitchBtn");if(btn){btn.innerHTML="洞察報告 <span class=\"chevron\" aria-hidden=\"true\"></span>"}}function tab(id){if(!pageCopy[id])id="dashboard";localStorage.setItem("mvp_active_tab",id);var main=q("main");if(main)main.dataset.activeTab=id;var topAccountWrap=q(".top-account-wrap");if(topAccountWrap)topAccountWrap.classList.toggle("is-hidden",id!=="dashboard"&&id!=="analytics");qa(".nav button").forEach(function(b){var navId=b.dataset.tab;var active=navId===id||(navId==="dashboard"&&id==="analytics");b.classList.toggle("active",active)});qa(".section").forEach(function(s){s.classList.toggle("active",s.id===id)});var pageTitle=q("#pageTitle");if(pageTitle)pageTitle.textContent=pageCopy[id];qa("[data-report-tab]").forEach(function(b){b.classList.toggle("active",b.dataset.reportTab===id)});updateReportSwitchLabel(id);var menu=q("#reportMenu");if(menu)menu.classList.remove("open")}function cls(s){return s==="已連線"?"ok":s==="需重新確認"?"warn":"bad"}function accountStatusIconHtml(status){var kind=status==="已連線"?"ok":status==="需重新確認"?"warn":"bad";var icon=kind==="ok"?'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M8.3 12.2l2.4 2.4 5-5.3"></path></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7.8v5.2"></path><path d="M12 16.4h.01"></path></svg>';return '<button class="account-status-icon status-icon-'+kind+'" type="button" data-status-help="'+escapeAttr(status)+'" title="'+escapeAttr(status)+'" aria-label="'+escapeAttr(status)+'">'+icon+'</button>'}function deltaClass(text){return String(text).indexOf("+")>-1?"delta-up":String(text).indexOf("-")>-1?"delta-down":"delta-neutral"}function compactDelta(text){return String(text||"").replace(/近\s*7\s*天|近\s*30\s*天|近\s*90\s*天|自訂範圍/g,"").trim()}function setDelta(id,text){var el=q("#"+id);el.textContent=compactDelta(text);el.className=deltaClass(text)}
-function systemTheme(){return window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}function applyThemeMode(mode){var resolved=mode==="system"?systemTheme():mode;document.body.dataset.themeMode=mode;document.body.dataset.resolvedTheme=resolved;localStorage.setItem("mvp_theme_mode",mode);var icon=mode==="system"?"◐":mode==="dark"?"☾":"☀";var label=mode==="system"?"跟隨系統":mode==="dark"?"深色模式":"淺色模式";var themeIcon=q("#themeIcon"),themeBtn=q("#themeBtn");if(themeIcon)themeIcon.textContent=icon;if(themeBtn)themeBtn.title=label;qa("[data-theme-choice]").forEach(function(btn){btn.classList.toggle("active",btn.dataset.themeChoice===mode)})}function toggleTheme(){var current=document.body.dataset.themeMode||"system";applyThemeMode(current==="system"?"light":current==="light"?"dark":"system")}function closeHelpPopover(){var pop=q("#helpPopover");if(pop)pop.classList.remove("open");qa(".info-button").forEach(function(btn){btn.classList.remove("active")})}function closeConfirmDialog(){var pop=q("#confirmPopover");if(pop){pop.classList.remove("open");pop.innerHTML=""}}function showConfirmDialog(options){var pop=q("#confirmPopover");if(!pop)return;var title=options.title||"確認操作",body=options.body||"",confirmText=options.confirmText||"確認";pop.innerHTML="<div class=\"confirm-dialog\" role=\"dialog\" aria-modal=\"true\" aria-label=\""+escapeHtml(title)+"\"><h3>"+escapeHtml(title)+"</h3><div class=\"confirm-body\"><p>"+escapeHtml(body)+"</p></div><div class=\"confirm-actions\"><button class=\"btn confirm-cancel\" type=\"button\">取消</button><button class=\"btn danger confirm-ok\" type=\"button\">"+escapeHtml(confirmText)+"</button></div></div>";pop.onclick=function(event){if(event.target===pop)closeConfirmDialog()};var dialog=pop.querySelector(".confirm-dialog");if(dialog)dialog.onclick=function(event){event.stopPropagation()};var cancel=pop.querySelector(".confirm-cancel"),ok=pop.querySelector(".confirm-ok");if(cancel)cancel.onclick=closeConfirmDialog;if(ok)ok.onclick=function(){closeConfirmDialog();if(options.onConfirm)options.onConfirm()};pop.classList.add("open")}function showReportDialog(){
-  var pop=q("#confirmPopover");
-  if(!pop)return;
-  var main=q("main");
-  var page=(location.pathname||"/")+(main&&main.dataset.activeTab?"#"+main.dataset.activeTab:"");
-  pop.innerHTML="<div class=\"confirm-dialog report-dialog\" role=\"dialog\" aria-modal=\"true\" aria-label=\"\u554f\u984c\u56de\u5831\"><h3>\u554f\u984c\u56de\u5831</h3><form class=\"report-form\" id=\"issueReportForm\"><label><span>\u554f\u984c\u985e\u578b</span><select id=\"reportCategory\"><option value=\"ui\">\u756b\u9762\u6216\u64cd\u4f5c\u7570\u5e38</option><option value=\"account\">\u5e33\u865f\u9023\u7dda</option><option value=\"publish\">\u767c\u6587\u6d41\u7a0b</option><option value=\"data\">\u6578\u64da\u986f\u793a</option><option value=\"other\">\u5176\u4ed6</option></select></label><label><span>\u63cf\u8ff0</span><textarea id=\"reportMessage\" placeholder=\"\u8acb\u63cf\u8ff0\u4f60\u9047\u5230\u7684\u554f\u984c\uff0c\u8d8a\u5177\u9ad4\u8d8a\u597d\" required></textarea></label><label><span>\u806f\u7d61\u65b9\u5f0f\uff08\u9078\u586b\uff09</span><input id=\"reportEmail\" placeholder=\"Email \u6216\u5176\u4ed6\u806f\u7d61\u65b9\u5f0f\"></label><div class=\"confirm-actions\"><button class=\"btn confirm-cancel\" type=\"button\">\u53d6\u6d88</button><button class=\"btn primary confirm-ok\" type=\"submit\">\u9001\u51fa</button></div></form></div>";
-  var cancel=pop.querySelector(".confirm-cancel"),form=q("#issueReportForm");
-  if(cancel)cancel.onclick=closeConfirmDialog;
-  if(form)form.onsubmit=function(event){
-    event.preventDefault();
-    var message=q("#reportMessage").value.trim();
-    if(!message){q("#reportMessage").focus();return}
-    var submit=pop.querySelector(".confirm-ok");
-    if(submit){submit.disabled=true;submit.textContent="\u9001\u51fa\u4e2d"}
-    fetch("/api/reports",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({category:q("#reportCategory").value,page:page,message:message,email:q("#reportEmail").value.trim()})}).then(function(res){if(!res.ok)throw new Error("report failed");return res.json()}).then(function(){closeConfirmDialog();toast("\u554f\u984c\u5df2\u9001\u51fa")}).catch(function(){if(submit){submit.disabled=false;submit.textContent="\u9001\u51fa"}toast("\u9001\u51fa\u5931\u6557\uff0c\u8acb\u7a0d\u5f8c\u518d\u8a66")})
-  };
-  pop.classList.add("open")
-}function showHelpPopover(key,button){var data=helpContent[key],pop=q("#helpPopover");if(!data||!pop)return;var body=data.description?"<p class=\"help-dialog-lead\">"+escapeHtml(data.description)+"</p>"+(data.action?"<div class=\"help-dialog-action\"><span>建議動作</span><strong>"+escapeHtml(data.action)+"</strong></div>":""):(data.sections||[]).map(function(section){return "<section class=\"help-dialog-section\"><strong>"+escapeHtml(section.title)+"</strong><p>"+escapeHtml(section.body)+"</p></section>"}).join("");pop.innerHTML="<div class=\"help-dialog\" role=\"dialog\" aria-modal=\"true\" aria-label=\""+escapeHtml(data.title)+"\"><h3>"+escapeHtml(data.title)+"</h3><div class=\"help-dialog-body\">"+body+"</div></div>";pop.onclick=function(event){if(event.target===pop)closeHelpPopover()};var dialog=pop.querySelector(".help-dialog");if(dialog)dialog.onclick=function(event){event.stopPropagation()};pop.classList.add("open");qa(".info-button").forEach(function(btn){btn.classList.toggle("active",btn===button)})}
-function activeAccountId(){return localStorage.getItem("mvp_active_account")||accounts[0]?.id||"main"}function closeAccountMenu(){["#accountMenu","#topAccountMenu","#platformMenu"].forEach(function(sel){var menu=q(sel);if(menu)menu.classList.remove("open")})}function setAsideMenuOpen(open){var aside=q("aside");if(aside)aside.classList.toggle("menu-open",!!open)}function closeSideMenus(){closeAccountMenu();["#moreMenu","#appearancePanel"].forEach(function(sel){var el=q(sel);if(el)el.classList.remove("open")});var more=q("#moreBtn"),appearance=q("#appearanceBtn");if(more)more.classList.remove("active");if(appearance)appearance.classList.remove("open");setAsideMenuOpen(false)}function handleGlobalEscape(event){if(event.key!=="Escape")return;var confirm=q("#confirmDialog");if(confirm&&confirm.classList.contains("open")){closeConfirmDialog();event.preventDefault();return}var help=q("#helpPopover");if(help&&help.classList.contains("open")){closeHelpPopover();event.preventDefault();return}if(activeGroupIndex!==null){activeGroupIndex=null;renderAccounts();event.preventDefault();return}var searchWrap=q("#accountSearchWrap"),searchInput=q("#accountSearch");if(searchWrap&&(searchWrap.classList.contains("open")||searchWrap.classList.contains("has-value"))){if(searchInput&&searchInput.value.trim()){searchInput.value="";searchWrap.classList.remove("has-value");renderAccounts()}else{searchWrap.classList.remove("open");searchWrap.classList.remove("has-value")}event.preventDefault();return}closeAccountMenu();closeHelpPopover();closeConfirmDialog()}function formatDateLabel(value){var parts=String(value).split("-");return parts.length===3?Number(parts[1])+"/"+Number(parts[2]):value}function customDateLabels(count){var start=q("#customStart"),end=q("#customEnd");if(!start||!end||!start.value||!end.value)return[];var s=new Date(start.value+"T00:00:00"),e=new Date(end.value+"T00:00:00");if(isNaN(s)||isNaN(e)||e<s)return[];if(count<=1)return[formatDateLabel(start.value)];var span=e.getTime()-s.getTime();return Array.from({length:count},function(_,i){var d=new Date(s.getTime()+span*(i/(count-1)));return (d.getMonth()+1)+"/"+d.getDate()})}function activeAccount(){var id=activeAccountId();return accounts.find(function(a){return a.id===id})||accounts[0]}function youtubeIcon(){return '<svg class="yt-play" viewBox="0 0 32 23" aria-hidden="true" focusable="false"><rect class="yt-play-bg" x="0" y="0" width="32" height="23" rx="6"></rect><path class="yt-play-triangle" d="M13 7.2v8.6l7-4.3z"></path></svg>'}function avatarHtml(a){if(a.avatar==="play")return youtubeIcon();return a.avatar&&a.avatar.indexOf("http")===0?'<img src="'+escapeAttr(a.avatar)+'" alt="">':escapeHtml(a.avatar||a.name.slice(0,1)||"Y")}function updateCustomDateBounds(){var account=activeAccount();var start=q("#customStart"),end=q("#customEnd"),hint=q("#customRangeHint");if(!start||!end)return;start.min=account.dataStart||"2026-01-01";start.max=account.dataEnd||"2026-06-30";end.min=account.dataStart||"2026-01-01";end.max=account.dataEnd||"2026-06-30";if(!start.value||start.value<start.min||start.value>start.max)start.value=start.min;if(!end.value||end.value<end.min||end.value>end.max)end.value=end.max;var rangeText="可選 "+formatDateLabel(start.min)+" - "+formatDateLabel(end.max);start.title=rangeText;end.title=rangeText;if(hint)hint.textContent=""}function renderAccountSwitcher(){var current=activeAccount();updateCustomDateBounds();var topAvatar=q("#topAccountAvatar"),topName=q("#topAccountName"),topBg=current.avatar==="play"?"transparent":(current.color||"#667085");if(topAvatar){topAvatar.style.background=topBg;topAvatar.innerHTML=avatarHtml(current)}if(topName)topName.textContent=current.name;var accountOptions=accounts.map(function(a){var avatarBg=a.avatar==="play"?"transparent":(a.color||"#667085");return '<button class="account-option '+(a.id===current.id?'active':'')+'" data-account-id="'+escapeAttr(a.id)+'"><div class="profile-avatar" style="background:'+escapeAttr(avatarBg)+'">'+avatarHtml(a)+'</div><div><strong>'+escapeHtml(a.name)+'</strong></div></button>'}).join("");if(q("#topAccountMenu"))q("#topAccountMenu").innerHTML=accountOptions;qa(".account-option").forEach(function(btn){btn.onclick=function(){localStorage.setItem("mvp_active_account",btn.dataset.accountId);closeAccountMenu();var topMenu=q("#topAccountMenu");if(topMenu)topMenu.classList.remove("open");renderAccountSwitcher();renderChart(localStorage.getItem("mvp_chart_range")||"7")}})}function activeChartMetric(){return localStorage.getItem("mvp_chart_metric")||"views"}function activeChartType(){return localStorage.getItem("mvp_chart_type")||"bar"}function formatAxisValue(value,metric){if(metric==="engagement")return value.toFixed(1)+"%";return Math.round(value).toLocaleString("zh-TW")}function renderYAxis(values,metric){var max=Math.max.apply(null,values),min=Math.min.apply(null,values),span=Math.max(1,max-min);var ticks=[max,min+span*.66,min+span*.33,min];q("#chartYAxis").innerHTML=ticks.map(function(v){return "<span>"+formatAxisValue(v,metric)+"</span>"}).join("")}function runSync(){var account=activeAccount(),items=accountHealth[account.id]||accountHealth.main,sync=items.find(function(item){return item.key==="sync"});if(sync){sync.state="ok";sync.icon="↻";sync.title="同步中";sync.text="正在更新資料";renderHealth()}setTimeout(function(){var account=activeAccount(),items=accountHealth[account.id]||accountHealth.main,sync=items.find(function(item){return item.key==="sync"});if(sync){sync.state="ok";sync.icon="✓";sync.title="資料已同步";sync.text="剛剛";renderHealth()}toast("同步完成")},700)}function renderHealth(){var items=(accountHealth[activeAccount().id]||accountHealth.main).filter(function(item){return item.state!=="ok"});q("#healthStrip").classList.toggle("is-hidden",items.length===0);q("#healthStrip").innerHTML=items.map(function(item){var tag=item.action?"button":"div";return '<div class="health-item '+(item.state==="warn"?"warn":"")+'"><'+tag+' class="health-icon '+(item.action?"action":"")+'" '+(item.action?'data-health-action="sync" title="同步資料" aria-label="同步資料"':"")+'>'+escapeHtml(item.icon)+'</'+tag+'><div><strong>'+escapeHtml(item.title)+'</strong><span>'+escapeHtml(item.text)+'</span></div></div>'}).join("");qa("[data-health-action=sync]").forEach(function(btn){btn.onclick=runSync})}function renderLine(values){var max=Math.max.apply(null,values),min=Math.min.apply(null,values),span=Math.max(1,max-min);var points=values.map(function(v,i){var x=values.length===1?50:6+i*(88/(values.length-1));var y=88-((v-min)/span)*76;return {x:x,y:y}});var d=points.map(function(p,i){return (i?"L":"M")+p.x.toFixed(2)+" "+p.y.toFixed(2)}).join(" ");q("#chartLine").innerHTML='<path class="line-stroke" d="'+d+'"></path><g class="line-hit-points">'+points.map(function(p,i){return '<circle data-point-index="'+i+'" cx="'+p.x.toFixed(2)+'" cy="'+p.y.toFixed(2)+'" r="6"></circle>'}).join("")+'</g>'}function showTooltip(index,x,y){var tip=q("#chartTooltip"),metric=activeChartMetric(),metricInfo=metricMeta[metric]||metricMeta.views,range=localStorage.getItem("mvp_chart_range")||"7",account=activeAccount(),data=(accountStats[account.id]&&accountStats[account.id][range])||accountStats.main[range],values=(data.series&&data.series[metric])||data.series.views;tip.innerHTML="<strong>"+escapeHtml(data.labels[index]||"")+"</strong><span>"+escapeHtml(metricInfo.title)+"："+escapeHtml(formatAxisValue(values[index],metric))+"</span>";tip.style.left=x+"px";tip.style.top=y+"px";tip.classList.add("show")}function hideTooltip(){q("#chartTooltip").classList.remove("show")}function bindChartTooltip(values){var plot=q("#chartPlot"),bars=qa("#chartBars .bar"),circles=qa("#chartLine circle");bars.forEach(function(bar,i){bar.onmouseenter=function(){showTooltip(i,bar.offsetLeft+bar.offsetWidth/2,bar.offsetTop+8)};bar.onmouseleave=hideTooltip});circles.forEach(function(circle,i){circle.onmouseenter=function(){var rect=plot.getBoundingClientRect(),box=circle.getBoundingClientRect();showTooltip(i,box.left-rect.left+box.width/2,box.top-rect.top)};circle.onmouseleave=hideTooltip})}function renderAnalytics(range){var account=activeAccount();var platform="youtube";var platformData=contentAnalytics[platform]||{};if(!platformData[account.id])createDemoContentAnalytics(account.id,accounts.findIndex(function(a){return a.id===account.id})+1);var data=(platformData[account.id]&&platformData[account.id][range])||(platformData[account.id]&&platformData[account.id]["7"])||(platformData.main&&platformData.main[range])||platformData.main["7"];if(!data)return;var content=q("#analyticsContentMetric"),contentDelta=q("#analyticsContentDelta"),views=q("#analyticsViewsMetric"),viewsDelta=q("#analyticsViewsDelta"),eng=q("#analyticsEngagementMetric"),engDelta=q("#analyticsEngagementDelta"),list=q("#contentRankList");if(content)content.textContent=data.content;if(contentDelta){contentDelta.textContent=compactDelta(data.contentDelta);contentDelta.className=deltaClass(data.contentDelta)}if(views)views.textContent=data.views;if(viewsDelta){viewsDelta.textContent=compactDelta(data.viewsDelta);viewsDelta.className=deltaClass(data.viewsDelta)}if(eng)eng.textContent=data.engagement;if(engDelta){engDelta.textContent=compactDelta(data.engagementDelta);engDelta.className=deltaClass(data.engagementDelta)}if(list)list.innerHTML=(data.items||[]).map(function(item,i){return '<article class="content-rank-card"><div class="rank-index">'+(i+1)+'</div><div class="rank-main"><strong>'+escapeHtml(item.title)+'</strong><span>'+escapeHtml(item.type)+'</span></div><div class="rank-stats"><span>'+escapeHtml(item.views)+'</span><small>觀看</small></div><div class="rank-stats"><span>'+escapeHtml(item.engagement)+'</span><small>互動</small></div></article>'}).join("");}
-function renderChart(range){renderAnalytics(range);var account=activeAccount();var metric=activeChartMetric();var data=(accountStats[account.id]&&accountStats[account.id][range])||accountStats.main[range]||accountStats.main["7"];var meta=rangeMeta[range]||rangeMeta["7"];var metricInfo=metricMeta[metric]||metricMeta.views;var values=(data.series&&data.series[metric])||data.series.views;q("#viewsChart").dataset.range=range;q("#chartTitle").textContent=metricInfo.title;if(range==="custom"){updateCustomDateBounds();}q("#subscriberMetric").textContent=data.subscribers;setDelta("subscriberDelta",data.subscriberDelta);q("#viewMetric").textContent=data.views;setDelta("viewDelta",data.viewDelta);q("#engagementMetric").textContent=data.engagement;setDelta("engagementDelta",data.engagementDelta);var type=activeChartType();q("#viewsChart").dataset.chartType=type;renderYAxis(values,metric);if(type==="bar"){q("#chartLine").innerHTML="";q("#chartBars").innerHTML=values.map(function(v,i){return '<div class="bar" data-point-index="'+i+'" style="height:'+v+'%"></div>'}).join("")}else{q("#chartBars").innerHTML="";renderLine(values)}var labels=range==="custom"?customDateLabels(values.length):data.labels;q("#chartLabels").innerHTML=labels.map(function(label){return '<span>'+escapeHtml(label)+'</span>'}).join("");bindChartTooltip(values);renderHealth();q("#rangeSelect").value=range;qa("#chartTypeTabs button").forEach(function(btn){btn.classList.toggle("active",btn.dataset.chartType===type)});q("#customRange").classList.toggle("show",range==="custom");qa("[data-chart-metric]").forEach(function(card){card.classList.toggle("active",card.dataset.chartMetric===metric)});localStorage.setItem("mvp_chart_range",range)}
+function systemTheme(){return window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}function applyThemeMode(mode){var resolved=mode==="system"?systemTheme():mode;document.body.dataset.themeMode=mode;document.body.dataset.resolvedTheme=resolved;localStorage.setItem("mvp_theme_mode",mode);var icon=mode==="system"?"◐":mode==="dark"?"☾":"☀";var label=mode==="system"?"跟隨系統":mode==="dark"?"深色模式":"淺色模式";var themeIcon=q("#themeIcon"),themeBtn=q("#themeBtn");if(themeIcon)themeIcon.textContent=icon;if(themeBtn)themeBtn.title=label;qa("[data-theme-choice]").forEach(function(btn){btn.classList.toggle("active",btn.dataset.themeChoice===mode)})}function toggleTheme(){var current=document.body.dataset.themeMode||"system";applyThemeMode(current==="system"?"light":current==="light"?"dark":"system")}function closeHelpPopover(){var pop=q("#helpPopover");if(pop)pop.classList.remove("open");qa(".info-button").forEach(function(btn){btn.classList.remove("active")})}function closeConfirmDialog(){var pop=q("#confirmPopover");if(pop){pop.classList.remove("open");pop.innerHTML=""}}function showConfirmDialog(options){var pop=q("#confirmPopover");if(!pop)return;var title=options.title||"確認操作",body=options.body||"",confirmText=options.confirmText||"確認";pop.innerHTML="<div class=\"confirm-dialog\" role=\"dialog\" aria-modal=\"true\" aria-label=\""+escapeHtml(title)+"\"><h3>"+escapeHtml(title)+"</h3><div class=\"confirm-body\"><p>"+escapeHtml(body)+"</p></div><div class=\"confirm-actions\"><button class=\"btn confirm-cancel\" type=\"button\">取消</button><button class=\"btn danger confirm-ok\" type=\"button\">"+escapeHtml(confirmText)+"</button></div></div>";pop.onclick=function(event){if(event.target===pop)closeConfirmDialog()};var dialog=pop.querySelector(".confirm-dialog");if(dialog)dialog.onclick=function(event){event.stopPropagation()};var cancel=pop.querySelector(".confirm-cancel"),ok=pop.querySelector(".confirm-ok");if(cancel)cancel.onclick=closeConfirmDialog;if(ok)ok.onclick=function(){closeConfirmDialog();if(options.onConfirm)options.onConfirm()};pop.classList.add("open")}function showHelpPopover(key,button){var data=helpContent[key],pop=q("#helpPopover");if(!data||!pop)return;var body=data.description?"<p class=\"help-dialog-lead\">"+escapeHtml(data.description)+"</p>"+(data.action?"<div class=\"help-dialog-action\"><span>建議動作</span><strong>"+escapeHtml(data.action)+"</strong></div>":""):(data.sections||[]).map(function(section){return "<section class=\"help-dialog-section\"><strong>"+escapeHtml(section.title)+"</strong><p>"+escapeHtml(section.body)+"</p></section>"}).join("");pop.innerHTML="<div class=\"help-dialog\" role=\"dialog\" aria-modal=\"true\" aria-label=\""+escapeHtml(data.title)+"\"><h3>"+escapeHtml(data.title)+"</h3><div class=\"help-dialog-body\">"+body+"</div></div>";pop.onclick=function(event){if(event.target===pop)closeHelpPopover()};var dialog=pop.querySelector(".help-dialog");if(dialog)dialog.onclick=function(event){event.stopPropagation()};pop.classList.add("open");qa(".info-button").forEach(function(btn){btn.classList.toggle("active",btn===button)})}
+function activeAccountId(){return localStorage.getItem("mvp_active_account")||accounts[0]?.id||"main"}function closeAccountMenu(){["#accountMenu","#topAccountMenu","#platformMenu"].forEach(function(sel){var menu=q(sel);if(menu)menu.classList.remove("open")})}function setAsideMenuOpen(open){var aside=q("aside");if(aside)aside.classList.toggle("menu-open",!!open)}function closeSideMenus(){closeAccountMenu();["#moreMenu","#appearancePanel"].forEach(function(sel){var el=q(sel);if(el)el.classList.remove("open")});var more=q("#moreBtn"),appearance=q("#appearanceBtn");if(more)more.classList.remove("active");if(appearance)appearance.classList.remove("open");setAsideMenuOpen(false)}function handleGlobalEscape(event){if(event.key!=="Escape")return;var confirm=q("#confirmDialog");if(confirm&&confirm.classList.contains("open")){closeConfirmDialog();event.preventDefault();return}var help=q("#helpPopover");if(help&&help.classList.contains("open")){closeHelpPopover();event.preventDefault();return}if(activeGroupIndex!==null){activeGroupIndex=null;renderAccounts();event.preventDefault();return}var searchWrap=q("#accountSearchWrap"),searchInput=q("#accountSearch");if(searchWrap&&(searchWrap.classList.contains("open")||searchWrap.classList.contains("has-value"))){if(searchInput&&searchInput.value.trim()){searchInput.value="";searchWrap.classList.remove("has-value");renderAccounts()}else{searchWrap.classList.remove("open");searchWrap.classList.remove("has-value")}event.preventDefault();return}closeAccountMenu();closeHelpPopover();closeConfirmDialog()}function formatDateLabel(value){var parts=String(value).split("-");return parts.length===3?Number(parts[1])+"/"+Number(parts[2]):value}function customDateLabels(count){var start=q("#customStart"),end=q("#customEnd");if(!start||!end||!start.value||!end.value)return[];var s=new Date(start.value+"T00:00:00"),e=new Date(end.value+"T00:00:00");if(isNaN(s)||isNaN(e)||e<s)return[];if(count<=1)return[formatDateLabel(start.value)];var span=e.getTime()-s.getTime();return Array.from({length:count},function(_,i){var d=new Date(s.getTime()+span*(i/(count-1)));return (d.getMonth()+1)+"/"+d.getDate()})}function activeAccount(){var id=activeAccountId();return accounts.find(function(a){return a.id===id})||accounts[0]}function youtubeIcon(){return '<svg class="yt-play" viewBox="0 0 32 23" aria-hidden="true" focusable="false"><rect class="yt-play-bg" x="0" y="0" width="32" height="23" rx="6"></rect><path class="yt-play-triangle" d="M13 7.2v8.6l7-4.3z"></path></svg>'}function avatarHtml(a){if(a.avatar==="play")return youtubeIcon();return a.avatar&&a.avatar.indexOf("http")===0?'<img src="'+escapeAttr(a.avatar)+'" alt="">':escapeHtml(a.avatar||a.name.slice(0,1)||"Y")}function updateCustomDateBounds(){var account=activeAccount();var start=q("#customStart"),end=q("#customEnd"),hint=q("#customRangeHint");if(!start||!end)return;start.min=account.dataStart||"2026-01-01";start.max=account.dataEnd||"2026-06-30";end.min=account.dataStart||"2026-01-01";end.max=account.dataEnd||"2026-06-30";if(!start.value||start.value<start.min||start.value>start.max)start.value=start.min;if(!end.value||end.value<end.min||end.value>end.max)end.value=end.max;var rangeText="可選 "+formatDateLabel(start.min)+" - "+formatDateLabel(end.max);start.title=rangeText;end.title=rangeText;if(hint)hint.textContent=""}function renderAccountSwitcher(){var current=activeAccount();updateCustomDateBounds();var topAvatar=q("#topAccountAvatar"),topName=q("#topAccountName"),topBg=current.avatar==="play"?"transparent":(current.color||"#667085");if(topAvatar){topAvatar.style.background=topBg;topAvatar.innerHTML=avatarHtml(current)}if(topName)topName.textContent=current.name;var accountOptions=accounts.map(function(a){var avatarBg=a.avatar==="play"?"transparent":(a.color||"#667085");return '<button class="account-option '+(a.id===current.id?'active':'')+'" data-account-id="'+escapeAttr(a.id)+'"><div class="profile-avatar" style="background:'+escapeAttr(avatarBg)+'">'+avatarHtml(a)+'</div><div><strong>'+escapeHtml(a.name)+'</strong></div></button>'}).join("");if(q("#topAccountMenu"))q("#topAccountMenu").innerHTML=accountOptions;qa(".account-option").forEach(function(btn){btn.onclick=function(){localStorage.setItem("mvp_active_account",btn.dataset.accountId);closeAccountMenu();var topMenu=q("#topAccountMenu");if(topMenu)topMenu.classList.remove("open");renderAccountSwitcher();renderChart(localStorage.getItem("mvp_chart_range")||"7")}})}function activeChartMetric(){return localStorage.getItem("mvp_chart_metric")||"views"}function activeChartType(){return localStorage.getItem("mvp_chart_type")||"bar"}function formatAxisValue(value,metric){if(metric==="engagement")return value.toFixed(1)+"%";return Math.round(value).toLocaleString("zh-TW")}function renderYAxis(values,metric){var max=Math.max.apply(null,values),min=Math.min.apply(null,values),span=Math.max(1,max-min);var ticks=[max,min+span*.66,min+span*.33,min];q("#chartYAxis").innerHTML=ticks.map(function(v){return "<span>"+formatAxisValue(v,metric)+"</span>"}).join("")}function runSync(){var account=activeAccount(),items=accountHealth[account.id]||accountHealth.main,sync=items.find(function(item){return item.key==="sync"});if(sync){sync.state="ok";sync.icon="↻";sync.title="同步中";sync.text="正在更新資料";renderHealth()}setTimeout(function(){var account=activeAccount(),items=accountHealth[account.id]||accountHealth.main,sync=items.find(function(item){return item.key==="sync"});if(sync){sync.state="ok";sync.icon="✓";sync.title="資料已同步";sync.text="剛剛";renderHealth()}toast("同步完成")},700)}function renderHealth(){var items=(accountHealth[activeAccount().id]||accountHealth.main).filter(function(item){return item.state!=="ok"});q("#healthStrip").classList.toggle("is-hidden",items.length===0);q("#healthStrip").innerHTML=items.map(function(item){var tag=item.action?"button":"div";return '<div class="health-item '+(item.state==="warn"?"warn":"")+'"><'+tag+' class="health-icon '+(item.action?"action":"")+'" '+(item.action?'data-health-action="sync" title="同步資料" aria-label="同步資料"':"")+'>'+escapeHtml(item.icon)+'</'+tag+'><div><strong>'+escapeHtml(item.title)+'</strong><span>'+escapeHtml(item.text)+'</span></div></div>'}).join("");qa("[data-health-action=sync]").forEach(function(btn){btn.onclick=runSync})}function renderLine(values){var max=Math.max.apply(null,values),min=Math.min.apply(null,values),span=Math.max(1,max-min);var points=values.map(function(v,i){var x=values.length===1?50:6+i*(88/(values.length-1));var y=88-((v-min)/span)*76;return {x:x,y:y}});var d=points.map(function(p,i){return (i?"L":"M")+p.x.toFixed(2)+" "+p.y.toFixed(2)}).join(" ");q("#chartLine").innerHTML='<path d="'+d+'"></path>'+points.map(function(p,i){return '<circle data-point-index="'+i+'" cx="'+p.x.toFixed(2)+'" cy="'+p.y.toFixed(2)+'" r="1.7"></circle>'}).join("")}function showTooltip(index,x,y){var tip=q("#chartTooltip"),metric=activeChartMetric(),metricInfo=metricMeta[metric]||metricMeta.views,range=localStorage.getItem("mvp_chart_range")||"7",account=activeAccount(),data=(accountStats[account.id]&&accountStats[account.id][range])||accountStats.main[range],values=(data.series&&data.series[metric])||data.series.views;tip.innerHTML="<strong>"+escapeHtml(data.labels[index]||"")+"</strong><span>"+escapeHtml(metricInfo.title)+"："+escapeHtml(formatAxisValue(values[index],metric))+"</span>";tip.style.left=x+"px";tip.style.top=y+"px";tip.classList.add("show")}function hideTooltip(){q("#chartTooltip").classList.remove("show")}function bindChartTooltip(values){var plot=q("#chartPlot"),bars=qa("#chartBars .bar"),circles=qa("#chartLine circle");bars.forEach(function(bar,i){bar.onmouseenter=function(){showTooltip(i,bar.offsetLeft+bar.offsetWidth/2,bar.offsetTop+8)};bar.onmouseleave=hideTooltip});circles.forEach(function(circle,i){circle.onmouseenter=function(){var rect=plot.getBoundingClientRect(),box=circle.getBoundingClientRect();showTooltip(i,box.left-rect.left+box.width/2,box.top-rect.top)};circle.onmouseleave=hideTooltip})}function renderAnalytics(range){var account=activeAccount();var platform="youtube";var platformData=contentAnalytics[platform]||{};if(!platformData[account.id])createDemoContentAnalytics(account.id,accounts.findIndex(function(a){return a.id===account.id})+1);var data=(platformData[account.id]&&platformData[account.id][range])||(platformData[account.id]&&platformData[account.id]["7"])||(platformData.main&&platformData.main[range])||platformData.main["7"];if(!data)return;var content=q("#analyticsContentMetric"),contentDelta=q("#analyticsContentDelta"),views=q("#analyticsViewsMetric"),viewsDelta=q("#analyticsViewsDelta"),eng=q("#analyticsEngagementMetric"),engDelta=q("#analyticsEngagementDelta"),list=q("#contentRankList");if(content)content.textContent=data.content;if(contentDelta){contentDelta.textContent=compactDelta(data.contentDelta);contentDelta.className=deltaClass(data.contentDelta)}if(views)views.textContent=data.views;if(viewsDelta){viewsDelta.textContent=compactDelta(data.viewsDelta);viewsDelta.className=deltaClass(data.viewsDelta)}if(eng)eng.textContent=data.engagement;if(engDelta){engDelta.textContent=compactDelta(data.engagementDelta);engDelta.className=deltaClass(data.engagementDelta)}if(list)list.innerHTML=(data.items||[]).map(function(item,i){return '<article class="content-rank-card"><div class="rank-index">'+(i+1)+'</div><div class="rank-main"><strong>'+escapeHtml(item.title)+'</strong><span>'+escapeHtml(item.type)+'</span></div><div class="rank-stats"><span>'+escapeHtml(item.views)+'</span><small>觀看</small></div><div class="rank-stats"><span>'+escapeHtml(item.engagement)+'</span><small>互動</small></div></article>'}).join("");}
+function renderChart(range){renderAnalytics(range);var account=activeAccount();var metric=activeChartMetric();var data=(accountStats[account.id]&&accountStats[account.id][range])||accountStats.main[range]||accountStats.main["7"];var meta=rangeMeta[range]||rangeMeta["7"];var metricInfo=metricMeta[metric]||metricMeta.views;var values=(data.series&&data.series[metric])||data.series.views;q("#viewsChart").dataset.range=range;q("#chartTitle").textContent=metricInfo.title;if(range==="custom"){updateCustomDateBounds();}q("#subscriberMetric").textContent=data.subscribers;setDelta("subscriberDelta",data.subscriberDelta);q("#viewMetric").textContent=data.views;setDelta("viewDelta",data.viewDelta);q("#engagementMetric").textContent=data.engagement;setDelta("engagementDelta",data.engagementDelta);var type=activeChartType();renderYAxis(values,metric);q("#chartBars").style.display=type==="bar"?"grid":"none";q("#chartLine").style.display=type==="line"?"block":"none";q("#chartBars").innerHTML=values.map(function(v,i){return '<div class="bar" data-point-index="'+i+'" style="height:'+v+'%"></div>'}).join("");renderLine(values);var labels=range==="custom"?customDateLabels(values.length):data.labels;q("#chartLabels").innerHTML=labels.map(function(label){return '<span>'+escapeHtml(label)+'</span>'}).join("");bindChartTooltip(values);renderHealth();q("#rangeSelect").value=range;qa("#chartTypeTabs button").forEach(function(btn){btn.classList.toggle("active",btn.dataset.chartType===type)});q("#customRange").classList.toggle("show",range==="custom");qa("[data-chart-metric]").forEach(function(card){card.classList.toggle("active",card.dataset.chartMetric===metric)});localStorage.setItem("mvp_chart_range",range)}
 function accountTags(a){var tags=Array.isArray(a.tags)?a.tags.slice():[];if(a.group&&tags.indexOf(a.group)===-1)tags.push(a.group);return tags.map(function(t){return String(t||"").trim()}).filter(function(t,i,arr){return t&&arr.indexOf(t)===i})}function setAccountTags(a,tags){a.tags=tags.map(function(t){return String(t||"").trim()}).filter(function(t,i,arr){return t&&arr.indexOf(t)===i});a.group=a.tags[0]||""}function groups(){var seen={};accounts.forEach(function(a){accountTags(a).forEach(function(t){seen[t]=true})});return Object.keys(seen).sort()}function renderGroupFilter(){var current=q("#groupFilter").value||"all",gs=groups();q("#groupFilter").innerHTML='<option value="all">全部帳號</option><option value="favorites">我的最愛</option>'+gs.map(function(g){return '<option value="tag:'+escapeAttr(g)+'">'+escapeHtml(g)+'</option>'}).join("");var values=["all","favorites"].concat(gs.map(function(g){return "tag:"+g}));q("#groupFilter").value=values.indexOf(current)>-1?current:"all"}
 function renderAccounts(){renderGroupFilter();var accountsSection=q("#accounts");if(accountsSection)accountsSection.classList.toggle("account-edit-mode",accountEditMode);var group=q("#groupFilter").value,term=q("#accountSearch").value.trim().toLowerCase();var editToggle=q("#accountEditToggle");if(editToggle){editToggle.classList.toggle("active",accountEditMode);editToggle.setAttribute("aria-pressed",accountEditMode?"true":"false");editToggle.title=accountEditMode?"結束編輯":"編輯帳戶"}if(!accountEditMode)activeGroupIndex=null;var rows=accounts.map(function(a,i){a._index=i;return a}).filter(function(a){var tags=accountTags(a);var gm=group==="all"||(group==="favorites"&&a.favorite)||(group.indexOf("tag:")===0&&tags.indexOf(group.slice(4))>-1);return gm&&(!term||(a.name+" "+tags.join(" ")).toLowerCase().indexOf(term)>-1)});var groupIcon='<svg class="action-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 5.5h6.7l8.3 8.3a2 2 0 0 1 0 2.8l-2.9 2.9a2 2 0 0 1-2.8 0L5.5 11.2V4.5"></path><circle cx="8.3" cy="8.3" r="1.2"></circle></svg>';var removeIcon='<svg class="action-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 6.5h15"></path><path d="M9.5 6.5V4.8h5v1.7"></path><path d="M7.2 9.2l.7 9.2a2 2 0 0 0 2 1.8h4.2a2 2 0 0 0 2-1.8l.7-9.2"></path><path d="M10.4 11.5v5"></path><path d="M13.6 11.5v5"></path></svg>';var heartIcon='<svg class="heart-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 5.7c-1.7-1.8-4.4-1.8-6.1 0L12 8.1 9.7 5.7c-1.7-1.8-4.4-1.8-6.1 0-1.8 1.9-1.8 4.9 0 6.8L12 21l8.4-8.5c1.8-1.9 1.8-4.9 0-6.8z"></path></svg>';q("#accountList").innerHTML=rows.map(function(a){var tags=accountTags(a);var badge=tags.length?(accountEditMode?'<div class="account-group-line account-tag-summary editable-tags"><svg class="account-group-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 5.5h6.7l8.3 8.3a2 2 0 0 1 0 2.8l-2.9 2.9a2 2 0 0 1-2.8 0L5.5 11.2V4.5"></path><circle cx="8.3" cy="8.3" r="1.2"></circle></svg><span class="account-tag-list">'+tags.map(function(t,tagIndex){return '<span class="tag-pill account-tag-pill" draggable="true" data-tag-drag="'+a._index+'" data-tag-index="'+tagIndex+'" data-tag-value="'+escapeAttr(t)+'" title="拖曳排序"><span class="tag-pill-name">'+escapeHtml(t)+'</span><button class="tag-remove" type="button" data-tag-remove="'+a._index+'" data-tag-value="'+escapeAttr(t)+'" title="移除標籤 '+escapeAttr(t)+'" aria-label="移除標籤 '+escapeAttr(t)+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10"></path><path d="M17 7L7 17"></path></svg></button></span>'}).join('')+'</span></div>':'<div class="account-group-line account-tag-summary"><svg class="account-group-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 5.5h6.7l8.3 8.3a2 2 0 0 1 0 2.8l-2.9 2.9a2 2 0 0 1-2.8 0L5.5 11.2V4.5"></path><circle cx="8.3" cy="8.3" r="1.2"></circle></svg><span class="account-tag-text">'+tags.map(escapeHtml).join(' , ')+'</span></div>'):"";var panel=accountEditMode&&activeGroupIndex===a._index?(function(){var quick=groups().filter(function(t){return tags.indexOf(t)===-1});return '<div class="group-panel"><div class="current-tags"></div><div class="group-edit-row"><input class="group-editor" data-edit-index="'+a._index+'" placeholder="新增標籤" value=""><div class="group-edit-actions"><button class="group-icon-btn group-save" data-save-index="'+a._index+'" title="新增標籤" aria-label="新增標籤"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></button><button class="group-icon-btn group-cancel" title="取消" aria-label="取消"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10"></path><path d="M17 7L7 17"></path></svg></button></div></div>'+(quick.length?'<div class="quick-tags">'+quick.map(function(t){return '<button class="quick-tag" type="button" data-tag-add="'+a._index+'" data-tag-value="'+escapeAttr(t)+'"><span>'+escapeHtml(t)+'</span></button>'}).join("")+'</div>':'')+'</div>'})():"";var statusAction=a.status==="需重新確認"?'<button class="btn account-status-action" type="button" data-account-reconnect="'+a._index+'">重新確認</button>':a.status==="需補權限"?'<button class="btn account-status-action" type="button" data-account-permission="'+a._index+'">補齊權限</button>':"";var favoriteButton='<button class="fav-btn account-fav-left '+(a.favorite?'active':'')+'" data-fav="'+a._index+'" title="我的最愛" aria-label="我的最愛">'+heartIcon+'</button>';var outerHandle=accountEditMode?'<button class="account-drag-handle account-action" draggable="true" data-account-drag-handle="'+a._index+'" title="拖曳排序" aria-label="拖曳排序"><svg class="drag-handle-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h.01"></path><path d="M15 6h.01"></path><path d="M9 12h.01"></path><path d="M15 12h.01"></path><path d="M9 18h.01"></path><path d="M15 18h.01"></path></svg></button>':'';var actions=accountEditMode?'<div class="account-actions"><button class="group-btn account-action" data-open-group="'+a._index+'" title="標籤" aria-label="標籤">'+groupIcon+'</button><button class="btn danger account-remove account-action account-action-danger" data-remove-account="'+a._index+'" title="移除帳戶" aria-label="移除帳戶">'+removeIcon+'</button></div>':'<div class="account-actions"></div>';return '<div class="account-row '+(accountEditMode?'is-editing':'')+'" data-index="'+a._index+'"><div class="account-drag-cell">'+outerHandle+'</div><article class="item-card account '+(accountEditMode?'is-editing':'')+'" draggable="false" data-index="'+a._index+'"><div class="account-top"><div class="account-title">'+favoriteButton+'<div class="avatar">'+youtubeIcon()+'</div><div class="account-copy"><div class="account-name-line"><strong>'+escapeHtml(a.name)+'</strong><span class="account-status-inline">'+accountStatusIconHtml(a.status)+statusAction+'</span></div>'+badge+'</div></div>'+actions+'</div>'+panel+'</article></div>'}).join("")||'<div class="hint">目前沒有符合條件的帳號。</div>';bindAccountControls();bindAccountDrag()}
 function removeAccountAt(index){if(accounts.length<=1){toast("至少保留一個帳戶");return}var account=accounts[index];if(!account)return;showConfirmDialog({title:"移除帳戶",body:"確定要移除帳戶「"+account.name+"」嗎？",confirmText:"移除",onConfirm:function(){showConfirmDialog({title:"再次確認",body:"這會從目前 demo 中移除此帳戶與相關本機資料。要繼續嗎？",confirmText:"移除",onConfirm:function(){accounts.splice(index,1);delete accountPlaylists[account.id];delete accountHealth[account.id];queue=queue.filter(function(item){var ids=item.accountIds||[item.accountId];return ids.indexOf(account.id)===-1});if(activeAccountId()===account.id)localStorage.setItem("mvp_active_account",accounts[0].id);var publishIds=selectedPublishAccountIds().filter(function(id){return id!==account.id});if(!publishIds.length)publishIds=[accounts[0].id];localStorage.setItem("mvp_publish_accounts",JSON.stringify(publishIds));localStorage.setItem("mvp_publish_account",publishIds[0]);save();renderAccounts();renderAccountSwitcher();renderPublishTargets();renderPlaylistOptions();renderQueue();renderComposer();renderChart(localStorage.getItem("mvp_chart_range")||"7");toast("已移除帳戶")}})}})}function bindAccountControls(){qa(".fav-btn").forEach(function(btn){btn.onclick=function(event){if(!accountEditMode){event.preventDefault();return}var i=Number(btn.dataset.fav);accounts[i].favorite=!accounts[i].favorite;save();renderAccounts();toast(accounts[i].favorite?"已加入我的最愛":"已從我的最愛移除")}});qa(".group-btn").forEach(function(btn){btn.onclick=function(){var i=Number(btn.dataset.openGroup);activeGroupIndex=activeGroupIndex===i?null:i;renderAccounts()}});qa(".group-save").forEach(function(btn){btn.onclick=function(){var i=Number(btn.dataset.saveIndex),input=q('.group-editor[data-edit-index="'+i+'"]'),value=input.value.trim();if(!value){input.focus();return}var tags=accountTags(accounts[i]);if(tags.indexOf(value)===-1)tags.push(value);setAccountTags(accounts[i],tags);save();renderAccounts();toast("已新增標籤："+value)}});qa(".tag-remove").forEach(function(btn){btn.onclick=function(event){event.preventDefault();event.stopPropagation();var i=Number(btn.dataset.tagRemove),value=btn.dataset.tagValue,tags=accountTags(accounts[i]).filter(function(t){return t!==value});setAccountTags(accounts[i],tags);save();renderAccounts();toast("已移除標籤："+value)}});bindTagDragControls();qa(".quick-tag").forEach(function(btn){btn.onclick=function(){var i=Number(btn.dataset.tagAdd),value=btn.dataset.tagValue,tags=accountTags(accounts[i]);if(tags.indexOf(value)===-1)tags.push(value);setAccountTags(accounts[i],tags);save();renderAccounts();toast("已套用標籤："+value)}});qa(".group-cancel").forEach(function(btn){btn.onclick=function(){activeGroupIndex=null;renderAccounts()}});qa(".group-editor").forEach(function(input){input.onkeydown=function(event){if(event.key==="Enter"){event.preventDefault();var i=Number(input.dataset.editIndex),value=input.value.trim();if(!value)return;var tags=accountTags(accounts[i]);if(tags.indexOf(value)===-1)tags.push(value);setAccountTags(accounts[i],tags);save();renderAccounts();toast("已新增標籤："+value)}if(event.key==="Escape"){activeGroupIndex=null;renderAccounts()}}});qa(".account-remove").forEach(function(btn){btn.onclick=function(){removeAccountAt(Number(btn.dataset.removeAccount))}});qa("[data-status-help]").forEach(function(btn){btn.onclick=function(event){event.preventDefault();event.stopPropagation();var status=btn.dataset.statusHelp,key=status==="需重新確認"?"accountReconnect":status==="需補權限"?"accountPermission":"accountConnected";showHelpPopover(key,btn)}});qa("[data-account-reconnect]").forEach(function(btn){btn.onclick=function(){toast("之後會開啟重新確認流程")}});qa("[data-account-permission]").forEach(function(btn){btn.onclick=function(){toast("之後會開啟補齊權限流程")}})}
@@ -72,7 +52,7 @@ var tagDragState=null,accountDragState=null;function bindTagDragControls(){qa(".
 function queueStatusLabel(status){if(status==="排程發文")return "等待中";return status||"等待中"}function formatQueueTime(value){if(!value||value==="未設定")return "未設定";var parts=String(value).split("T");if(parts.length!==2)return value;var d=parts[0].split("-"),t=parts[1];return d.length===3?Number(d[1])+"/"+Number(d[2])+" "+t:t}function renderQueue(){var hasQueue=queue.length>0;q("#queuePanel").classList.toggle("is-hidden",!hasQueue);q("#queueList").innerHTML=queue.map(function(t,i){return '<div class="queue-row"><strong>'+escapeHtml(t.title)+'</strong><div class="meta"><span></span><span>'+escapeHtml(formatQueueTime(t.time))+'</span></div><div class="toolbar"><span class="badge info">'+escapeHtml(queueStatusLabel(t.status))+'</span><button class="btn danger" data-remove-task="'+i+'">移除</button></div></div>'}).join("");renderHealth();qa("[data-remove-task]").forEach(function(b){b.onclick=function(){queue.splice(Number(b.dataset.removeTask),1);save();renderQueue();toast("已移除排程")}})}
 function addDemoAccount(){var next=accounts.length+1,id="demo"+Date.now();var statusCycle=["已連線","需重新確認","需補權限"];var status=statusCycle[(next-1)%statusCycle.length];var account={id:id,name:"YouTube 測試帳號 "+next,platform:"YouTube",group:"",favorite:false,status:status,expires:"2026-09-30",color:["#64748b","#475569","#334155","#52525b"][next%4],avatar:String(next),dataStart:"2026-06-01",dataEnd:"2026-06-30"};createDemoContentAnalytics(id,next);accounts.push(account);accountPlaylists[id]=["測試播放清單","Shorts 測試"];accountHealth[id]=[{key:"auth",state:status==="已連線"?"ok":"warn",icon:status==="已連線"?"✓":"!",title:status==="已連線"?"連線正常":status,text:status==="已連線"?"Demo 帳號":"需要處理"},{key:"sync",state:"ok",icon:"↻",title:"資料已同步",text:"剛剛",action:true}];save();renderAccounts();renderAccountSwitcher();renderPublishTargets();renderPlaylistOptions();toast("已新增測試帳戶："+status)}function renderPlaylistOptions(){var select=q("#playlistInput");if(!select)return;var current=select.value,account=selectedPublishAccount(),list=accountPlaylists[account.id]||[];select.innerHTML='<option value=""></option>'+list.map(function(name){return '<option>'+escapeHtml(name)+'</option>'}).join("");select.value=list.indexOf(current)>-1?current:""}function showPlaylistCreate(open){var box=q("#playlistCreate"),input=q("#playlistNameInput");if(box)box.classList.toggle("open",!!open);if(open&&input){input.value="";setTimeout(function(){input.focus()},0)}}function addPlaylistForCurrentAccount(){var input=q("#playlistNameInput"),name=input&&input.value.trim();if(!name){if(input)input.focus();return}var account=selectedPublishAccount(),list=accountPlaylists[account.id]||(accountPlaylists[account.id]=[]);if(list.indexOf(name)===-1)list.push(name);renderPlaylistOptions();q("#playlistInput").value=name;showPlaylistCreate(false);renderComposer();toast("已新增播放清單")}function deleteSelectedPlaylist(){var select=q("#playlistInput"),name=select&&select.value;if(!name){toast("請先選擇播放清單");return}showConfirmDialog({title:"刪除播放清單",body:"確定要刪除播放清單「"+name+"」嗎？",confirmText:"刪除",onConfirm:function(){showConfirmDialog({title:"再次確認",body:"刪除後將從此帳號的播放清單中移除。要繼續嗎？",confirmText:"刪除",onConfirm:function(){var account=selectedPublishAccount(),list=accountPlaylists[account.id]||[];accountPlaylists[account.id]=list.filter(function(item){return item!==name});renderPlaylistOptions();renderComposer();toast("已刪除播放清單")}})}})}
 function renderPublishTargets(){var selectedIds=selectedPublishAccountIds();q("#publishTargets").innerHTML=accounts.map(function(a){var active=selectedIds.indexOf(a.id)>-1;return '<button class="target-card target-card-plain '+(active?'active':'')+'" type="button" data-publish-account="'+escapeAttr(a.id)+'" aria-pressed="'+(active?'true':'false')+'"><input class="target-check" type="checkbox" tabindex="-1" '+(active?'checked':'')+' aria-hidden="true"><strong>'+escapeHtml(a.name)+'</strong></button>'}).join("");qa("[data-publish-account]").forEach(function(btn){btn.onclick=function(){var ids=selectedPublishAccountIds(),id=btn.dataset.publishAccount;if(ids.indexOf(id)>-1){if(ids.length===1){toast("至少保留一個發布目標");return}ids=ids.filter(function(item){return item!==id})}else{ids.push(id)}localStorage.setItem("mvp_publish_accounts",JSON.stringify(ids));localStorage.setItem("mvp_publish_account",ids[0]);renderPublishTargets();renderPlaylistOptions();renderComposer()}})}function fieldValue(id,fallback){var el=q("#"+id);return el?el.value:fallback||""}function checkedValue(name,fallback){var el=q('input[name="'+name+'"]:checked');return el?el.value:fallback}function checkedState(id){var el=q("#"+id);return !!(el&&el.checked)}function audienceChoice(){var el=q('input[name="audienceChoice"]:checked');return el?el.value:""}function isMadeForKids(){return audienceChoice()==="kids"}function ageRestrictionChoice(){var el=q('input[name="ageRestrictionChoice"]:checked');return el?el.value:"false"}function visibilityLabel(value){return value==="public"?"公開":value==="unlisted"?"不公開":value==="scheduled"?"排程公開":"私人"}function syncCommentsAvailability(visibility,madeForKids){var select=q("#commentsInput"),field=q("#commentsField"),note=q("#commentsNote");if(!select)return "";var disabled=visibility==="private"||madeForKids;select.disabled=disabled;if(disabled){select.value="off"}if(field){field.classList.toggle("is-disabled",disabled);field.classList.toggle("restricted-control",disabled)}if(note)note.textContent="";var tip=q("#commentsRestrictionTip");if(tip)tip.textContent=madeForKids?"這部影片已設成「兒童專屬」，因此這題不開放選答。":visibility==="private"?"這部影片目前設為私人，因此留言功能不開放選答。":"";return select.value}function syncAudienceRestrictions(madeForKids){var ageInputs=qa('input[name="ageRestrictionChoice"]'),ageDetails=q(".age-settings"),notify=q("#notifyInput"),notifyLine=notify&&notify.closest(".check-line");if(madeForKids){ageInputs.forEach(function(input){input.checked=input.value==="false";input.disabled=false;input.setAttribute("aria-disabled","true")});if(ageDetails)ageDetails.classList.add("is-disabled");if(notify){notify.checked=false;notify.disabled=true}if(notifyLine)notifyLine.classList.add("is-disabled")}else{ageInputs.forEach(function(input){input.disabled=false;input.removeAttribute("aria-disabled")});if(ageDetails)ageDetails.classList.remove("is-disabled");if(notify)notify.disabled=false;if(notifyLine)notifyLine.classList.remove("is-disabled")}}function categoryLabel(value){var el=q("#categoryInput");if(!el)return value||"未設定";var option=[].slice.call(el.options).find(function(item){return item.value===value});return option?option.textContent:value||"未設定"}function setFieldError(id,message){var field=q('[data-field="'+id+'"]'),err=q("#"+id+"Error");if(field)field.classList.toggle("has-error",!!message);if(err)err.textContent=message||""}function validateComposer(mode){setFieldError("title","");setFieldError("media","");setFieldError("audience","");if(mode==="儲存草稿")return true;var title=q("#titleInput").value.trim();if(!title){setFieldError("title","請輸入標題。");q("#titleInput").focus();return false}if(!fileEntry("media")){setFieldError("media","請選擇影片檔案。");var media=q('[data-field="media"]');if(media)media.scrollIntoView({block:"center"});return false}if(!audienceChoice()){setFieldError("audience","請選擇觀眾設定。");var audience=q('[data-field="audience"]');if(audience)audience.scrollIntoView({block:"center"});return false}return true}
-function renderComposer(){var title=q("#titleInput").value.trim(),content=q("#contentInput").value.trim(),type=q("#contentType").value,mode=q("#publishMode").value,targets=selectedPublishAccounts(),target=targets[0]||activeAccount();var visibility=fieldValue("visibilityInput","private"),playlist=fieldValue("playlistInput",""),category=fieldValue("categoryInput",""),tags=fieldValue("tagsInput","").trim(),madeForKids=isMadeForKids();syncAudienceRestrictions(madeForKids);var ageRestricted=ageRestrictionChoice()==="true",notify=checkedState("notifyInput"),paidPromo=checkedState("paidPromoInput"),aiDisclosure=checkedState("aiDisclosureInput"),embedAllowed=checkedState("embedInput"),license=fieldValue("licenseInput","youtube"),comments=syncCommentsAvailability(visibility,madeForKids),remix=fieldValue("remixInput","videoAudio");var media=q("#mediaInput"),cover=q("#coverInput"),caption=q("#captionInput");syncFileInput("mediaInput","media");syncFileInput("coverInput","cover");syncFileInput("captionInput","caption");var mediaEntry=fileEntry("media"),coverEntry=fileEntry("cover"),captionEntry=fileEntry("caption");var mediaName=mediaEntry?mediaEntry.name:"尚未選擇影片";var coverName=coverEntry?coverEntry.name:"尚未選擇封面";var captionName=captionEntry?captionEntry.name:"未上傳字幕";var mediaLabel=q("#mediaFileName"),coverLabel=q("#coverFileName"),captionLabel=q("#captionFileName");if(mediaLabel)mediaLabel.textContent=mediaName;if(coverLabel)coverLabel.textContent=coverName;if(captionLabel)captionLabel.textContent=captionEntry?captionName:"";var removeMedia=q("#removeMediaBtn"),removeCover=q("#removeCoverBtn"),removeCaption=q("#removeCaptionBtn");setFileRemoveButton(removeMedia,mediaEntry);setFileRemoveButton(removeCover,coverEntry);setFileRemoveButton(removeCaption,captionEntry);var alerts=[];if(title.length>100)alerts.push({text:"標題已超過 YouTube 100 字限制。",type:"warn"});if(content.length>5000)alerts.push({text:"說明已超過 YouTube 5000 字限制。",type:"warn"});if(mode==="排程發布"&&!q("#publishTime").value)alerts.push({text:"排程發布需要設定時間。",type:"warn"});q("#rulesList").innerHTML=alerts.map(function(item){return '<div class="rule"><span>'+escapeHtml(item.text)+'</span><span class="badge '+item.type+'">'+(item.type==="warn"?"提醒":"標記")+'</span></div>'}).join("");q("#scheduleBtn").textContent=mode==="立即發布"?"立即發布":mode==="儲存草稿"?"儲存草稿":"加入佇列";q("#publishTime").closest(".field").classList.toggle("is-hidden",mode!=="排程發布");var previewHero=coverEntry?previewFileHtml("cover","封面","尚未選擇封面"):mediaEntry?previewFileHtml("media","影片","尚未選擇影片"):"";var previewMedia=previewHero?'<div class="preview-media">'+previewHero+'</div>':"";var badges='<div class="preview-badges"><span class="badge neutral">'+escapeHtml(type)+'</span><span class="badge neutral">'+escapeHtml(visibilityLabel(visibility))+'</span></div>';var settings='<div class="preview-settings"><div class="preview-setting"><span>瀏覽權限</span><span>'+escapeHtml(visibilityLabel(visibility))+'</span></div><div class="preview-setting"><span>播放清單</span><span>'+escapeHtml(playlist||"未加入")+'</span></div><div class="preview-setting"><span>目標觀眾</span><span>'+escapeHtml(audienceChoice()?madeForKids?"兒童專屬":"非兒童專屬":"未選擇")+'</span></div><div class="preview-setting"><span>年齡限制</span><span>'+(ageRestricted?"僅限成人":"未限制")+'</span></div><div class="preview-setting"><span>付費宣傳</span><span>'+(paidPromo?"是":"否")+'</span></div><div class="preview-setting"><span>AI 聲明</span><span>'+(aiDisclosure?"是":"否")+'</span></div></div>';var previewTitle=title?'<strong>'+escapeHtml(title)+'</strong>':"";var previewDescription=content?'<p>'+escapeHtml(content.split("\n").slice(0,3).join("\n"))+'</p>':"";var targetLabel=targets.length>1?targets.length+" 個發布目標":target.name;var channel='<div class="youtube-channel"><span>'+escapeHtml(targetLabel)+'</span></div>';var previewHead=previewTitle||previewDescription?'<div class="youtube-preview-head">'+previewTitle+channel+previewDescription+'</div>':channel;q("#previewList").innerHTML='<div class="composer-preview-list">'+previewMedia+'<div class="queue-row preview-summary">'+previewHead+badges+settings+'</div></div>'}
+function renderComposer(){var title=q("#titleInput").value.trim(),content=q("#contentInput").value.trim(),type=q("#contentType").value,mode=q("#publishMode").value,targets=selectedPublishAccounts(),target=targets[0]||activeAccount();var visibility=fieldValue("visibilityInput","private"),playlist=fieldValue("playlistInput",""),category=fieldValue("categoryInput",""),tags=fieldValue("tagsInput","").trim(),madeForKids=isMadeForKids();syncAudienceRestrictions(madeForKids);var ageRestricted=ageRestrictionChoice()==="true",notify=checkedState("notifyInput"),paidPromo=checkedState("paidPromoInput"),aiDisclosure=checkedState("aiDisclosureInput"),embedAllowed=checkedState("embedInput"),license=fieldValue("licenseInput","youtube"),comments=syncCommentsAvailability(visibility,madeForKids),remix=fieldValue("remixInput","videoAudio");var media=q("#mediaInput"),cover=q("#coverInput"),caption=q("#captionInput");syncFileInput("mediaInput","media");syncFileInput("coverInput","cover");syncFileInput("captionInput","caption");var mediaEntry=fileEntry("media"),coverEntry=fileEntry("cover"),captionEntry=fileEntry("caption");var mediaName=mediaEntry?mediaEntry.name:"尚未選擇影片";var coverName=coverEntry?coverEntry.name:"尚未選擇封面";var captionName=captionEntry?captionEntry.name:"未上傳字幕";var mediaLabel=q("#mediaFileName"),coverLabel=q("#coverFileName"),captionLabel=q("#captionFileName");if(mediaLabel)mediaLabel.textContent=mediaName;if(coverLabel)coverLabel.textContent=coverName;if(captionLabel)captionLabel.textContent=captionEntry?captionName:"";var removeMedia=q("#removeMediaBtn"),removeCover=q("#removeCoverBtn"),removeCaption=q("#removeCaptionBtn");if(removeMedia)removeMedia.classList.toggle("is-hidden",!mediaEntry);if(removeCover)removeCover.classList.toggle("is-hidden",!coverEntry);if(removeCaption)removeCaption.classList.toggle("is-hidden",!captionEntry);var alerts=[];if(title.length>100)alerts.push({text:"標題已超過 YouTube 100 字限制。",type:"warn"});if(content.length>5000)alerts.push({text:"說明已超過 YouTube 5000 字限制。",type:"warn"});if(mode==="排程發布"&&!q("#publishTime").value)alerts.push({text:"排程發布需要設定時間。",type:"warn"});q("#rulesList").innerHTML=alerts.map(function(item){return '<div class="rule"><span>'+escapeHtml(item.text)+'</span><span class="badge '+item.type+'">'+(item.type==="warn"?"提醒":"標記")+'</span></div>'}).join("");q("#scheduleBtn").textContent=mode==="立即發布"?"立即發布":mode==="儲存草稿"?"儲存草稿":"加入佇列";q("#publishTime").closest(".field").classList.toggle("is-hidden",mode!=="排程發布");var previewHero=coverEntry?previewFileHtml("cover","封面","尚未選擇封面"):mediaEntry?previewFileHtml("media","影片","尚未選擇影片"):"";var previewMedia=previewHero?'<div class="preview-media">'+previewHero+'</div>':"";var badges='<div class="preview-badges"><span class="badge neutral">'+escapeHtml(type)+'</span><span class="badge neutral">'+escapeHtml(visibilityLabel(visibility))+'</span></div>';var settings='<div class="preview-settings"><div class="preview-setting"><span>瀏覽權限</span><span>'+escapeHtml(visibilityLabel(visibility))+'</span></div><div class="preview-setting"><span>播放清單</span><span>'+escapeHtml(playlist||"未加入")+'</span></div><div class="preview-setting"><span>目標觀眾</span><span>'+escapeHtml(audienceChoice()?madeForKids?"兒童專屬":"非兒童專屬":"未選擇")+'</span></div><div class="preview-setting"><span>年齡限制</span><span>'+(ageRestricted?"僅限成人":"未限制")+'</span></div><div class="preview-setting"><span>付費宣傳</span><span>'+(paidPromo?"是":"否")+'</span></div><div class="preview-setting"><span>AI 聲明</span><span>'+(aiDisclosure?"是":"否")+'</span></div></div>';var previewTitle=title?'<strong>'+escapeHtml(title)+'</strong>':"";var previewDescription=content?'<p>'+escapeHtml(content.split("\n").slice(0,3).join("\n"))+'</p>':"";var targetLabel=targets.length>1?targets.length+" 個發布目標":target.name;var channel='<div class="youtube-channel"><span>'+escapeHtml(targetLabel)+'</span></div>';var previewHead=previewTitle||previewDescription?'<div class="youtube-preview-head">'+previewTitle+channel+previewDescription+'</div>':channel;q("#previewList").innerHTML='<div class="composer-preview-list">'+previewMedia+'<div class="queue-row preview-summary">'+previewHead+badges+settings+'</div></div>'}
 
 /* Dashboard-only platform switch source. */
 function ensureDashboardPlatformSwitch(){
@@ -85,7 +65,7 @@ function ensureDashboardPlatformSwitch(){
   wrap.innerHTML='<button class="account-current" id="platformSwitchBtn" type="button" title="切換平台" aria-label="切換平台"><div class="profile-avatar" id="currentPlatformIcon"><svg class="yt-play" viewBox="0 0 32 23" aria-hidden="true" focusable="false"><rect class="yt-play-bg" x="0" y="0" width="32" height="23" rx="6"></rect><path class="yt-play-triangle" d="M13 7.2v8.6l7-4.3z"></path></svg></div><div><strong id="currentPlatformName">YouTube</strong><span>平台資料</span></div><span class="chevron" aria-hidden="true"></span></button><div class="account-menu" id="platformMenu"><button class="account-option active" type="button" data-platform-id="youtube"><div class="profile-avatar" style="background:transparent"><svg class="yt-play" viewBox="0 0 32 23" aria-hidden="true" focusable="false"><rect class="yt-play-bg" x="0" y="0" width="32" height="23" rx="6"></rect><path class="yt-play-triangle" d="M13 7.2v8.6l7-4.3z"></path></svg></div><div><strong>YouTube</strong><span>帳號 / 內容數據</span></div></button></div>';
   return wrap;
 }
-function setupDashboardControls(){var header=q("header");if(!header)return;var host=q("#insightControlHost");if(!host){host=document.createElement("div");host.id="insightControlHost";host.className="insight-control-host";header.insertAdjacentElement("afterend",host)}var row=q("#dashboardControlRow");if(!row){row=document.createElement("div");row.id="dashboardControlRow";row.className="dashboard-control-row"}if(row.parentElement!==host)host.appendChild(row);var platform=ensureDashboardPlatformSwitch(),account=q(".top-account-wrap"),report=q(".report-switch"),range=q("#rangeSelect");if(platform&&platform.parentElement!==row)row.appendChild(platform);if(account&&account.parentElement!==row)row.appendChild(account);if(report&&report.parentElement!==row)row.appendChild(report);if(range&&range.parentElement!==row)row.appendChild(range);}function boot(){setupDashboardControls();var now=new Date();now.setHours(now.getHours()+3);q("#publishTime").value=now.toISOString().slice(0,16);applyThemeMode(localStorage.getItem("mvp_theme_mode")||"system");renderAccountSwitcher();renderChart(localStorage.getItem("mvp_chart_range")||"7");renderAccounts();renderQueue();renderPublishTargets();renderPlaylistOptions();renderComposer();tab(localStorage.getItem("mvp_active_tab")||"dashboard");qa(".nav button").forEach(function(b){b.onclick=function(){tab(b.dataset.tab)}});qa("[data-open-composer]").forEach(function(b){b.onclick=function(){tab("composer")}});if(q("#reportSwitchBtn")){q("#reportSwitchBtn").onclick=function(event){event.stopPropagation();q("#reportMenu").classList.toggle("open")};qa("[data-report-tab]").forEach(function(b){b.onclick=function(event){event.stopPropagation();tab(b.dataset.reportTab)}})}if(q("#moreBtn")){q("#moreBtn").onclick=function(event){event.stopPropagation();var menu=q("#moreMenu"),more=q("#moreBtn"),panel=q("#appearancePanel"),appearance=q("#appearanceBtn");if(menu)menu.classList.toggle("open");var isOpen=!!(menu&&menu.classList.contains("open"));if(more)more.classList.toggle("active",isOpen);if(!isOpen){if(panel)panel.classList.remove("open");if(appearance)appearance.classList.remove("open")}setAsideMenuOpen(isOpen)}}if(q("#appearanceBtn")){q("#appearanceBtn").onclick=function(event){event.stopPropagation();var menu=q("#moreMenu"),panel=q("#appearancePanel"),btn=q("#appearanceBtn"),more=q("#moreBtn");if(menu)menu.classList.add("open");if(more)more.classList.add("active");if(panel)panel.classList.toggle("open");if(btn)btn.classList.toggle("open");setAsideMenuOpen(true)}}if(q("#reportIssueBtn")){q("#reportIssueBtn").onclick=function(event){event.stopPropagation();closeSideMenus();showReportDialog()}}qa("[data-theme-choice]").forEach(function(btn){btn.onclick=function(event){event.stopPropagation();applyThemeMode(btn.dataset.themeChoice);closeSideMenus()}});if(window.matchMedia){window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",function(){if((document.body.dataset.themeMode||"system")==="system")applyThemeMode("system")})}if(q("#platformSwitchBtn")){q("#platformSwitchBtn").onclick=function(event){event.stopPropagation();var menu=q("#platformMenu"),moreMenu=q("#moreMenu"),more=q("#moreBtn"),panel=q("#appearancePanel"),appearance=q("#appearanceBtn");if(moreMenu)moreMenu.classList.remove("open");if(more)more.classList.remove("active");if(panel)panel.classList.remove("open");if(appearance)appearance.classList.remove("open");if(menu)menu.classList.remove("open");setAsideMenuOpen(false);localStorage.setItem("mvp_active_platform","youtube");tab("dashboard");renderChart(localStorage.getItem("mvp_chart_range")||"7")};qa("[data-platform-id]").forEach(function(btn){btn.onclick=function(event){event.stopPropagation();localStorage.setItem("mvp_active_platform",btn.dataset.platformId);closeAccountMenu();tab("dashboard");renderChart(localStorage.getItem("mvp_chart_range")||"7")}});q(".platform-switch").onclick=function(event){event.stopPropagation()}}if(q("#topAccount")){q("#topAccount").onclick=function(event){event.stopPropagation();q("#topAccountMenu").classList.toggle("open")};q(".top-account-wrap").onclick=function(event){event.stopPropagation()}}q("aside").onclick=function(event){event.stopPropagation()};q("aside").onmouseleave=function(){var moreMenu=q("#moreMenu");if(!(moreMenu&&moreMenu.classList.contains("open")))closeSideMenus()};document.addEventListener("click",function(){closeSideMenus();closeHelpPopover();var menu=q("#reportMenu");if(menu)menu.classList.remove("open")});document.addEventListener("keydown",handleGlobalEscape);q("#rangeSelect").onchange=function(){renderChart(q("#rangeSelect").value)};qa("#chartTypeTabs button").forEach(function(btn){btn.onclick=function(){localStorage.setItem("mvp_chart_type",btn.dataset.chartType);renderChart(localStorage.getItem("mvp_chart_range")||"7")}});q("#applyCustomRange").onclick=function(){var s=q("#customStart"),e=q("#customEnd");if(s.value>e.value){toast("開始日期不能晚於結束日期");return}renderChart("custom");toast("已套用自訂時間範圍")};qa("[data-chart-metric]").forEach(function(card){card.onclick=function(){localStorage.setItem("mvp_chart_metric",card.dataset.chartMetric);renderChart(localStorage.getItem("mvp_chart_range")||"7")}});q("#groupFilter").onchange=renderAccounts;q("#accountSearch").oninput=function(){var wrap=q("#accountSearchWrap");if(wrap)wrap.classList.toggle("has-value",!!q("#accountSearch").value.trim());renderAccounts()};if(q("#accountSearchToggle")){q("#accountSearchToggle").onclick=function(){var wrap=q("#accountSearchWrap"),input=q("#accountSearch");if(wrap)wrap.classList.toggle("open");if(wrap&&wrap.classList.contains("open")&&input)setTimeout(function(){input.focus()},0)}}if(q("#accountEditToggle"))q("#accountEditToggle").onclick=function(){accountEditMode=!accountEditMode;if(!accountEditMode)activeGroupIndex=null;renderAccounts();toast(accountEditMode?"已進入編輯帳戶":"已結束編輯")};if(q("#addDemoAccountBtn")){if(demoToolsEnabled()){q("#addDemoAccountBtn").onclick=addDemoAccount}else{q("#addDemoAccountBtn").classList.add("is-hidden")}}if(q("#addPlaylistBtn"))q("#addPlaylistBtn").onclick=function(){showPlaylistCreate(true)};if(q("#deletePlaylistBtn"))q("#deletePlaylistBtn").onclick=deleteSelectedPlaylist;if(q("#savePlaylistBtn"))q("#savePlaylistBtn").onclick=addPlaylistForCurrentAccount;if(q("#cancelPlaylistBtn"))q("#cancelPlaylistBtn").onclick=function(){showPlaylistCreate(false)};if(q("#playlistNameInput"))q("#playlistNameInput").onkeydown=function(event){if(event.key==="Enter")addPlaylistForCurrentAccount();if(event.key==="Escape")showPlaylistCreate(false)};qa("[data-help]").forEach(function(btn){btn.onclick=function(event){event.preventDefault();event.stopPropagation();showHelpPopover(btn.dataset.help,btn)}});qa('input[name="audienceChoice"]').forEach(function(el){el.onchange=function(){if(audienceChoice())setFieldError("audience","");renderComposer()}});qa('input[name="ageRestrictionChoice"]').forEach(function(el){el.onclick=function(event){if(isMadeForKids()){event.preventDefault();qa('input[name="ageRestrictionChoice"]').forEach(function(input){input.checked=input.value==="false"});renderComposer();return false}};el.onchange=renderComposer});["contentInput","titleInput","contentType","publishMode","visibilityInput","playlistInput","categoryInput","tagsInput","mediaInput","coverInput","captionInput","publishTime","licenseInput","embedInput","notifyInput","commentsInput","remixInput","paidPromoInput","aiDisclosureInput"].forEach(function(id){var el=q("#"+id);if(el){el.oninput=function(){if(id==="titleInput"&&el.value.trim())setFieldError("title","");renderComposer()};el.onchange=renderComposer}});q("#scheduleBtn").onclick=function(){var mode=q("#publishMode").value;if(!validateComposer(mode))return;var button=q("#scheduleBtn"),originalText=button.textContent;if(mode==="排程發布"){var targets=selectedPublishAccounts();queue.unshift({title:q("#titleInput").value.trim(),platform:"YouTube",accountId:targets[0].id,accountIds:targets.map(function(a){return a.id}),accountName:targets.map(function(a){return a.name}).join("、"),time:q("#publishTime").value||"未設定",status:"排程發布",visibility:fieldValue("visibilityInput","private"),playlist:fieldValue("playlistInput",""),madeForKids:isMadeForKids()});save();renderQueue();toast("已加入發文佇列");return}if(mode==="立即發布"){button.disabled=true;button.textContent="準備發布...";toast("準備發布...");setTimeout(function(){button.disabled=false;renderComposer();toast("目前為預覽模式，尚未送出到 YouTube")},900);return}localStorage.setItem("mvp_youtube_draft",JSON.stringify({title:q("#titleInput").value.trim(),content:q("#contentInput").value,type:q("#contentType").value,accountIds:selectedPublishAccounts().map(function(a){return a.id}),visibility:fieldValue("visibilityInput","private"),playlist:fieldValue("playlistInput",""),madeForKids:isMadeForKids(),category:fieldValue("categoryInput",""),tags:fieldValue("tagsInput","")}));button.textContent="已儲存草稿";toast("已儲存草稿");setTimeout(renderComposer,900)};if(q("#removeMediaBtn"))q("#removeMediaBtn").onclick=function(){clearFileInput("mediaInput","media");setFieldError("media","")};if(q("#removeCoverBtn"))q("#removeCoverBtn").onclick=function(){clearFileInput("coverInput","cover")};if(q("#removeCaptionBtn"))q("#removeCaptionBtn").onclick=function(){clearFileInput("captionInput","caption")};}
+function setupDashboardControls(){var header=q("header");if(!header)return;var host=q("#insightControlHost");if(!host){host=document.createElement("div");host.id="insightControlHost";host.className="insight-control-host";header.insertAdjacentElement("afterend",host)}var row=q("#dashboardControlRow");if(!row){row=document.createElement("div");row.id="dashboardControlRow";row.className="dashboard-control-row"}if(row.parentElement!==host)host.appendChild(row);var platform=ensureDashboardPlatformSwitch(),account=q(".top-account-wrap"),report=q(".report-switch"),range=q("#rangeSelect");if(platform&&platform.parentElement!==row)row.appendChild(platform);if(account&&account.parentElement!==row)row.appendChild(account);if(report&&report.parentElement!==row)row.appendChild(report);if(range&&range.parentElement!==row)row.appendChild(range);}function boot(){setupDashboardControls();var now=new Date();now.setHours(now.getHours()+3);q("#publishTime").value=now.toISOString().slice(0,16);applyThemeMode(localStorage.getItem("mvp_theme_mode")||"system");renderAccountSwitcher();renderChart(localStorage.getItem("mvp_chart_range")||"7");renderAccounts();renderQueue();renderPublishTargets();renderPlaylistOptions();renderComposer();tab(localStorage.getItem("mvp_active_tab")||"dashboard");qa(".nav button").forEach(function(b){b.onclick=function(){tab(b.dataset.tab)}});qa("[data-open-composer]").forEach(function(b){b.onclick=function(){tab("composer")}});if(q("#reportSwitchBtn")){q("#reportSwitchBtn").onclick=function(event){event.stopPropagation();q("#reportMenu").classList.toggle("open")};qa("[data-report-tab]").forEach(function(b){b.onclick=function(event){event.stopPropagation();tab(b.dataset.reportTab)}})}if(q("#moreBtn")){q("#moreBtn").onclick=function(event){event.stopPropagation();var menu=q("#moreMenu"),more=q("#moreBtn"),panel=q("#appearancePanel"),appearance=q("#appearanceBtn");if(menu)menu.classList.toggle("open");var isOpen=!!(menu&&menu.classList.contains("open"));if(more)more.classList.toggle("active",isOpen);if(!isOpen){if(panel)panel.classList.remove("open");if(appearance)appearance.classList.remove("open")}setAsideMenuOpen(isOpen)}}if(q("#appearanceBtn")){q("#appearanceBtn").onclick=function(event){event.stopPropagation();var menu=q("#moreMenu"),panel=q("#appearancePanel"),btn=q("#appearanceBtn"),more=q("#moreBtn");if(menu)menu.classList.add("open");if(more)more.classList.add("active");if(panel)panel.classList.toggle("open");if(btn)btn.classList.toggle("open");setAsideMenuOpen(true)}}qa("[data-theme-choice]").forEach(function(btn){btn.onclick=function(event){event.stopPropagation();applyThemeMode(btn.dataset.themeChoice);closeSideMenus()}});if(window.matchMedia){window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",function(){if((document.body.dataset.themeMode||"system")==="system")applyThemeMode("system")})}if(q("#platformSwitchBtn")){q("#platformSwitchBtn").onclick=function(event){event.stopPropagation();var menu=q("#platformMenu"),moreMenu=q("#moreMenu"),more=q("#moreBtn"),panel=q("#appearancePanel"),appearance=q("#appearanceBtn");if(moreMenu)moreMenu.classList.remove("open");if(more)more.classList.remove("active");if(panel)panel.classList.remove("open");if(appearance)appearance.classList.remove("open");if(menu)menu.classList.remove("open");setAsideMenuOpen(false);localStorage.setItem("mvp_active_platform","youtube");tab("dashboard");renderChart(localStorage.getItem("mvp_chart_range")||"7")};qa("[data-platform-id]").forEach(function(btn){btn.onclick=function(event){event.stopPropagation();localStorage.setItem("mvp_active_platform",btn.dataset.platformId);closeAccountMenu();tab("dashboard");renderChart(localStorage.getItem("mvp_chart_range")||"7")}});q(".platform-switch").onclick=function(event){event.stopPropagation()}}if(q("#topAccount")){q("#topAccount").onclick=function(event){event.stopPropagation();q("#topAccountMenu").classList.toggle("open")};q(".top-account-wrap").onclick=function(event){event.stopPropagation()}}q("aside").onclick=function(event){event.stopPropagation()};q("aside").onmouseleave=function(){var moreMenu=q("#moreMenu");if(!(moreMenu&&moreMenu.classList.contains("open")))closeSideMenus()};document.addEventListener("click",function(){closeSideMenus();closeHelpPopover();var menu=q("#reportMenu");if(menu)menu.classList.remove("open")});document.addEventListener("keydown",handleGlobalEscape);q("#rangeSelect").onchange=function(){renderChart(q("#rangeSelect").value)};qa("#chartTypeTabs button").forEach(function(btn){btn.onclick=function(){localStorage.setItem("mvp_chart_type",btn.dataset.chartType);renderChart(localStorage.getItem("mvp_chart_range")||"7")}});q("#applyCustomRange").onclick=function(){var s=q("#customStart"),e=q("#customEnd");if(s.value>e.value){toast("開始日期不能晚於結束日期");return}renderChart("custom");toast("已套用自訂時間範圍")};qa("[data-chart-metric]").forEach(function(card){card.onclick=function(){localStorage.setItem("mvp_chart_metric",card.dataset.chartMetric);renderChart(localStorage.getItem("mvp_chart_range")||"7")}});q("#groupFilter").onchange=renderAccounts;q("#accountSearch").oninput=function(){var wrap=q("#accountSearchWrap");if(wrap)wrap.classList.toggle("has-value",!!q("#accountSearch").value.trim());renderAccounts()};if(q("#accountSearchToggle")){q("#accountSearchToggle").onclick=function(){var wrap=q("#accountSearchWrap"),input=q("#accountSearch");if(wrap)wrap.classList.toggle("open");if(wrap&&wrap.classList.contains("open")&&input)setTimeout(function(){input.focus()},0)}}if(q("#accountEditToggle"))q("#accountEditToggle").onclick=function(){accountEditMode=!accountEditMode;if(!accountEditMode)activeGroupIndex=null;renderAccounts();toast(accountEditMode?"已進入編輯帳戶":"已結束編輯")};if(q("#addDemoAccountBtn"))q("#addDemoAccountBtn").onclick=addDemoAccount;if(q("#addPlaylistBtn"))q("#addPlaylistBtn").onclick=function(){showPlaylistCreate(true)};if(q("#deletePlaylistBtn"))q("#deletePlaylistBtn").onclick=deleteSelectedPlaylist;if(q("#savePlaylistBtn"))q("#savePlaylistBtn").onclick=addPlaylistForCurrentAccount;if(q("#cancelPlaylistBtn"))q("#cancelPlaylistBtn").onclick=function(){showPlaylistCreate(false)};if(q("#playlistNameInput"))q("#playlistNameInput").onkeydown=function(event){if(event.key==="Enter")addPlaylistForCurrentAccount();if(event.key==="Escape")showPlaylistCreate(false)};qa("[data-help]").forEach(function(btn){btn.onclick=function(event){event.preventDefault();event.stopPropagation();showHelpPopover(btn.dataset.help,btn)}});qa('input[name="audienceChoice"]').forEach(function(el){el.onchange=function(){if(audienceChoice())setFieldError("audience","");renderComposer()}});qa('input[name="ageRestrictionChoice"]').forEach(function(el){el.onclick=function(event){if(isMadeForKids()){event.preventDefault();qa('input[name="ageRestrictionChoice"]').forEach(function(input){input.checked=input.value==="false"});renderComposer();return false}};el.onchange=renderComposer});["contentInput","titleInput","contentType","publishMode","visibilityInput","playlistInput","categoryInput","tagsInput","mediaInput","coverInput","captionInput","publishTime","licenseInput","embedInput","notifyInput","commentsInput","remixInput","paidPromoInput","aiDisclosureInput"].forEach(function(id){var el=q("#"+id);if(el){el.oninput=function(){if(id==="titleInput"&&el.value.trim())setFieldError("title","");renderComposer()};el.onchange=renderComposer}});q("#scheduleBtn").onclick=function(){var mode=q("#publishMode").value;if(!validateComposer(mode))return;var button=q("#scheduleBtn"),originalText=button.textContent;if(mode==="排程發布"){var targets=selectedPublishAccounts();queue.unshift({title:q("#titleInput").value.trim(),platform:"YouTube",accountId:targets[0].id,accountIds:targets.map(function(a){return a.id}),accountName:targets.map(function(a){return a.name}).join("、"),time:q("#publishTime").value||"未設定",status:"排程發布",visibility:fieldValue("visibilityInput","private"),playlist:fieldValue("playlistInput",""),madeForKids:isMadeForKids()});save();renderQueue();toast("已加入發文佇列");return}if(mode==="立即發布"){button.disabled=true;button.textContent="準備發布...";toast("準備發布...");setTimeout(function(){button.disabled=false;renderComposer();toast("目前為預覽模式，尚未送出到 YouTube")},900);return}localStorage.setItem("mvp_youtube_draft",JSON.stringify({title:q("#titleInput").value.trim(),content:q("#contentInput").value,type:q("#contentType").value,accountIds:selectedPublishAccounts().map(function(a){return a.id}),visibility:fieldValue("visibilityInput","private"),playlist:fieldValue("playlistInput",""),madeForKids:isMadeForKids(),category:fieldValue("categoryInput",""),tags:fieldValue("tagsInput","")}));button.textContent="已儲存草稿";toast("已儲存草稿");setTimeout(renderComposer,900)};if(q("#removeMediaBtn"))q("#removeMediaBtn").onclick=function(){clearFileInput("mediaInput","media");setFieldError("media","")};if(q("#removeCoverBtn"))q("#removeCoverBtn").onclick=function(){clearFileInput("coverInput","cover")};if(q("#removeCaptionBtn"))q("#removeCaptionBtn").onclick=function(){clearFileInput("captionInput","caption")};}
 boot();
 /* Account search auto collapse when empty. */
 (function(){
@@ -112,84 +92,6 @@ boot();
   });
 })();
 
-/* Final route and composer-target overrides. Keep refreshes on the current app page. */
-(function(){
-  function routeForTab(id){
-    if(id==='accounts')return '/accounts';
-    if(id==='composer')return '/composer';
-    return '/app';
-  }
-
-  function tabForRoute(path){
-    if(path.indexOf('/accounts')===0)return 'accounts';
-    if(path.indexOf('/composer')===0)return 'composer';
-    if(path.indexOf('/app')===0)return 'dashboard';
-    return 'dashboard';
-  }
-
-  function applyRouteTab(){
-    if(typeof tab!=='function')return;
-    tab(tabForRoute(window.location.pathname));
-  }
-
-  function bindRouteButtons(){
-    Array.prototype.slice.call(document.querySelectorAll('.nav button')).forEach(function(button){
-      button.onclick=function(){
-        var nextTab=button.dataset.tab||'dashboard';
-        tab(nextTab);
-        var nextPath=routeForTab(nextTab);
-        if(window.location.pathname!==nextPath){
-          window.history.pushState({tab:nextTab},'',nextPath);
-        }
-      };
-    });
-    Array.prototype.slice.call(document.querySelectorAll('[data-open-composer]')).forEach(function(button){
-      button.onclick=function(){
-        tab('composer');
-        if(window.location.pathname!=='/composer')window.history.pushState({tab:'composer'},'','/composer');
-      };
-    });
-  }
-
-  if(typeof renderPublishTargets==='function'){
-    renderPublishTargets=function(){
-      var selectedIds=selectedPublishAccountIds();
-      var host=document.querySelector('#publishTargets');
-      if(!host)return;
-      host.innerHTML=accounts.map(function(account){
-        var active=selectedIds.indexOf(account.id)>-1;
-        return '<button class="target-card target-account-card '+(active?'active':'')+'" type="button" data-publish-account="'+escapeAttr(account.id)+'" aria-pressed="'+(active?'true':'false')+'">'+
-          '<span class="target-checkmark" aria-hidden="true">'+(active?'✓':'')+'</span>'+
-          '<span class="target-avatar">'+youtubeIcon()+'</span>'+
-          '<span class="target-copy"><strong>'+escapeHtml(account.name)+'</strong></span>'+
-        '</button>';
-      }).join('');
-      Array.prototype.slice.call(host.querySelectorAll('[data-publish-account]')).forEach(function(button){
-        button.onclick=function(){
-          var ids=selectedPublishAccountIds();
-          var id=button.dataset.publishAccount;
-          if(ids.indexOf(id)>-1){
-            if(ids.length===1){toast('至少保留一個發布目標');return}
-            ids=ids.filter(function(item){return item!==id});
-          }else{
-            ids.push(id);
-          }
-          localStorage.setItem('mvp_publish_accounts',JSON.stringify(ids));
-          localStorage.setItem('mvp_publish_account',ids[0]);
-          renderPublishTargets();
-          renderPlaylistOptions();
-          renderComposer();
-        };
-      });
-    };
-    renderPublishTargets();
-  }
-
-  bindRouteButtons();
-  applyRouteTab();
-  window.addEventListener('popstate',applyRouteTab);
-})();
-
 /* Dashboard platform icon dropdown override */
 (function(){
   var btn=document.querySelector('#platformSwitchBtn');
@@ -210,967 +112,145 @@ boot();
   };
 })();
 
-/* Resilient sidebar report entry binding for deferred Next script loading. */
+
+/* Clean YouTube publish bridge for the Next backend. */
 (function(){
-  function bindSidebarReportEntry(){
-    var more=document.querySelector('#moreBtn');
-    var menu=document.querySelector('#moreMenu');
-    var panel=document.querySelector('#appearancePanel');
-    var appearance=document.querySelector('#appearanceBtn');
-    var report=document.querySelector('#reportIssueBtn');
-    var aside=document.querySelector('aside');
-    if(!more||!menu||!report)return;
-    more.onclick=function(event){
-      event.preventDefault();
-      event.stopPropagation();
-      menu.classList.toggle('open');
-      var open=menu.classList.contains('open');
-      more.classList.toggle('active',open);
-      if(aside)aside.classList.toggle('menu-open',open);
-      if(!open){
-        if(panel)panel.classList.remove('open');
-        if(appearance)appearance.classList.remove('open');
-      }
-    };
-    report.onclick=function(event){
-      event.preventDefault();
-      event.stopPropagation();
-      menu.classList.remove('open');
-      more.classList.remove('active');
-      if(panel)panel.classList.remove('open');
-      if(appearance)appearance.classList.remove('open');
-      if(aside)aside.classList.remove('menu-open');
-      if(typeof showReportDialog==='function')showReportDialog();
-    };
-  }
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',bindSidebarReportEntry);
-  }else{
-    bindSidebarReportEntry();
-  }
-  setTimeout(bindSidebarReportEntry,0);
-  setTimeout(bindSidebarReportEntry,250);
-})();
-
-/* Dashboard account switch modal and richer content insight overrides. */
-(function(){
-  function activePlatformCount(){
-    return 1;
-  }
-
-  function updateDashboardSwitchVisibility(){
-    var accountWrap=document.querySelector('.top-account-wrap');
-    var platformWrap=document.querySelector('.dashboard-control-row .platform-switch');
-    if(accountWrap)accountWrap.classList.toggle('is-hidden',accounts.length<=1);
-    if(platformWrap)platformWrap.classList.toggle('is-hidden',activePlatformCount()<=1);
-  }
-
-  function showAccountSwitchDialog(){
-    var pop=document.querySelector('#confirmPopover');
-    if(!pop)return;
-    var currentId=activeAccountId();
-    var rows=accounts.map(function(account){
-      var active=account.id===currentId;
-      return '<button class="account-switch-row '+(active?'active':'')+'" type="button" data-switch-account="'+escapeAttr(account.id)+'">'+
-        '<div class="account-switch-avatar">'+avatarHtml(account)+'</div>'+
-        '<strong>'+escapeHtml(account.name)+'</strong>'+
-        (active?'<span class="account-switch-check" aria-hidden="true">✓</span>':'')+
-      '</button>';
-    }).join('');
-    pop.innerHTML='<div class="account-switch-dialog" role="dialog" aria-modal="true" aria-label="切換帳號">'+
-      '<div class="account-switch-head"><h3>切換帳號</h3><button class="account-switch-close" type="button" aria-label="關閉">×</button></div>'+
-      '<div class="account-switch-list">'+rows+'</div>'+
-    '</div>';
-    pop.classList.add('open');
-    pop.onclick=function(event){if(event.target===pop)closeConfirmDialog()};
-    var dialog=pop.querySelector('.account-switch-dialog');
-    if(dialog)dialog.onclick=function(event){event.stopPropagation()};
-    var close=pop.querySelector('.account-switch-close');
-    if(close)close.onclick=closeConfirmDialog;
-    Array.prototype.slice.call(pop.querySelectorAll('[data-switch-account]')).forEach(function(button){
-      button.onclick=function(){
-        localStorage.setItem('mvp_active_account',button.dataset.switchAccount);
-        closeConfirmDialog();
-        renderAccountSwitcher();
-        renderChart(localStorage.getItem('mvp_chart_range')||'7');
-        updateDashboardSwitchVisibility();
-      };
-    });
-  }
-
-  function bindAccountModalSwitch(){
-    var button=document.querySelector('#topAccount');
-    var menu=document.querySelector('#topAccountMenu');
-    if(menu)menu.classList.remove('open');
-    if(!button)return;
-    button.onclick=function(event){
-      event.preventDefault();
-      event.stopPropagation();
-      if(accounts.length<=1)return;
-      showAccountSwitchDialog();
-    };
-  }
-
-  function contentThumb(item,index){
-    if(item.thumbnail){
-      return '<img src="'+escapeAttr(item.thumbnail)+'" alt="">';
+  const COPY = {
+    noTarget: "\u8acb\u9078\u64c7\u81f3\u5c11\u4e00\u500b\u767c\u5e03\u76ee\u6a19\u3002",
+    noTitle: "\u8acb\u8f38\u5165\u5f71\u7247\u6a19\u984c\u3002",
+    noMedia: "\u8acb\u9078\u64c7\u5f71\u7247\u6a94\u6848\u3002",
+    noSchedule: "\u8acb\u8a2d\u5b9a\u6392\u7a0b\u767c\u5e03\u6642\u9593\u3002",
+    uploading: "\u767c\u5e03\u4e2d...",
+    saving: "\u5132\u5b58\u4e2d...",
+    queuing: "\u52a0\u5165\u4f47\u5217\u4e2d...",
+    uploaded: "\u5df2\u767c\u5e03\u5230 YouTube\u3002",
+    drafted: "\u5df2\u5132\u5b58\u8349\u7a3f\u3002",
+    queued: "\u5df2\u52a0\u5165\u6392\u7a0b\u4f47\u5217\u3002",
+    partial: "\u90e8\u5206\u767c\u5e03\u5931\u6557\uff0c\u8acb\u6aa2\u67e5\u4f47\u5217\u72c0\u614b\u3002",
+    uploadScope: "YouTube \u9700\u8981\u5f71\u7247\u4e0a\u50b3\u6b0a\u9650\uff0c\u8acb\u91cd\u65b0\u9023\u7dda YouTube\u3002",
+    failed: "\u767c\u5e03\u9023\u7dda\u5931\u6557\uff0c\u8acb\u7a0d\u5f8c\u518d\u8a66\u3002",
+  };
+  const $ = (selector, root=document) => root.querySelector(selector);
+  const $$ = (selector, root=document) => Array.from(root.querySelectorAll(selector));
+  const toast = (message, type) => {
+    if (typeof window.showToast === "function") window.showToast(message, type || "success");
+    else console.log(message);
+  };
+  const setFieldError = (field, message) => {
+    if (!field) return;
+    field.classList.add("is-invalid");
+    let error = field.parentElement && field.parentElement.querySelector(".field-error");
+    if (!error && field.parentElement) {
+      error = document.createElement("div");
+      error.className = "field-error";
+      field.parentElement.appendChild(error);
     }
-    var label=item.type==="Shorts"?"S":"▶";
-    return '<div class="rank-thumb-fallback"><span>'+escapeHtml(label)+'</span></div>';
-  }
-
-  function typeSummary(items){
-    var normal=0,shorts=0;
-    items.forEach(function(item){
-      if(String(item.type||'').toLowerCase().indexOf('short')>-1)shorts+=1;
-      else normal+=1;
-    });
-    var parts=[];
-    if(normal)parts.push('<span>一般影片 <strong>'+normal+'</strong></span>');
-    if(shorts)parts.push('<span>Shorts <strong>'+shorts+'</strong></span>');
-    return parts.length?'<div class="content-type-summary">'+parts.join('')+'</div>':'';
-  }
-
-  var originalRenderAnalytics=typeof renderAnalytics==='function'?renderAnalytics:null;
-  renderAnalytics=function(range){
-    var account=activeAccount();
-    var platformData=(contentAnalytics.youtube||{});
-    if(!platformData[account.id])createDemoContentAnalytics(account.id,accounts.findIndex(function(a){return a.id===account.id})+1);
-    var data=(platformData[account.id]&&platformData[account.id][range])||(platformData[account.id]&&platformData[account.id]['7'])||(platformData.main&&platformData.main[range])||platformData.main['7'];
-    if(!data){
-      if(originalRenderAnalytics)originalRenderAnalytics(range);
+    if (error) error.textContent = message;
+  };
+  const clearFieldError = (field) => {
+    if (!field) return;
+    field.classList.remove("is-invalid");
+    const error = field.parentElement && field.parentElement.querySelector(".field-error");
+    if (error) error.textContent = "";
+  };
+  const publishMode = () => {
+    const mode = $("#publishMode")?.value || "scheduled";
+    if (mode === "immediate" || mode === "\u7acb\u5373\u767c\u5e03") return "immediate";
+    if (mode === "draft" || mode === "\u5132\u5b58\u8349\u7a3f") return "draft";
+    return "scheduled";
+  };
+  const selectedIds = () => {
+    if (window.socialOpsSelectedPublishTargets instanceof Set && window.socialOpsSelectedPublishTargets.size) {
+      return Array.from(window.socialOpsSelectedPublishTargets);
+    }
+    return $$("[data-target-account][aria-pressed='true'], [data-target-account].is-selected, input[name='publishTarget']:checked")
+      .map((el) => el.dataset.targetAccount || el.value)
+      .filter(Boolean);
+  };
+  const scheduleIso = () => {
+    const date = $("#scheduleAt")?.value || $("#publishAt")?.value || "";
+    if (!date) return "";
+    const parsed = new Date(date);
+    return Number.isNaN(parsed.getTime()) ? date : parsed.toISOString();
+  };
+  const hydratePublishTasks = async () => {
+    if (typeof window.renderQueue !== "function") return;
+    try {
+      const response = await fetch("/api/publish-tasks", { cache: "no-store" });
+      if (!response.ok) return;
+      const data = await response.json();
+      if (Array.isArray(data.tasks)) window.renderQueue(data.tasks);
+    } catch (_) {}
+  };
+  const submitPublish = async (event) => {
+    event?.preventDefault?.();
+    const titleField = $("#postTitle");
+    const mediaField = $("#videoFile");
+    const mode = publishMode();
+    clearFieldError(titleField);
+    clearFieldError(mediaField);
+    const accountIds = selectedIds();
+    if (!accountIds.length) return toast(COPY.noTarget, "error");
+    if (!titleField?.value?.trim()) {
+      setFieldError(titleField, COPY.noTitle);
+      titleField?.focus?.();
       return;
     }
-    var items=data.items||[];
-    var content=document.querySelector('#analyticsContentMetric');
-    var contentDelta=document.querySelector('#analyticsContentDelta');
-    var views=document.querySelector('#analyticsViewsMetric');
-    var viewsDelta=document.querySelector('#analyticsViewsDelta');
-    var engagement=document.querySelector('#analyticsEngagementMetric');
-    var engagementDelta=document.querySelector('#analyticsEngagementDelta');
-    var list=document.querySelector('#contentRankList');
-    if(content)content.textContent=data.content;
-    if(contentDelta){contentDelta.textContent=compactDelta(data.contentDelta);contentDelta.className=deltaClass(data.contentDelta)}
-    if(views)views.textContent=data.views;
-    if(viewsDelta){viewsDelta.textContent=compactDelta(data.viewsDelta);viewsDelta.className=deltaClass(data.viewsDelta)}
-    if(engagement)engagement.textContent=data.engagement;
-    if(engagementDelta){engagementDelta.textContent=compactDelta(data.engagementDelta);engagementDelta.className=deltaClass(data.engagementDelta)}
-    if(list){
-      list.innerHTML=typeSummary(items)+items.map(function(item,index){
-        return '<article class="content-rank-card with-cover">'+
-          '<div class="rank-index">'+(index+1)+'</div>'+
-          '<div class="rank-thumb">'+contentThumb(item,index)+'</div>'+
-          '<div class="rank-main"><strong>'+escapeHtml(item.title)+'</strong><span>'+escapeHtml(item.type)+'</span></div>'+
-          '<div class="rank-stats"><span>'+escapeHtml(item.views)+'</span><small>觀看</small></div>'+
-          '<div class="rank-stats"><span>'+escapeHtml(item.engagement)+'</span><small>互動</small></div>'+
-        '</article>';
-      }).join('');
+    if (mode !== "draft" && !mediaField?.files?.[0]) {
+      setFieldError(mediaField, COPY.noMedia);
+      mediaField?.focus?.();
+      return;
     }
-  };
-
-  function refreshDashboardControlOverrides(){
-    bindAccountModalSwitch();
-    updateDashboardSwitchVisibility();
-    renderAnalytics(localStorage.getItem('mvp_chart_range')||'7');
-  }
-
-  refreshDashboardControlOverrides();
-  setTimeout(refreshDashboardControlOverrides,0);
-  setTimeout(refreshDashboardControlOverrides,300);
-})();
-
-/* Platform-specific composer controls and content filter refinements. */
-(function(){
-  function currentContentFilter(){
-    return localStorage.getItem('mvp_content_type_filter')||'all';
-  }
-
-  function isShortsItem(item){
-    return String(item&&item.type||'').toLowerCase().indexOf('short')>-1;
-  }
-
-  function contentTypeButton(label,value,count,active){
-    return '<button class="content-type-filter '+(active?'active':'')+'" type="button" data-content-filter="'+value+'">'+
-      '<span>'+escapeHtml(label)+'</span><strong>'+count+'</strong>'+
-    '</button>';
-  }
-
-  function contentTypeSummaryButtons(items,filter){
-    var normal=items.filter(function(item){return !isShortsItem(item)}).length;
-    var shorts=items.filter(isShortsItem).length;
-    var buttons=[];
-    if(normal&&shorts)buttons.push(contentTypeButton('全部','all',items.length,filter==='all'));
-    if(normal)buttons.push(contentTypeButton('一般影片','normal',normal,filter==='normal'));
-    if(shorts)buttons.push(contentTypeButton('Shorts','shorts',shorts,filter==='shorts'));
-    return buttons.length?'<div class="content-type-summary is-filterable">'+buttons.join('')+'</div>':'';
-  }
-
-  function filteredContentItems(items,filter){
-    if(filter==='normal')return items.filter(function(item){return !isShortsItem(item)});
-    if(filter==='shorts')return items.filter(isShortsItem);
-    return items;
-  }
-
-  function contentThumb(item,index){
-    if(item&&item.thumbnail){
-      return '<img src="'+escapeAttr(item.thumbnail)+'" alt="">';
-    }
-    var label=isShortsItem(item)?'S':'▶';
-    return '<div class="rank-thumb-fallback"><span>'+escapeHtml(label)+'</span></div>';
-  }
-
-  renderAnalytics=function(range){
-    var account=activeAccount();
-    var platformData=(contentAnalytics.youtube||{});
-    if(!platformData[account.id])createDemoContentAnalytics(account.id,accounts.findIndex(function(a){return a.id===account.id})+1);
-    var data=(platformData[account.id]&&platformData[account.id][range])||(platformData[account.id]&&platformData[account.id]['7'])||(platformData.main&&platformData.main[range])||platformData.main['7'];
-    if(!data)return;
-    var allItems=data.items||[];
-    var filter=currentContentFilter();
-    if(filter==='normal'&&!allItems.some(function(item){return !isShortsItem(item)}))filter='all';
-    if(filter==='shorts'&&!allItems.some(isShortsItem))filter='all';
-    var items=filteredContentItems(allItems,filter);
-    var content=document.querySelector('#analyticsContentMetric');
-    var contentDelta=document.querySelector('#analyticsContentDelta');
-    var views=document.querySelector('#analyticsViewsMetric');
-    var viewsDelta=document.querySelector('#analyticsViewsDelta');
-    var engagement=document.querySelector('#analyticsEngagementMetric');
-    var engagementDelta=document.querySelector('#analyticsEngagementDelta');
-    var list=document.querySelector('#contentRankList');
-    if(content)content.textContent=data.content;
-    if(contentDelta){contentDelta.textContent=compactDelta(data.contentDelta);contentDelta.className=deltaClass(data.contentDelta)}
-    if(views)views.textContent=data.views;
-    if(viewsDelta){viewsDelta.textContent=compactDelta(data.viewsDelta);viewsDelta.className=deltaClass(data.viewsDelta)}
-    if(engagement)engagement.textContent=data.engagement;
-    if(engagementDelta){engagementDelta.textContent=compactDelta(data.engagementDelta);engagementDelta.className=deltaClass(data.engagementDelta)}
-    if(list){
-      list.innerHTML=contentTypeSummaryButtons(allItems,filter)+items.map(function(item,index){
-        return '<article class="content-rank-card with-cover">'+
-          '<div class="rank-index">'+(index+1)+'</div>'+
-          '<div class="rank-thumb">'+contentThumb(item,index)+'</div>'+
-          '<div class="rank-main"><strong>'+escapeHtml(item.title)+'</strong><span>'+escapeHtml(item.type)+'</span></div>'+
-          '<div class="rank-stats"><span>'+escapeHtml(item.views)+'</span><small>觀看</small></div>'+
-          '<div class="rank-stats"><span>'+escapeHtml(item.engagement)+'</span><small>互動</small></div>'+
-        '</article>';
-      }).join('');
-      Array.prototype.slice.call(list.querySelectorAll('[data-content-filter]')).forEach(function(button){
-        button.onclick=function(){
-          localStorage.setItem('mvp_content_type_filter',button.dataset.contentFilter);
-          renderAnalytics(localStorage.getItem('mvp_chart_range')||'7');
-        };
-      });
-    }
-  };
-
-  renderPublishTargets=function(){
-    var selectedIds=selectedPublishAccountIds();
-    var host=document.querySelector('#publishTargets');
-    if(!host)return;
-    host.innerHTML=accounts.map(function(account){
-      var active=selectedIds.indexOf(account.id)>-1;
-      return '<button class="target-card target-account-card '+(active?'active':'')+'" type="button" data-publish-account="'+escapeAttr(account.id)+'" aria-pressed="'+(active?'true':'false')+'">'+
-        '<span class="target-checkmark" aria-hidden="true">'+(active?'✓':'')+'</span>'+
-        '<span class="target-avatar">'+avatarHtml(account)+'</span>'+
-        '<span class="target-copy"><strong>'+escapeHtml(account.name)+'</strong><small>YouTube</small></span>'+
-      '</button>';
-    }).join('');
-    Array.prototype.slice.call(host.querySelectorAll('[data-publish-account]')).forEach(function(button){
-      button.onclick=function(){
-        var ids=selectedPublishAccountIds();
-        var id=button.dataset.publishAccount;
-        if(ids.indexOf(id)>-1){
-          if(ids.length===1){toast('至少保留一個發布目標');return}
-          ids=ids.filter(function(item){return item!==id});
-        }else{
-          ids.push(id);
-        }
-        localStorage.setItem('mvp_publish_accounts',JSON.stringify(ids));
-        localStorage.setItem('mvp_publish_account',ids[0]);
-        renderPublishTargets();
-        renderPlaylistOptions();
-        renderComposer();
-      };
-    });
-  };
-
-  function renamePlatformSettings(){
-    var summary=document.querySelector('.advanced-settings summary .advanced-summary-title span');
-    if(summary)summary.textContent='YouTube 設定';
-    var help=document.querySelector('.advanced-settings summary .summary-info');
-    if(help)help.setAttribute('aria-label','YouTube 設定說明');
-  }
-
-  function refreshPlatformComposerUi(){
-    renamePlatformSettings();
-    renderPublishTargets();
-    renderAnalytics(localStorage.getItem('mvp_chart_range')||'7');
-  }
-
-  refreshPlatformComposerUi();
-  setTimeout(refreshPlatformComposerUi,0);
-  setTimeout(refreshPlatformComposerUi,300);
-})();
-
-/* Last-mile overrides: these intentionally run after all legacy demo patches. */
-(function(){
-  function routeForTab(id){
-    if(id==='accounts')return '/accounts';
-    if(id==='composer')return '/composer';
-    return '/app';
-  }
-
-  function tabForRoute(path){
-    if(path.indexOf('/accounts')===0)return 'accounts';
-    if(path.indexOf('/composer')===0)return 'composer';
-    if(path.indexOf('/app')===0)return 'dashboard';
-    return 'dashboard';
-  }
-
-  function syncRouteTab(){
-    if(typeof tab==='function')tab(tabForRoute(window.location.pathname));
-  }
-
-  function bindRouteButtons(){
-    Array.prototype.slice.call(document.querySelectorAll('.nav button')).forEach(function(button){
-      button.onclick=function(){
-        var nextTab=button.dataset.tab||'dashboard';
-        tab(nextTab);
-        var nextPath=routeForTab(nextTab);
-        if(window.location.pathname!==nextPath)window.history.pushState({tab:nextTab},'',nextPath);
-      };
-    });
-    Array.prototype.slice.call(document.querySelectorAll('[data-open-composer]')).forEach(function(button){
-      button.onclick=function(){
-        tab('composer');
-        if(window.location.pathname!=='/composer')window.history.pushState({tab:'composer'},'','/composer');
-      };
-    });
-  }
-
-  renderPublishTargets=function(){
-    var selectedIds=selectedPublishAccountIds();
-    var host=document.querySelector('#publishTargets');
-    if(!host)return;
-    host.innerHTML=accounts.map(function(account){
-      var active=selectedIds.indexOf(account.id)>-1;
-      return '<button class="target-card target-account-card '+(active?'active':'')+'" type="button" data-publish-account="'+escapeAttr(account.id)+'" aria-pressed="'+(active?'true':'false')+'">'+
-        '<span class="target-checkmark" aria-hidden="true">'+(active?'✓':'')+'</span>'+
-        '<span class="target-avatar">'+youtubeIcon()+'</span>'+
-        '<span class="target-copy"><strong>'+escapeHtml(account.name)+'</strong></span>'+
-      '</button>';
-    }).join('');
-    Array.prototype.slice.call(host.querySelectorAll('[data-publish-account]')).forEach(function(button){
-      button.onclick=function(){
-        var ids=selectedPublishAccountIds();
-        var id=button.dataset.publishAccount;
-        if(ids.indexOf(id)>-1){
-          if(ids.length===1){toast('至少保留一個發布目標');return}
-          ids=ids.filter(function(item){return item!==id});
-        }else{
-          ids.push(id);
-        }
-        localStorage.setItem('mvp_publish_accounts',JSON.stringify(ids));
-        localStorage.setItem('mvp_publish_account',ids[0]);
-        renderPublishTargets();
-        renderPlaylistOptions();
-        renderComposer();
-      };
-    });
-  };
-
-  bindRouteButtons();
-  renderPublishTargets();
-  syncRouteTab();
-  window.addEventListener('popstate',syncRouteTab);
-})();
-
-/* Publish target modal: replace inline checkbox cards with one centered picker. */
-(function(){
-  function selectedTargetLabel(selectedAccounts){
-    if(!selectedAccounts.length)return '尚未選擇帳號';
-    if(selectedAccounts.length===1)return selectedAccounts[0].name;
-    return selectedAccounts[0].name+' 等 '+selectedAccounts.length+' 個帳號';
-  }
-
-  function selectedTargetNames(selectedAccounts){
-    return selectedAccounts.map(function(account){return account.name}).join('、');
-  }
-
-  function renderTargetRows(container){
-    var selectedIds=selectedPublishAccountIds();
-    container.innerHTML=accounts.map(function(account){
-      var active=selectedIds.indexOf(account.id)>-1;
-      return '<button class="target-dialog-row '+(active?'active':'')+'" type="button" data-dialog-publish-account="'+escapeAttr(account.id)+'" aria-pressed="'+(active?'true':'false')+'">'+
-        '<span class="target-dialog-icon">'+youtubeIcon()+'</span>'+
-        '<span class="target-dialog-copy"><strong>'+escapeHtml(account.name)+'</strong></span>'+
-        '<span class="target-dialog-check" aria-hidden="true">✓</span>'+
-      '</button>';
-    }).join('');
-    Array.prototype.slice.call(container.querySelectorAll('[data-dialog-publish-account]')).forEach(function(button){
-      button.onclick=function(){
-        var ids=selectedPublishAccountIds();
-        var id=button.dataset.dialogPublishAccount;
-        if(ids.indexOf(id)>-1){
-          if(ids.length===1){toast('至少保留一個發布目標');return}
-          ids=ids.filter(function(item){return item!==id});
-        }else{
-          ids.push(id);
-        }
-        localStorage.setItem('mvp_publish_accounts',JSON.stringify(ids));
-        localStorage.setItem('mvp_publish_account',ids[0]);
-        renderTargetRows(container);
-        renderPublishTargets();
-        renderPlaylistOptions();
-        renderComposer();
-      };
-    });
-  }
-
-  function openPublishTargetDialog(){
-    var pop=document.querySelector('#confirmPopover');
-    if(!pop)return;
-    pop.innerHTML='<div class="confirm-dialog target-dialog" role="dialog" aria-modal="true" aria-label="發布目標">'+
-      '<h3>發布目標</h3>'+
-      '<div class="confirm-body"><div class="target-dialog-list" id="targetDialogList"></div></div>'+
-      '<div class="confirm-actions"><button class="btn primary target-dialog-done" type="button">完成</button></div>'+
-    '</div>';
-    pop.onclick=function(event){if(event.target===pop)closeConfirmDialog()};
-    var dialog=pop.querySelector('.confirm-dialog');
-    if(dialog)dialog.onclick=function(event){event.stopPropagation()};
-    var done=pop.querySelector('.target-dialog-done');
-    if(done)done.onclick=closeConfirmDialog;
-    var list=pop.querySelector('#targetDialogList');
-    if(list)renderTargetRows(list);
-    pop.classList.add('open');
-  }
-
-  renderPublishTargets=function(){
-    var host=document.querySelector('#publishTargets');
-    if(!host)return;
-    var selectedAccounts=selectedPublishAccounts();
-    var wrapper=host.closest('.publish-targets');
-    var label=wrapper&&wrapper.querySelector('label');
-    if(label)label.remove();
-    host.classList.add('target-summary-list');
-    host.innerHTML='<button class="publish-target-summary" type="button" id="publishTargetSummary">'+
-      '<span class="publish-target-summary-main">'+
-        '<span class="publish-target-summary-icons">'+youtubeIcon()+'</span>'+
-        '<span class="publish-target-summary-text"><strong>'+escapeHtml(selectedTargetLabel(selectedAccounts))+'</strong></span>'+
-      '</span>'+
-    '</button>';
-    var button=document.querySelector('#publishTargetSummary');
-    if(button)button.onclick=openPublishTargetDialog;
-  };
-
-  renderPublishTargets();
-})();
-
-/* Member center entry. */
-(function(){
-  function addProfileEntry(){
-    var menu=document.querySelector("#moreMenu");
-    var report=document.querySelector("#reportIssueBtn");
-    var appearance=document.querySelector("#appearanceBtn");
-    var appearancePanel=document.querySelector("#appearancePanel");
-    if(appearance)appearance.remove();
-    if(appearancePanel)appearancePanel.remove();
-    if(!menu||document.querySelector("#profileCenterBtn"))return;
-    var btn=document.createElement("button");
-    btn.className="more-item-title";
-    btn.id="profileCenterBtn";
-    btn.type="button";
-    btn.innerHTML='<span class="more-row-icon">◎</span><span>會員中心</span>';
-    btn.onclick=function(){window.location.href="/profile";};
-    if(report)menu.insertBefore(btn,report);else menu.appendChild(btn);
-  }
-  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",addProfileEntry);else addProfileEntry();
-})();
-
-/* Remove YouTube Studio-only settings from the publishing flow. */
-(function(){
-  function removeElement(node){
-    if(node&&node.parentNode)node.parentNode.removeChild(node);
-  }
-
-  function removeAdvancedHelpSections(){
-    if(!window.helpContent||!helpContent.advancedYoutube||!Array.isArray(helpContent.advancedYoutube.sections))return;
-    helpContent.advancedYoutube.sections=helpContent.advancedYoutube.sections.filter(function(section){
-      return ["僅限成人觀眾收看","Shorts 重混"].indexOf(section.title)===-1;
-    });
-  }
-
-  function removeUnsupportedYoutubeSettings(){
-    removeAdvancedHelpSections();
-
-    var ageSettings=document.querySelector(".age-settings");
-    removeElement(ageSettings);
-
-    var commentsField=document.querySelector("#commentsField");
-    removeElement(commentsField);
-
-    var remixInput=document.querySelector("#remixInput");
-    if(remixInput)removeElement(remixInput.closest(".field"));
-
-    Array.prototype.slice.call(document.querySelectorAll(".preview-setting")).forEach(function(row){
-      var label=row.querySelector("span");
-      if(label&&label.textContent.trim()==="年齡限制")removeElement(row);
-    });
-  }
-
-  syncAudienceRestrictions=function(madeForKids){
-    var notify=document.querySelector("#notifyInput");
-    var notifyLine=notify&&notify.closest(".check-line");
-    if(madeForKids){
-      if(notify){notify.checked=false;notify.disabled=true}
-      if(notifyLine)notifyLine.classList.add("is-disabled");
-    }else{
-      if(notify)notify.disabled=false;
-      if(notifyLine)notifyLine.classList.remove("is-disabled");
-    }
-  };
-
-  syncCommentsAvailability=function(){return ""};
-  ageRestrictionChoice=function(){return "false"};
-
-  var previousRenderComposer=renderComposer;
-  renderComposer=function(){
-    previousRenderComposer();
-    removeUnsupportedYoutubeSettings();
-  };
-
-  removeUnsupportedYoutubeSettings();
-  if(document.readyState==="loading"){
-    document.addEventListener("DOMContentLoaded",function(){
-      removeUnsupportedYoutubeSettings();
-      if(typeof renderComposer==="function")renderComposer();
-    });
-  }else if(typeof renderComposer==="function"){
-    renderComposer();
-  }
-})();
-
-/* Real YouTube publishing bridge. */
-(function(){
-  function byId(id){return document.getElementById(id)}
-  function inputValue(id,fallback){
-    var el=byId(id);
-    return el?el.value:(fallback||"");
-  }
-  function inputChecked(id){
-    var el=byId(id);
-    return !!(el&&el.checked);
-  }
-  function radioValue(name,fallback){
-    var el=document.querySelector('input[name="'+name+'"]:checked');
-    return el?el.value:(fallback||"");
-  }
-  function appendFile(form,key,inputId){
-    var input=byId(inputId);
-    if(input&&input.files&&input.files[0])form.append(key,input.files[0]);
-  }
-  function selectedIds(){
-    if(typeof selectedPublishAccountIds==="function")return selectedPublishAccountIds();
-    try{return JSON.parse(localStorage.getItem("mvp_publish_accounts")||"[]")}catch(error){return []}
-  }
-  function scheduledIso(){
-    var raw=inputValue("publishTime","");
-    if(!raw)return "";
-    var date=new Date(raw);
-    return Number.isNaN(date.getTime())?"":date.toISOString();
-  }
-  function toastSafe(message){
-    if(typeof toast==="function")toast(message);
-  }
-  function setFieldErrorSafe(id,message){
-    if(typeof setFieldError==="function")setFieldError(id,message);
-  }
-  async function hydratePublishTasks(){
-    try{
-      var response=await fetch("/api/publish-tasks",{cache:"no-store"});
-      if(!response.ok)return;
-      var data=await response.json();
-      if(!Array.isArray(data.tasks))return;
-      var activeStatuses=["queued","uploading","scheduled","failed"];
-      queue=data.tasks.filter(function(task){
-        return activeStatuses.indexOf(task.status)>-1;
-      }).map(function(task){
-        return {
-          id:task.id,
-          title:task.title,
-          platform:"YouTube",
-          accountId:task.socialAccountId,
-          accountIds:[task.socialAccountId],
-          accountName:task.socialAccount&&task.socialAccount.displayName||"YouTube",
-          time:task.scheduledAt||task.createdAt,
-          status:task.status==="uploading"?"上傳中":task.status==="failed"?"失敗":"排程發文",
-          visibility:task.visibility,
-          madeForKids:task.settings&&task.settings.madeForKids
-        };
-      });
-      if(typeof save==="function")save();
-      if(typeof renderQueue==="function")renderQueue();
-    }catch(error){
-      console.warn("SocialOps publish tasks fallback",error);
-    }
-  }
-  async function submitPublish(){
-    var button=byId("scheduleBtn");
-    if(!button)return;
-    var mode=inputValue("publishMode","排程發布");
-    if(typeof validateComposer==="function"&&!validateComposer(mode))return;
-
-    var form=new FormData();
-    form.append("accountIds",JSON.stringify(selectedIds()));
-    form.append("title",inputValue("titleInput",""));
-    form.append("description",inputValue("contentInput",""));
-    form.append("contentType",inputValue("contentType","一般影片"));
-    form.append("publishMode",mode);
-    form.append("visibility",inputValue("visibilityInput","private"));
-    form.append("scheduledAt",scheduledIso());
-    form.append("playlistId",inputValue("playlistInput",""));
-    form.append("madeForKids",radioValue("audienceChoice","")==="kids"?"true":"false");
-    form.append("paidPromo",inputChecked("paidPromoInput")?"true":"false");
-    form.append("aiDisclosure",inputChecked("aiDisclosureInput")?"true":"false");
-    form.append("embedAllowed",inputChecked("embedInput")?"true":"false");
-    form.append("notifySubscribers",inputChecked("notifyInput")?"true":"false");
-    form.append("categoryId",inputValue("categoryInput","22"));
-    form.append("tags",inputValue("tagsInput",""));
-    form.append("license",inputValue("licenseInput","youtube"));
-    appendFile(form,"media","mediaInput");
-    appendFile(form,"cover","coverInput");
-    appendFile(form,"caption","captionInput");
-
-    var original=button.textContent;
-    button.disabled=true;
-    button.textContent=mode==="立即發布"?"發布中...":mode==="儲存草稿"?"儲存中...":"建立中...";
-    try{
-      var response=await fetch("/api/youtube/publish",{method:"POST",body:form});
-      var payload=await response.json().catch(function(){return {}});
-      if(response.status===403&&payload.code==="youtube_upload_scope_required"){
-        toastSafe("需要重新連線 YouTube，補足上傳權限");
-        return;
-      }
-      if(!response.ok&&response.status!==207){
-        if(payload.error==="請輸入標題。"){
-          setFieldErrorSafe("title",payload.error);
-        }
-        if(payload.error==="請選擇影片檔案。"){
-          setFieldErrorSafe("media",payload.error);
-        }
-        toastSafe(payload.error||"發文任務建立失敗");
+    const scheduledAt = scheduleIso();
+    if (mode === "scheduled" && !scheduledAt) return toast(COPY.noSchedule, "error");
+    const form = new FormData();
+    accountIds.forEach((id) => form.append("accountIds", id));
+    form.set("title", titleField.value.trim());
+    form.set("description", $("#postCaption")?.value || "");
+    form.set("contentType", $("#contentType")?.value || "video");
+    form.set("publishMode", mode);
+    form.set("visibility", $("#visibility")?.value || "private");
+    if (scheduledAt) form.set("scheduledAt", scheduledAt);
+    form.set("playlistId", $("#playlistSelect")?.value || "");
+    form.set("madeForKids", $("input[name='madeForKids']:checked")?.value || "false");
+    form.set("paidPromo", $("#paidPromo")?.checked ? "true" : "false");
+    form.set("aiDisclosure", $("#aiDisclosure")?.checked ? "true" : "false");
+    form.set("embedAllowed", $("#embedAllowed")?.checked === false ? "false" : "true");
+    form.set("notifySubscribers", $("#notifySubscribers")?.checked === false ? "false" : "true");
+    form.set("categoryId", $("#categoryId")?.value || "24");
+    form.set("tags", $("#tags")?.value || "");
+    form.set("license", $("#license")?.value || "youtube");
+    if (mediaField?.files?.[0]) form.set("media", mediaField.files[0]);
+    const cover = $("#coverFile")?.files?.[0];
+    if (cover) form.set("cover", cover);
+    const caption = $("#captionFile")?.files?.[0];
+    if (caption) form.set("caption", caption);
+    toast(mode === "draft" ? COPY.saving : mode === "immediate" ? COPY.uploading : COPY.queuing, "info");
+    try {
+      const response = await fetch("/api/youtube/publish", { method: "POST", body: form });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        if (data.code === "youtube_upload_scope_required") toast(COPY.uploadScope, "error");
+        else toast(data.error || COPY.failed, "error");
         return;
       }
       await hydratePublishTasks();
-      if(payload.ok===false){
-        toastSafe("部分發布失敗，已保留任務紀錄");
-      }else if(mode==="立即發布"){
-        toastSafe("已送出到 YouTube");
-      }else if(mode==="儲存草稿"){
-        toastSafe("已儲存草稿");
-      }else{
-        toastSafe("已建立排程發布");
-      }
-    }catch(error){
-      console.warn("SocialOps publish failed",error);
-      toastSafe("發文流程失敗，請稍後再試");
-    }finally{
-      button.disabled=false;
-      if(typeof renderComposer==="function")renderComposer();
-      else button.textContent=original;
+      const failed = Array.isArray(data.results) && data.results.some((item) => item.status === "failed");
+      if (failed) toast(COPY.partial, "error");
+      else toast(mode === "draft" ? COPY.drafted : mode === "immediate" ? COPY.uploaded : COPY.queued, "success");
+    } catch (_) {
+      toast(COPY.failed, "error");
     }
-  }
-  function install(){
-    var button=byId("scheduleBtn");
-    if(button)button.onclick=submitPublish;
+  };
+  const install = () => {
+    const button = $("#scheduleBtn");
+    if (button && !button.dataset.realPublishBridge) {
+      button.dataset.realPublishBridge = "true";
+      button.onclick = submitPublish;
+    }
     hydratePublishTasks();
-  }
-  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",install);
+  };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", install, { once: true });
   else install();
-  setTimeout(install,300);
-})();
-
-/* Production data bridge: use real member accounts and YouTube metrics when available. */
-(function(){
-  metricMeta={
-    subscribers:{title:"訂閱者",unit:"人"},
-    views:{title:"觀看次數",unit:"次"},
-    engagement:{title:"互動率",unit:"%"}
-  };
-  rangeMeta={
-    "7":{title:"近 7 天"},
-    "30":{title:"近 30 天"},
-    "90":{title:"近 90 天"},
-    "custom":{title:"自訂"}
-  };
-
-  function statusText(status){
-    if(status==="authorized"||status==="已連線")return "已連線";
-    if(status==="reconnect"||status==="需重新確認")return "需重新確認";
-    if(status==="insufficient_scope"||status==="需補權限")return "需補權限";
-    return "需重新確認";
-  }
-
-  function mapApiAccount(account,index){
-    var tags=String(account.groupName||"").split(",").map(function(tag){return tag.trim()}).filter(Boolean);
-    return {
-      id:account.id,
-      platform:"YouTube",
-      platformAccountId:account.platformAccountId,
-      name:account.displayName||"YouTube",
-      group:tags[0]||"",
-      tags:tags,
-      favorite:!!account.favorite,
-      status:statusText(account.status),
-      expires:account.tokenExpiresAt?String(account.tokenExpiresAt).slice(0,10):"",
-      color:"transparent",
-      avatar:"play",
-      sortOrder:typeof account.sortOrder==="number"?account.sortOrder:index,
-      dataStart:"2026-01-01",
-      dataEnd:"2026-12-31",
-      source:"api"
-    };
-  }
-
-  function ensureActiveAccount(){
-    var current=localStorage.getItem("mvp_active_account");
-    if(accounts.some(function(account){return account.id===current}))return;
-    if(accounts[0])localStorage.setItem("mvp_active_account",accounts[0].id);
-  }
-
-  activeAccount=function(){
-    var id=activeAccountId();
-    return accounts.find(function(account){return account.id===id})||accounts[0]||{
-      id:"none",
-      name:"YouTube",
-      platform:"YouTube",
-      avatar:"play",
-      color:"transparent",
-      status:"需重新確認",
-      tags:[]
-    };
-  };
-
-  function syncAccountHealth(){
-    accounts.forEach(function(account){
-      var ok=account.status==="已連線";
-      accountHealth[account.id]=[
-        {
-          key:"auth",
-          state:ok?"ok":"warn",
-          icon:ok?"✓":"!",
-          title:ok?"連線正常":account.status,
-          text:ok?"可同步資料與發布內容":"需要處理"
-        }
-      ];
-    });
-  }
-
-  function setEmptyAccountsState(){
-    accounts=[];
-    localStorage.removeItem("mvp_active_account");
-    localStorage.setItem("mvp_publish_accounts",JSON.stringify([]));
-    if(typeof renderAccounts==="function")renderAccounts();
-    var list=document.querySelector("#accountList");
-    if(list)list.innerHTML='<div class="hint">尚未連線 YouTube 帳號。</div>';
-    var target=document.querySelector("#publishTargets");
-    if(target)target.innerHTML='<button class="publish-target-summary" type="button">尚未連線帳號</button>';
-  }
-
-  function normalizeRange(rangePayload){
-    if(!rangePayload)return null;
-    return {
-      labels:Array.isArray(rangePayload.labels)?rangePayload.labels:[],
-      subscribers:rangePayload.subscribers||"--",
-      subscriberDelta:rangePayload.subscriberDelta||"+0.0%",
-      views:rangePayload.views||"--",
-      viewDelta:rangePayload.viewDelta||"+0.0%",
-      engagement:rangePayload.engagement||"--",
-      engagementDelta:rangePayload.engagementDelta||"+0.0%",
-      series:{
-        subscribers:(rangePayload.series&&rangePayload.series.subscribers)||[],
-        views:(rangePayload.series&&rangePayload.series.views)||[],
-        engagement:(rangePayload.series&&rangePayload.series.engagement)||[]
-      }
-    };
-  }
-
-  function applyMetricsPayload(payload){
-    if(!payload||!Array.isArray(payload.accounts))return false;
-    payload.accounts.forEach(function(account){
-      var ranges={};
-      ["7","30","90"].forEach(function(range){
-        ranges[range]=normalizeRange(account.ranges&&account.ranges[range]);
-      });
-      if(ranges["7"])accountStats[account.accountId]=ranges;
-    });
-    return payload.accounts.length>0;
-  }
-
-  function rerenderCurrentScreen(){
-    ensureActiveAccount();
-    syncAccountHealth();
-    renderAccountSwitcher();
-    renderAccounts();
-    renderPublishTargets();
-    renderPlaylistOptions();
-    renderComposer();
-    renderChart(localStorage.getItem("mvp_chart_range")||"7");
-  }
-
-  async function loadRealAccounts(){
-    try{
-      var response=await fetch("/api/accounts",{cache:"no-store"});
-      if(response.status===401)return false;
-      if(!response.ok)throw new Error("accounts failed");
-      var data=await response.json();
-      if(!Array.isArray(data.accounts))return false;
-      if(data.accounts.length===0){
-        if(isProductionHost())setEmptyAccountsState();
-        return false;
-      }
-      accounts=data.accounts.map(mapApiAccount);
-      localStorage.setItem("mvp_accounts_youtube",JSON.stringify(accounts));
-      ensureActiveAccount();
-      var publishIds=selectedPublishAccountIds().filter(function(id){
-        return accounts.some(function(account){return account.id===id});
-      });
-      if(!publishIds.length&&accounts[0])publishIds=[accounts[0].id];
-      localStorage.setItem("mvp_publish_accounts",JSON.stringify(publishIds));
-      localStorage.setItem("mvp_publish_account",publishIds[0]||"");
-      rerenderCurrentScreen();
-      return true;
-    }catch(error){
-      console.warn("SocialOps accounts fallback",error);
-      return false;
-    }
-  }
-
-  async function loadRealMetrics(){
-    try{
-      var response=await fetch("/api/youtube/metrics",{cache:"no-store"});
-      if(response.status===401)return false;
-      if(!response.ok)throw new Error("metrics failed");
-      var data=await response.json();
-      if(applyMetricsPayload(data)){
-        renderChart(localStorage.getItem("mvp_chart_range")||"7");
-        return true;
-      }
-    }catch(error){
-      console.warn("SocialOps metrics fallback",error);
-    }
-    return false;
-  }
-
-  async function hydrateProductionData(){
-    var hasAccounts=await loadRealAccounts();
-    if(hasAccounts)await loadRealMetrics();
-  }
-
-  if(document.readyState==="loading"){
-    document.addEventListener("DOMContentLoaded",hydrateProductionData);
-  }else{
-    hydrateProductionData();
-  }
-})();
-
-/* Member account controls. */
-(function(){
-  function ensureLogoutButton(){
-    var menu=document.querySelector('#moreMenu');
-    if(!menu || document.querySelector('#logoutBtn'))return;
-    var button=document.createElement('button');
-    button.className='more-item-title logout-menu-button';
-    button.id='logoutBtn';
-    button.type='button';
-    button.innerHTML='<span class="more-row-icon">↪</span><span>登出</span>';
-    button.onclick=function(event){
-      event.preventDefault();
-      event.stopPropagation();
-      fetch('/api/auth/logout',{method:'POST'}).finally(function(){
-        window.location.href='/login';
-      });
-    };
-    menu.appendChild(button);
-  }
-
-  ensureLogoutButton();
-  setTimeout(ensureLogoutButton,0);
-  setTimeout(ensureLogoutButton,300);
-})();
-
-/* Final publish target picker override: clean copy, no icon-only done button. */
-(function(){
-  function targetLabel(selectedAccounts){
-    if(!selectedAccounts.length)return '尚未選擇';
-    if(selectedAccounts.length===1)return selectedAccounts[0].name;
-    return selectedAccounts[0].name+' 等 '+selectedAccounts.length+' 個帳號';
-  }
-
-  function renderRows(container){
-    var selectedIds=selectedPublishAccountIds();
-    container.innerHTML=accounts.map(function(account){
-      var active=selectedIds.indexOf(account.id)>-1;
-      return '<button class="target-dialog-row '+(active?'active':'')+'" type="button" data-final-publish-account="'+escapeAttr(account.id)+'" aria-pressed="'+(active?'true':'false')+'">'+
-        '<span class="target-dialog-icon">'+youtubeIcon()+'</span>'+
-        '<span class="target-dialog-copy"><strong>'+escapeHtml(account.name)+'</strong></span>'+
-        '<span class="target-dialog-check" aria-hidden="true">✓</span>'+
-      '</button>';
-    }).join('');
-    Array.prototype.slice.call(container.querySelectorAll('[data-final-publish-account]')).forEach(function(button){
-      button.onclick=function(){
-        var ids=selectedPublishAccountIds();
-        var id=button.dataset.finalPublishAccount;
-        if(ids.indexOf(id)>-1){
-          if(ids.length===1){toast('至少保留一個發布目標');return}
-          ids=ids.filter(function(item){return item!==id});
-        }else{
-          ids.push(id);
-        }
-        localStorage.setItem('mvp_publish_accounts',JSON.stringify(ids));
-        localStorage.setItem('mvp_publish_account',ids[0]);
-        renderRows(container);
-        renderPublishTargets();
-        renderPlaylistOptions();
-        renderComposer();
-      };
-    });
-  }
-
-  function openTargetDialog(){
-    var pop=document.querySelector('#confirmPopover');
-    if(!pop)return;
-    pop.innerHTML='<div class="confirm-dialog target-dialog" role="dialog" aria-modal="true" aria-label="發布目標">'+
-      '<h3>發布目標</h3>'+
-      '<div class="confirm-body"><div class="target-dialog-list" id="targetDialogList"></div></div>'+
-      '<div class="confirm-actions"><button class="btn primary target-dialog-done" type="button">完成</button></div>'+
-    '</div>';
-    pop.onclick=function(event){if(event.target===pop)closeConfirmDialog()};
-    var dialog=pop.querySelector('.confirm-dialog');
-    if(dialog)dialog.onclick=function(event){event.stopPropagation()};
-    var done=pop.querySelector('.target-dialog-done');
-    if(done)done.onclick=closeConfirmDialog;
-    var list=pop.querySelector('#targetDialogList');
-    if(list)renderRows(list);
-    pop.classList.add('open');
-  }
-
-  renderPublishTargets=function(){
-    var host=document.querySelector('#publishTargets');
-    if(!host)return;
-    var selectedAccounts=selectedPublishAccounts();
-    var wrapper=host.closest('.publish-targets');
-    var label=wrapper&&wrapper.querySelector('label');
-    if(label)label.remove();
-    host.classList.add('target-summary-list');
-    host.innerHTML='<button class="publish-target-summary" type="button" id="publishTargetSummary">'+
-      '<span class="publish-target-summary-main">'+
-        '<span class="publish-target-summary-icons">'+youtubeIcon()+'</span>'+
-        '<span class="publish-target-summary-text"><strong>'+escapeHtml(targetLabel(selectedAccounts))+'</strong></span>'+
-      '</span>'+
-    '</button>';
-    var button=document.querySelector('#publishTargetSummary');
-    if(button)button.onclick=openTargetDialog;
-  };
-
-  renderPublishTargets();
+  setTimeout(install, 300);
 })();
