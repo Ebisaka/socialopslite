@@ -16,9 +16,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="zh-Hant">
-      <body data-resolved-theme="dark">
-        {children}
-      </body>
+      <body data-resolved-theme="dark">{children}</body>
     </html>
   );
 }

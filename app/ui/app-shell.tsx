@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-type IconName = "dashboard" | "accounts" | "composer" | "more" | "moon";
+type IconName = "dashboard" | "accounts" | "composer" | "profile" | "more" | "moon";
 
 function NavIcon({ name }: { name: IconName }) {
   if (name === "dashboard") {
@@ -15,6 +15,9 @@ function NavIcon({ name }: { name: IconName }) {
   }
   if (name === "composer") {
     return <svg className="nav-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 18.5 6.1 14 15.9 4.2a2 2 0 0 1 2.9 2.9L9 16.9z" /><path d="M13.8 6.3 17.7 10.2" /></svg>;
+  }
+  if (name === "profile") {
+    return <svg className="nav-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2" /><path d="M8 20h8" /><path d="M7 16.5c1.1-2.2 2.8-3.3 5-3.3s3.9 1.1 5 3.3" /></svg>;
   }
   if (name === "moon") {
     return <svg className="nav-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.2A8.2 8.2 0 0 1 8.8 4 7.5 7.5 0 1 0 20 15.2Z" /></svg>;
@@ -36,15 +39,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [appearanceOpen, setAppearanceOpen] = useState(false);
   const navItems = [
-    { href: "/", label: "總覽", icon: "dashboard" as const, active: pathname === "/" },
+    { href: "/app", label: "總覽", icon: "dashboard" as const, active: pathname === "/app" },
     { href: "/accounts", label: "帳號", icon: "accounts" as const, active: pathname.startsWith("/accounts") },
-    { href: "/composer", label: "發文", icon: "composer" as const, active: pathname.startsWith("/composer") }
+    { href: "/composer", label: "發文", icon: "composer" as const, active: pathname.startsWith("/composer") },
+    { href: "/profile", label: "會員", icon: "profile" as const, active: pathname.startsWith("/profile") }
   ];
 
   return (
     <div className="app">
       <aside>
-        <Link className="brand" href="/" aria-label="SocialOps Lite">
+        <Link className="brand" href="/app" aria-label="SocialOps Lite">
           <img className="brand-logo" src="/socialops-logo.png" alt="SocialOps" title="SocialOps" width={38} height={38} />
           <span className="brand-copy"><strong>SocialOps Lite</strong></span>
         </Link>
@@ -73,6 +77,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     <button className="more-option" type="button"><span>深色模式</span><span>☾</span></button>
                   </div>
                 ) : null}
+                <Link className="more-item-title" href="/profile">
+                  <span className="more-row-icon"><NavIcon name="profile" /></span>
+                  <span>會員中心</span>
+                </Link>
               </div>
             ) : null}
             <button className="more-btn" type="button" onClick={() => setMenuOpen((value) => !value)} aria-label="更多">
