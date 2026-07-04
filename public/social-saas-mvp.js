@@ -76,9 +76,14 @@ function normalizeSeries(values){
 /* Production bridge: keep demo UI, but use real connected accounts on the live app. */
 (function(){
   function isProductionHost(){
+    var config=window.SOCIALOPS_CONFIG||{};
+    if(config.appEnv)return config.appEnv==="production";
     return location.hostname==="socialopslite.com"||location.hostname==="www.socialopslite.com";
   }
   function demoToolsEnabled(){
+    var config=window.SOCIALOPS_CONFIG||{};
+    if(config.demoTools===true)return true;
+    if(config.demoTools===false&&isProductionHost())return false;
     return !isProductionHost()||/[?&]demoTools=1\b/.test(location.search)||localStorage.getItem("socialops_demo_tools")==="1";
   }
   function normalizeStatus(status){

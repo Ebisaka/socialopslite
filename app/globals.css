@@ -1879,3 +1879,225 @@ body[data-resolved-theme="light"] .more-option.active {
     .account-row.is-editing{grid-template-columns:28px minmax(0,1fr)!important;gap:10px!important}
     .account-row.is-editing .account-drag-cell{width:28px!important;min-width:28px!important}
     .account-row>.account-drag-cell>.account-drag-handle{width:20px!important;min-width:20px!important}
+
+.admin-page {
+  min-height: 100vh;
+  background: #080c11;
+  color: #edf2f7;
+  padding: 48px;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.admin-shell {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+}
+
+.admin-login-page {
+  display: grid;
+  place-items: center;
+}
+
+.admin-login-card,
+.admin-card,
+.admin-stat,
+.admin-header {
+  background: #131920;
+  border: 1px solid #263241;
+  border-radius: 8px;
+}
+
+.admin-login-card {
+  width: min(440px, 100%);
+  padding: 28px;
+  display: grid;
+  gap: 24px;
+}
+
+.admin-eyebrow {
+  margin: 0 0 8px;
+  color: #8fb3d9;
+  font-size: 13px;
+}
+
+.admin-page h1,
+.admin-page h2,
+.admin-page p {
+  margin: 0;
+}
+
+.admin-page h1 {
+  font-size: 30px;
+  letter-spacing: 0;
+}
+
+.admin-page h2 {
+  font-size: 16px;
+}
+
+.admin-login-card p,
+.admin-empty,
+.admin-report small,
+.admin-list span,
+.admin-stat span {
+  color: #94a3b8;
+}
+
+.admin-login-form {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-login-form label {
+  display: grid;
+  gap: 8px;
+  color: #cbd5e1;
+  font-size: 14px;
+}
+
+.admin-login-form input {
+  height: 42px;
+  border-radius: 8px;
+  border: 1px solid #334155;
+  background: #0b1017;
+  color: #f8fafc;
+  padding: 0 12px;
+}
+
+.admin-login-form button,
+.admin-header-actions button {
+  height: 38px;
+  border: 1px solid #d8dee8;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #111827;
+  padding: 0 14px;
+  cursor: pointer;
+}
+
+.admin-error {
+  color: #ff6b6b;
+  font-size: 13px;
+}
+
+.admin-alert {
+  border: 1px solid #9a3412;
+  color: #fed7aa;
+  background: rgba(154, 52, 18, .16);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.admin-header {
+  padding: 22px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.admin-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-header-actions span {
+  color: #9fb2c7;
+  border: 1px solid #2f3d4d;
+  border-radius: 999px;
+  padding: 8px 12px;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.admin-stat {
+  padding: 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.admin-stat strong {
+  font-size: 30px;
+}
+
+.admin-columns {
+  display: grid;
+  grid-template-columns: .8fr 1.2fr;
+  gap: 18px;
+}
+
+.admin-card {
+  padding: 20px;
+}
+
+.admin-card-head {
+  padding-bottom: 14px;
+  border-bottom: 1px solid #263241;
+  margin-bottom: 12px;
+}
+
+.admin-list {
+  display: grid;
+  gap: 4px;
+}
+
+.admin-list div {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid rgba(38, 50, 65, .55);
+}
+
+.admin-report-list {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-report {
+  border: 1px solid #263241;
+  border-radius: 8px;
+  padding: 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.admin-report div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-report div span {
+  color: #9fb2c7;
+}
+
+.admin-report p {
+  color: #e5edf6;
+  line-height: 1.6;
+}
+
+@media (max-width: 860px) {
+  .admin-page {
+    padding: 22px;
+  }
+
+  .admin-header,
+  .admin-header-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-grid,
+  .admin-columns {
+    grid-template-columns: 1fr;
+  }
+}
