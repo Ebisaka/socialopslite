@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useEffect, useRef } from "react";
+import Script from "next/script";
 import { demoMarkup } from "./ui/demo-markup";
 
 declare global {
@@ -25,6 +26,11 @@ export default function DemoShell({
   demoTools = false
 }: DemoShellProps) {
   const mountedRef = useRef(false);
+  const buildVersion = "20260705-core-clean-3";
+  const configScript = `
+    window.SOCIALOPS_CONFIG = ${JSON.stringify({ appEnv, demoTools, initialTab })};
+    try { localStorage.setItem("mvp_active_tab", ${JSON.stringify(initialTab)}); } catch (error) {}
+  `;
 
   useEffect(() => {
     localStorage.setItem("mvp_active_tab", initialTab);
@@ -34,52 +40,39 @@ export default function DemoShell({
     }
     if (mountedRef.current) return;
     mountedRef.current = true;
-    document
-      .querySelectorAll('script[data-socialops-runtime="true"]')
-      .forEach((node) => node.remove());
-    document
-      .querySelectorAll('script[data-socialops-demo="true"]')
-      .forEach((node) => node.remove());
-
-    const coreScript = document.createElement("script");
-    const compatScript = document.createElement("script");
-    const overrideScript = document.createElement("script");
-    coreScript.src = "/socialops/core.js?v=20260705-core-clean-2";
-    compatScript.src = "/socialops/compat-overrides.js?v=20260705-core-clean-2";
-    overrideScript.src = "/socialops/runtime-overrides.js?v=20260705-core-clean-2";
-    coreScript.dataset.socialopsRuntime = "true";
-    compatScript.dataset.socialopsRuntime = "true";
-    overrideScript.dataset.socialopsRuntime = "true";
-    coreScript.async = false;
-    compatScript.async = false;
-    overrideScript.async = false;
-    coreScript.onload = () => {
-      if (!document.body.contains(compatScript)) {
-        document.body.appendChild(compatScript);
-      }
-    };
-    compatScript.onload = () => {
-      if (!document.body.contains(overrideScript)) {
-        document.body.appendChild(overrideScript);
-      }
-    };
-    document.body.appendChild(coreScript);
-    return () => {
-      coreScript.remove();
-      compatScript.remove();
-      overrideScript.remove();
-    };
   }, [initialTab, appEnv, demoTools]);
 
   return (
-    <div
-      data-socialops-build="demo-parity-20260705-core-clean-2"
-      data-socialops-env={appEnv}
-      data-demo-tools={demoTools ? "true" : "false"}
-      dangerouslySetInnerHTML={{ __html: demoMarkup }}
-    />
+    <>
+      <script
+        id="socialops-config"
+        dangerouslySetInnerHTML={{ __html: configScript }}
+      />
+      <div
+        data-socialops-build={`demo-parity-${buildVersion}`}
+        data-socialops-env={appEnv}
+        data-demo-tools={demoTools ? "true" : "false"}
+        dangerouslySetInnerHTML={{ __html: demoMarkup }}
+      />
+      <Script
+        src={`/socialops/core.js?v=${buildVersion}`}
+        strategy="afterInteractive"
+        data-socialops-runtime="true"
+      />
+      <Script
+        src={`/socialops/compat-overrides.js?v=${buildVersion}`}
+        strategy="afterInteractive"
+        data-socialops-runtime="true"
+      />
+      <Script
+        src={`/socialops/runtime-overrides.js?v=${buildVersion}`}
+        strategy="afterInteractive"
+        data-socialops-runtime="true"
+      />
+    </>
   );
 }
+
 
 
 
