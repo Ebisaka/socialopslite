@@ -1,72 +1,73 @@
-/* Extracted runtime overrides. Keep this file loaded after /socialops/core.js and /socialops/compat-overrides.js. */
-/* 2026-07-05 clean final override.
-   This block intentionally runs last and replaces listeners installed by older
-   compatibility patches above. */
-(function socialOpsRuntimeOverrides20260705(){
+/* Final runtime layer for SocialOps Lite.
+   Keep this file as the only place that patches the demo shell after core.js. */
+(function socialOpsRuntimeOverrides(){
   var cfg = window.SOCIALOPS_CONFIG || {};
+  var isPreview = !!cfg.demoTools;
+  var isProduction = cfg.appEnv === "production";
+
   function $(selector, root){ return (root || document).querySelector(selector); }
   function $$(selector, root){ return Array.from((root || document).querySelectorAll(selector)); }
-  function escapeHtml(value){
+  function html(value){
     return String(value == null ? "" : value).replace(/[&<>"']/g, function(ch){
       return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch];
     });
   }
+  function attr(value){ return html(value); }
+  function accountList(){
+    try { return Array.isArray(accounts) ? accounts : []; } catch (_) { return []; }
+  }
   function activeAccountSafe(){
+    try { return typeof activeAccount === "function" ? activeAccount() : accountList()[0]; }
+    catch (_) { return accountList()[0]; }
+  }
+  function accountName(account){ return account && account.name ? account.name : "YouTube"; }
+  function icon(){
+    try { return typeof youtubeIcon === "function" ? youtubeIcon() : '<span class="yt-dot">▶</span>'; }
+    catch (_) { return '<span class="yt-dot">▶</span>'; }
+  }
+  function toastSafe(message){
+    if (typeof toast === "function") toast(message);
+  }
+
+  function normalizeYoutubeHelp(){
     try {
-      if (typeof activeAccount === "function") return activeAccount();
-      return Array.isArray(window.accounts) ? window.accounts[0] : null;
-    } catch (_) {
-      return null;
+      if (!window.helpContent || !helpContent.advancedYoutube) return;
+      helpContent.advancedYoutube.title = "YouTube 發布設定說明";
+      helpContent.advancedYoutube.sections = [
+        {
+          title: "兒童專屬內容",
+          body: "發布前需要說明影片是否屬於兒童專屬內容。若設為兒童專屬，通知等部分功能會依 YouTube 規則調整。"
+        },
+        {
+          title: "內容包含付費宣傳",
+          body: "如果影片含有第三方提供的有價品，並據以製作相關影片，發布時需要標記，例如置入性行銷、贊助或代言。"
+        },
+        {
+          title: "內容包含需揭露的 AI 內容",
+          body: "若影片使用 AI 生成或編輯，且呈現真人言論、真實事件或看似真實但未發生的場景，發布時需要揭露。"
+        },
+        {
+          title: "允許嵌入",
+          body: "允許他人在網站上嵌入你的影片。"
+        }
+      ];
+    } catch (_) {}
+    var label = $(".advanced-summary-title > span");
+    if (label) label.textContent = "YouTube 發布設定";
+    var help = $(".summary-info");
+    if (help) {
+      help.dataset.help = "advancedYoutube";
+      help.title = "YouTube 發布設定說明";
+      help.setAttribute("aria-label", "YouTube 發布設定說明");
     }
   }
-  function selectedPublishIds(){
-    try {
-      var stored = JSON.parse(localStorage.getItem("mvp_publish_accounts") || "[]");
-      if (Array.isArray(stored) && stored.length) return stored;
-    } catch (_) {}
-    var account = activeAccountSafe();
-    return account ? [account.id] : [];
-  }
-  function normalizeRemoveButton(inputId, buttonId){
-    var input = $("#" + inputId);
-    var button = $("#" + buttonId);
-    if (!button) return;
-    var hasFile = !!(input && input.files && input.files.length);
-    var wrap = button.closest(".upload-item") || button.closest(".caption-file-row");
-    if (wrap) wrap.classList.toggle("has-file", hasFile);
-    button.className = "file-remove" + (hasFile ? "" : " is-hidden");
-    button.hidden = !hasFile;
-    button.setAttribute("aria-hidden", hasFile ? "false" : "true");
-    button.setAttribute("aria-label", "移除檔案");
-    button.title = "移除檔案";
-    button.innerHTML = "";
-    button.style.display = hasFile ? "grid" : "none";
-  }
-  function normalizeComposerLabels(){
-    normalizeRemoveButton("mediaInput", "removeMediaBtn");
-    normalizeRemoveButton("coverInput", "removeCoverBtn");
-    normalizeRemoveButton("captionInput", "removeCaptionBtn");
-    var summary = $(".advanced-summary-title > span");
-    if (summary) summary.textContent = "YouTube 設定";
-    var info = $(".summary-info");
-    if (info) {
-      info.dataset.help = "advancedYoutube";
-      info.setAttribute("aria-label", "YouTube 設定說明");
-      info.title = "YouTube 設定說明";
-    }
-    try {
-      if (window.helpContent && helpContent.advancedYoutube) {
-        helpContent.advancedYoutube.title = "YouTube 設定說明";
-      }
-    } catch (_) {}
-  }
+
   function normalizeChartMode(){
+    var type = localStorage.getItem("mvp_chart_type") || "bar";
     var chart = $("#viewsChart");
     var bars = $("#chartBars");
     var line = $("#chartLine");
-    if (!chart) return;
-    var type = localStorage.getItem("mvp_chart_type") || "bar";
-    chart.dataset.chartType = type;
+    if (chart) chart.dataset.chartType = type;
     if (bars) {
       bars.hidden = type !== "bar";
       bars.style.display = type === "bar" ? "grid" : "none";
@@ -76,88 +77,174 @@
       line.hidden = type !== "line";
       line.style.display = type === "line" ? "block" : "none";
       line.style.visibility = type === "line" ? "visible" : "hidden";
-      $$("path", line).forEach(function(path){ path.classList.add("line-stroke"); });
-      var circles = $$("circle", line);
-      if (circles.length && !line.querySelector(".line-hit-points")) {
-        var group = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        group.setAttribute("class", "line-hit-points");
-        circles.forEach(function(circle){ group.appendChild(circle); });
-        line.appendChild(group);
-      }
     }
   }
-  function normalizeProductionMetrics(){
-    if (cfg.appEnv !== "production") return;
+
+  function selectedIds(){
+    try {
+      var saved = JSON.parse(localStorage.getItem("mvp_publish_accounts") || "[]");
+      if (Array.isArray(saved) && saved.length) return saved.filter(function(id){
+        return accountList().some(function(account){ return account.id === id; });
+      });
+    } catch (_) {}
     var account = activeAccountSafe();
-    var isDemoAccount = account && (account.id === "main" || account.id === "studio" || String(account.id || "").indexOf("demo") === 0);
-    var hasRealStats = !!(account && window.accountStats && window.(window.accountStats||{})[account.id]);
-    if (!account || (!isDemoAccount && hasRealStats)) return;
-    var values = { subscriberMetric: "0", viewMetric: "0", engagementMetric: "0%" };
-    Object.keys(values).forEach(function(id){
-      var el = $("#" + id);
-      if (el) el.textContent = values[id];
-    });
-    ["subscriberDelta", "viewDelta", "engagementDelta"].forEach(function(id){
-      var el = $("#" + id);
-      if (el) el.textContent = "-";
-    });
-    var yAxis = $("#chartYAxis");
-    var labels = $("#chartLabels");
-    var bars = $("#chartBars");
-    var line = $("#chartLine");
-    if (yAxis) yAxis.innerHTML = ["0","0","0","0"].map(function(v){ return "<span>" + v + "</span>"; }).join("");
-    if (labels) labels.innerHTML = "";
-    if (bars) bars.innerHTML = "";
-    if (line) line.innerHTML = "";
+    return account ? [account.id] : [];
   }
-  function normalizeAccountActions(){
-    $$(".account-status-action,.status-action").forEach(function(el){
-      el.classList.remove("btn");
-      el.style.transform = "none";
-      el.style.textDecoration = "none";
+  function saveSelectedIds(ids){
+    var clean = ids.filter(Boolean);
+    localStorage.setItem("mvp_publish_accounts", JSON.stringify(clean));
+    if (clean[0]) localStorage.setItem("mvp_publish_account", clean[0]);
+  }
+
+  function closeTargetDialog(){
+    var modal = $("#publishTargetModal");
+    if (modal) modal.remove();
+  }
+  function openTargetDialog(){
+    closeTargetDialog();
+    var accountsData = accountList();
+    var ids = selectedIds();
+    var modal = document.createElement("div");
+    modal.id = "publishTargetModal";
+    modal.className = "target-modal-backdrop open";
+    modal.innerHTML =
+      '<div class="target-dialog" role="dialog" aria-modal="true" aria-label="發布目標">' +
+        '<div class="target-dialog-head target-dialog-head-plain"><button class="target-dialog-close" type="button" aria-label="關閉">×</button></div>' +
+        '<div class="target-dialog-list">' +
+          accountsData.map(function(account){
+            var active = ids.indexOf(account.id) >= 0;
+            return '<button class="target-dialog-option ' + (active ? "active" : "") + '" type="button" data-target-id="' + attr(account.id) + '">' +
+              '<span class="target-option-icon">' + icon() + '</span>' +
+              '<strong>' + html(accountName(account)) + '</strong>' +
+              '<span class="target-option-check" aria-hidden="true">' + (active ? "✓" : "") + '</span>' +
+            '</button>';
+          }).join("") +
+        '</div>' +
+        '<div class="target-dialog-actions"><button class="btn primary target-dialog-done" type="button">完成</button></div>' +
+      '</div>';
+    document.body.appendChild(modal);
+    modal.addEventListener("click", function(event){ if (event.target === modal) closeTargetDialog(); });
+    $(".target-dialog-close", modal).onclick = closeTargetDialog;
+    $(".target-dialog-done", modal).onclick = function(){
+      closeTargetDialog();
+      renderPublishTargetsClean();
+      if (typeof renderPlaylistOptions === "function") renderPlaylistOptions();
+      if (typeof renderComposer === "function") renderComposer();
+    };
+    $$("[data-target-id]", modal).forEach(function(button){
+      button.onclick = function(){
+        var id = button.dataset.targetId;
+        var next = selectedIds();
+        if (next.indexOf(id) >= 0) {
+          if (next.length === 1) {
+            toastSafe("至少保留一個發布目標");
+            return;
+          }
+          next = next.filter(function(item){ return item !== id; });
+        } else {
+          next.push(id);
+        }
+        saveSelectedIds(next);
+        openTargetDialog();
+      };
     });
   }
-  function contentRows(){
+  function renderPublishTargetsClean(){
+    var host = $("#publishTargets");
+    if (!host) return;
+    var accountsData = accountList();
+    if (!accountsData.length) {
+      host.innerHTML = "";
+      return;
+    }
+    var selected = selectedIds().map(function(id){
+      return accountsData.find(function(account){ return account.id === id; });
+    }).filter(Boolean);
+    if (!selected.length) selected = [accountsData[0]];
+    var label = selected.length > 1 ? selected.length + " 個帳號" : accountName(selected[0]);
+    host.innerHTML =
+      '<button class="target-summary-button" type="button" id="publishTargetSummaryBtn">' +
+        '<span class="target-summary-icon">' + icon() + '</span>' +
+        '<strong>' + html(label) + '</strong>' +
+      '</button>';
+    $("#publishTargetSummaryBtn").onclick = openTargetDialog;
+  }
+
+  function realContentData(){
+    try {
+      var account = activeAccountSafe();
+      var range = localStorage.getItem("mvp_chart_range") || "7";
+      if (window.realContentAnalytics && account && realContentAnalytics[account.id]) {
+        return realContentAnalytics[account.id][range] || realContentAnalytics[account.id]["7"] || null;
+      }
+    } catch (_) {}
+    return null;
+  }
+  function demoContentData(){
     var account = activeAccountSafe();
-    var base = account ? (account.name || "YouTube") : "YouTube";
-    return [
-      { type: "shorts", title: base + " 近期最佳 Shorts", views: "87,400", rate: "7.5%", cover: "S" },
-      { type: "video", title: base + " 更新公告", views: "42,800", rate: "5.9%", cover: "V" },
-      { type: "shorts", title: base + " 製作流程幕後分享", views: "58,200", rate: "6.8%", cover: "S" }
-    ];
+    var name = accountName(account);
+    return {
+      content: 3,
+      views: "188,400",
+      engagement: "6.7%",
+      items: [
+        { type: "shorts", title: name + " 近期最佳 Shorts", views: "87,400", engagement: "7.5%", cover: "S" },
+        { type: "video", title: name + " 更新公告", views: "42,800", engagement: "5.9%", cover: "V" },
+        { type: "shorts", title: name + " 製作流程幕後分享", views: "58,200", engagement: "6.8%", cover: "S" }
+      ]
+    };
   }
-  function renderContentInsight(){
+  function setContentMetrics(data){
+    var content = $("#analyticsContentMetric");
+    var views = $("#analyticsViewsMetric");
+    var engagement = $("#analyticsEngagementMetric");
+    if (content) content.textContent = data ? data.content : "0";
+    if (views) views.textContent = data ? data.views : "0";
+    if (engagement) engagement.textContent = data ? data.engagement : "0%";
+    ["analyticsContentDelta", "analyticsViewsDelta", "analyticsEngagementDelta"].forEach(function(id){
+      var el = $("#" + id);
+      if (el) el.textContent = data ? "" : "-";
+    });
+  }
+  function renderContentRanking(){
     var list = $("#contentRankList");
     if (!list) return;
+    var data = realContentData() || (isPreview ? demoContentData() : null);
+    setContentMetrics(data);
+    if (!data || !Array.isArray(data.items) || !data.items.length) {
+      list.innerHTML = "";
+      return;
+    }
     var filter = localStorage.getItem("mvp_content_filter") || "all";
-    var data = contentRows();
-    var shown = data.filter(function(item){ return filter === "all" || item.type === filter; });
-    var count = function(type){ return data.filter(function(item){ return item.type === type; }).length; };
+    var all = data.items;
+    var shown = all.filter(function(item){ return filter === "all" || item.type === filter; });
+    var count = function(type){ return all.filter(function(item){ return item.type === type; }).length; };
     list.innerHTML =
       '<div class="content-type-summary is-filterable">' +
-        '<button type="button" class="content-type-filter ' + (filter === "all" ? "active" : "") + '" data-content-filter="all"><span>全部</span><strong>' + data.length + '</strong></button>' +
+        '<button type="button" class="content-type-filter ' + (filter === "all" ? "active" : "") + '" data-content-filter="all"><span>全部</span><strong>' + all.length + '</strong></button>' +
         '<button type="button" class="content-type-filter ' + (filter === "video" ? "active" : "") + '" data-content-filter="video"><span>一般影片</span><strong>' + count("video") + '</strong></button>' +
         '<button type="button" class="content-type-filter ' + (filter === "shorts" ? "active" : "") + '" data-content-filter="shorts"><span>Shorts</span><strong>' + count("shorts") + '</strong></button>' +
       '</div>' +
       shown.map(function(item, index){
         return '<article class="content-rank-card with-cover">' +
           '<span class="rank-index">' + (index + 1) + '</span>' +
-          '<div class="rank-cover">' + escapeHtml(item.cover) + '</div>' +
-          '<div class="rank-copy"><strong>' + escapeHtml(item.title) + '</strong><span>' + (item.type === "shorts" ? "Shorts" : "一般影片") + '</span></div>' +
-          '<div><strong>' + escapeHtml(item.views) + '</strong><span>觀看</span></div>' +
-          '<div><strong>' + escapeHtml(item.rate) + '</strong><span>互動</span></div>' +
+          '<div class="rank-cover">' + html(item.cover || (item.type === "shorts" ? "S" : "V")) + '</div>' +
+          '<div class="rank-copy"><strong>' + html(item.title) + '</strong><span>' + (item.type === "shorts" ? "Shorts" : "一般影片") + '</span></div>' +
+          '<div><strong>' + html(item.views) + '</strong><span>觀看</span></div>' +
+          '<div><strong>' + html(item.engagement) + '</strong><span>互動</span></div>' +
         '</article>';
       }).join("");
     $$("[data-content-filter]", list).forEach(function(button){
       button.onclick = function(){
         localStorage.setItem("mvp_content_filter", button.dataset.contentFilter || "all");
-        renderContentInsight();
+        renderContentRanking();
       };
     });
   }
+
   function openIssueModal(){
-    var old = $("#issueModalBackdrop");
-    if (old) old.remove();
+    var existing = $("#issueModalBackdrop");
+    if (existing) existing.remove();
     var modal = document.createElement("div");
     modal.id = "issueModalBackdrop";
     modal.className = "issue-modal-backdrop";
@@ -180,7 +267,7 @@
       var form = event.currentTarget;
       var message = form.message.value.trim();
       if (!message) {
-        if (typeof toast === "function") toast("請輸入問題描述");
+        toastSafe("請輸入問題描述");
         return;
       }
       try {
@@ -191,149 +278,133 @@
         });
         if (!response.ok) throw new Error("failed");
         close();
-        if (typeof toast === "function") toast("已送出問題回報");
+        toastSafe("已送出問題回報");
       } catch (_) {
-        if (typeof toast === "function") toast("問題回報送出失敗，請稍後再試");
+        toastSafe("問題回報送出失敗，請稍後再試");
       }
     };
   }
   function bindIssueButton(){
     var button = $("#reportIssueBtn");
     if (!button) {
-      button = $$(".more-item-title").find(function(item){
-        return (item.textContent || "").replace(/\s+/g, "").indexOf("問題回報") > -1;
+      button = $$(".more-item, .more-row, button, a").find(function(item){
+        return (item.textContent || "").replace(/\s+/g, "").indexOf("問題回報") >= 0;
       });
     }
-    if (!button || button.dataset.cleanIssueBound === "true") return;
-    var clone = button.cloneNode(true);
-    clone.dataset.cleanIssueBound = "true";
-    clone.onclick = function(event){
+    if (!button || button.dataset.runtimeIssueBound === "true") return;
+    button.dataset.runtimeIssueBound = "true";
+    button.addEventListener("click", function(event){
       event.preventDefault();
       event.stopPropagation();
       openIssueModal();
-    };
-    button.replaceWith(clone);
+    });
   }
-  function publishModeValue(){
-    var raw = $("#publishMode") ? $("#publishMode").value : "排程發布";
-    if (raw === "immediate" || raw.indexOf("立即") > -1) return "immediate";
-    if (raw === "draft" || raw.indexOf("草稿") > -1 || raw.indexOf("儲存") > -1) return "draft";
-    return "scheduled";
+  document.addEventListener("click", function(event){
+    var trigger = event.target && event.target.closest ? event.target.closest("#reportIssueBtn") : null;
+    if (!trigger) return;
+    event.preventDefault();
+    event.stopPropagation();
+    openIssueModal();
+  }, true);
+
+  function normalizeRemoveButtons(){
+    [
+      ["mediaInput", "removeMediaBtn"],
+      ["coverInput", "removeCoverBtn"],
+      ["captionInput", "removeCaptionBtn"]
+    ].forEach(function(pair){
+      var input = $("#" + pair[0]);
+      var button = $("#" + pair[1]);
+      if (!button) return;
+      var hasFile = !!(input && input.files && input.files.length);
+      button.className = "file-remove" + (hasFile ? "" : " is-hidden");
+      button.hidden = !hasFile;
+      button.style.display = hasFile ? "grid" : "none";
+      button.textContent = "";
+      button.setAttribute("aria-label", "移除檔案");
+      button.title = "移除檔案";
+    });
   }
-  function bindPublishButton(){
-    var button = $("#scheduleBtn");
-    if (!button || button.dataset.cleanPublishBound === "true") return;
-    var clone = button.cloneNode(true);
-    clone.dataset.cleanPublishBound = "true";
-    clone.onclick = async function(event){
-      event.preventDefault();
-      var title = $("#titleInput");
-      var media = $("#mediaInput");
-      var mode = publishModeValue();
-      if (!title || !title.value.trim()) {
-        if (typeof setFieldError === "function") setFieldError("title", "請輸入影片標題。");
-        if (title) title.focus();
-        return;
-      }
-      if (mode !== "draft" && (!media || !media.files || !media.files[0])) {
-        if (typeof setFieldError === "function") setFieldError("media", "請選擇影片檔案。");
-        return;
-      }
-      if (mode === "scheduled" && $("#publishTime") && !$("#publishTime").value) {
-        if (typeof toast === "function") toast("請設定排程發布時間。");
-        return;
-      }
-      var form = new FormData();
-      selectedPublishIds().forEach(function(id){ form.append("accountIds", id); });
-      form.set("title", title.value.trim());
-      form.set("description", $("#contentInput") ? $("#contentInput").value : "");
-      form.set("contentType", $("#contentType") ? $("#contentType").value : "一般影片");
-      form.set("publishMode", mode);
-      form.set("visibility", $("#visibilityInput") ? $("#visibilityInput").value : "private");
-      if ($("#publishTime") && $("#publishTime").value) form.set("scheduledAt", new Date($("#publishTime").value).toISOString());
-      form.set("playlistId", $("#playlistInput") ? $("#playlistInput").value : "");
-      form.set("madeForKids", typeof isMadeForKids === "function" && isMadeForKids() ? "true" : "false");
-      form.set("paidPromo", $("#paidPromoInput") && $("#paidPromoInput").checked ? "true" : "false");
-      form.set("aiDisclosure", $("#aiDisclosureInput") && $("#aiDisclosureInput").checked ? "true" : "false");
-      form.set("embedAllowed", $("#embedInput") && $("#embedInput").checked ? "true" : "false");
-      form.set("notifySubscribers", $("#notifyInput") && $("#notifyInput").checked ? "true" : "false");
-      form.set("categoryId", $("#categoryInput") ? $("#categoryInput").value : "24");
-      form.set("tags", $("#tagsInput") ? $("#tagsInput").value : "");
-      form.set("license", $("#licenseInput") ? $("#licenseInput").value : "youtube");
-      if (media && media.files && media.files[0]) form.set("media", media.files[0]);
-      var cover = $("#coverInput");
-      var caption = $("#captionInput");
-      if (cover && cover.files && cover.files[0]) form.set("cover", cover.files[0]);
-      if (caption && caption.files && caption.files[0]) form.set("caption", caption.files[0]);
-      var oldText = clone.textContent;
-      clone.disabled = true;
-      clone.textContent = mode === "draft" ? "儲存中..." : mode === "immediate" ? "發布中..." : "加入中...";
-      try {
-        var response = await fetch("/api/youtube/publish", { method: "POST", body: form });
-        var data = await response.json().catch(function(){ return {}; });
-        if (!response.ok) {
-          if (typeof toast === "function") toast(data.error || "發布失敗，請稍後再試。");
-          return;
-        }
-        if (typeof toast === "function") toast(mode === "draft" ? "已儲存草稿。" : mode === "immediate" ? "已送出發布任務。" : "已加入排程佇列。");
-      } catch (_) {
-        if (typeof toast === "function") toast("發布連線失敗，請稍後再試。");
-      } finally {
-        clone.disabled = false;
-        clone.textContent = oldText;
-      }
-    };
-    button.replaceWith(clone);
+
+  function normalizeProductionDashboard(){
+    if (!isProduction) return;
+    var account = activeAccountSafe();
+    var hasStats = false;
+    try { hasStats = !!(account && window.accountStats && accountStats[account.id]); } catch (_) {}
+    if (hasStats) return;
+    ["subscriberMetric", "viewMetric"].forEach(function(id){
+      var el = $("#" + id);
+      if (el) el.textContent = "0";
+    });
+    var engagement = $("#engagementMetric");
+    if (engagement) engagement.textContent = "0%";
+    ["subscriberDelta", "viewDelta", "engagementDelta"].forEach(function(id){
+      var el = $("#" + id);
+      if (el) el.textContent = "-";
+    });
+    var yAxis = $("#chartYAxis");
+    var labels = $("#chartLabels");
+    var bars = $("#chartBars");
+    var line = $("#chartLine");
+    if (yAxis) yAxis.innerHTML = "";
+    if (labels) labels.innerHTML = "";
+    if (bars) bars.innerHTML = "";
+    if (line) line.innerHTML = "";
   }
-  function runCleanFinal(){
-    normalizeComposerLabels();
+
+  function normalizeAll(){
+    normalizeYoutubeHelp();
     normalizeChartMode();
-    normalizeProductionMetrics();
-    normalizeAccountActions();
-    renderContentInsight();
+    normalizeRemoveButtons();
+    renderPublishTargetsClean();
+    renderContentRanking();
     bindIssueButton();
-    bindPublishButton();
-    if (!cfg.demoTools) {
+    normalizeProductionDashboard();
+    if (!isPreview) {
       var demo = $("#addDemoAccountBtn");
       if (demo) demo.remove();
     }
   }
+
   var previousRenderChart = typeof renderChart === "function" ? renderChart : null;
   if (previousRenderChart) {
     renderChart = function(range){
       previousRenderChart(range);
-      runCleanFinal();
-    };
-  }
-  var previousRenderComposer = typeof renderComposer === "function" ? renderComposer : null;
-  if (previousRenderComposer) {
-    renderComposer = function(){
-      previousRenderComposer();
-      runCleanFinal();
+      normalizeAll();
     };
   }
   var previousRenderAnalytics = typeof renderAnalytics === "function" ? renderAnalytics : null;
   renderAnalytics = function(range){
-    if (previousRenderAnalytics) {
+    if (!isProduction && previousRenderAnalytics) {
       try { previousRenderAnalytics(range); } catch (_) {}
     }
-    renderContentInsight();
-    runCleanFinal();
+    renderContentRanking();
   };
-  document.addEventListener("click", function(){ setTimeout(runCleanFinal, 0); });
+  var previousRenderComposer = typeof renderComposer === "function" ? renderComposer : null;
+  if (previousRenderComposer) {
+    renderComposer = function(){
+      previousRenderComposer();
+      normalizeAll();
+    };
+  }
+  var previousRenderPublishTargets = typeof renderPublishTargets === "function" ? renderPublishTargets : null;
+  renderPublishTargets = function(){
+    if (!previousRenderPublishTargets) return renderPublishTargetsClean();
+    renderPublishTargetsClean();
+  };
+
+  document.addEventListener("click", function(){ setTimeout(normalizeAll, 0); });
   document.addEventListener("change", function(event){
-    if (event.target && event.target.matches && event.target.matches("#mediaInput,#coverInput,#captionInput,#publishMode")) {
-      setTimeout(runCleanFinal, 0);
+    if (event.target && event.target.matches && event.target.matches("#mediaInput,#coverInput,#captionInput,#publishMode,#visibilityInput,input[name='audienceChoice'],#playlistInput")) {
+      setTimeout(normalizeAll, 0);
     }
   });
+
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", runCleanFinal, { once: true });
+    document.addEventListener("DOMContentLoaded", normalizeAll, { once: true });
   } else {
-    runCleanFinal();
+    normalizeAll();
   }
-  setTimeout(runCleanFinal, 100);
-  setTimeout(runCleanFinal, 700);
+  setTimeout(normalizeAll, 100);
+  setTimeout(normalizeAll, 700);
 })();
-
-
-
