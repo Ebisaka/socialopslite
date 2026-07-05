@@ -1267,12 +1267,23 @@
     });
   }
   function contentData(){
+    var cfg=window.SOCIALOPS_CONFIG||{};
+    if(cfg.appEnv==="production"){
+      try{
+        var account=active();
+        var id=account&&account.id;
+        var range=localStorage.getItem("mvp_chart_range")||"7";
+        var store=window.contentAnalytics||contentAnalytics||{};
+        var data=store.youtube&&id&&store.youtube[id]&&(store.youtube[id][range]||store.youtube[id]["7"]);
+        return data&&Array.isArray(data.items)?data.items.map(function(item){return {type:(item.type==="Shorts"||item.type==="shorts")?"shorts":"video",title:item.title||"?????",views:item.views||"0",rate:item.rate||item.engagement||"-",cover:item.cover||((item.type==="Shorts"||item.type==="shorts")?"S":"V"),thumbnail:item.thumbnail||""}}):[];
+      }catch(_){return []}
+    }
     var account=active();
     var base=account?(account.name||"YouTube"):"YouTube";
     return [
-      {type:"shorts",title:base+" 近期最佳 Shorts",views:"87,400",rate:"7.5%",cover:"S"},
-      {type:"video",title:base+" 更新公告",views:"42,800",rate:"5.9%",cover:"V"},
-      {type:"shorts",title:base+" 製作流程幕後分享",views:"58,200",rate:"6.8%",cover:"S"}
+      {type:"shorts",title:base+" ???? Shorts",views:"87,400",rate:"7.5%",cover:"S"},
+      {type:"video",title:base+" ????",views:"42,800",rate:"5.9%",cover:"V"},
+      {type:"shorts",title:base+" ????????",views:"58,200",rate:"6.8%",cover:"S"}
     ];
   }
   function renderContentTab(){
@@ -1390,5 +1401,73 @@
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",run,{once:true});else run();
   setTimeout(run,100);
   setTimeout(run,600);
+})();
+
+/* 2026-07-05 production pre-guard.
+   This runs before runtime-overrides.js and prevents a brief flash of demo
+   content/accounts while the real account and metric APIs are still loading. */
+(function socialOpsProductionPreGuard20260705(){
+  var cfg = window.SOCIALOPS_CONFIG || {};
+  if (cfg.appEnv !== "production") return;
+  function $(selector, root){ return (root || document).querySelector(selector); }
+  function $$(selector, root){ return Array.from((root || document).querySelectorAll(selector)); }
+  function isDemoAccount(account){
+    if (!account) return true;
+    var id = String(account.id || "");
+    var name = String(account.name || account.displayName || "");
+    return id === "__empty" || id === "main" || id === "studio" || id.indexOf("demo") === 0 || name === "YouTube" || name === "工作用 YouTube" || /^YouTube 測試帳號/.test(name);
+  }
+  function cleanAccounts(){
+    try {
+      if (!Array.isArray(accounts)) return;
+      var filtered = accounts.filter(function(account){ return !isDemoAccount(account); });
+      if (filtered.length !== accounts.length) {
+        accounts.length = 0;
+        filtered.forEach(function(account){ accounts.push(account); });
+      }
+    } catch (_) {}
+  }
+  function emptyContentReport(){
+    var list = $("#contentRankList");
+    if (list) {
+      list.innerHTML = '<div class="content-type-summary is-filterable"><button type="button" class="content-type-filter active" data-content-filter="all"><span>全部</span><strong>0</strong></button><button type="button" class="content-type-filter" data-content-filter="video"><span>一般影片</span><strong>0</strong></button><button type="button" class="content-type-filter" data-content-filter="shorts"><span>Shorts</span><strong>0</strong></button></div><div class="content-empty">目前沒有可顯示的內容資料</div>';
+    }
+    [["analyticsContentMetric","0"],["analyticsViewsMetric","0"],["analyticsEngagementMetric","0%"]].forEach(function(item){
+      var el = $("#" + item[0]);
+      if (el) el.textContent = item[1];
+    });
+    ["analyticsContentDelta","analyticsViewsDelta","analyticsEngagementDelta"].forEach(function(id){
+      var el = $("#" + id);
+      if (el) el.textContent = "-";
+    });
+  }
+  function emptyDemoRows(){
+    cleanAccounts();
+    emptyContentReport();
+    var addDemo = $("#addDemoAccountBtn");
+    if (addDemo) addDemo.remove();
+    var list = $("#accountList");
+    if (list) {
+      $$(".account", list).forEach(function(card){
+        if (/YouTube 測試帳號|工作用 YouTube/.test(card.textContent || "") || (card.textContent || "").trim() === "YouTube") {
+          card.remove();
+        }
+      });
+    }
+  }
+  var oldAnalytics = typeof renderAnalytics === "function" ? renderAnalytics : null;
+  renderAnalytics = function(range){
+    if (oldAnalytics) {
+      try { oldAnalytics(range); } catch (_) {}
+    }
+    emptyContentReport();
+  };
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", emptyDemoRows, { once: true });
+  } else {
+    emptyDemoRows();
+  }
+  setTimeout(emptyDemoRows, 80);
+  setTimeout(emptyDemoRows, 400);
 })();
 
