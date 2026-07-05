@@ -44,6 +44,9 @@ export default function ProfileClient() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [passwordMessage, setPasswordMessage] = useState("");
+  const [passwordErrorField, setPasswordErrorField] = useState<"" | "current" | "new" | "form">("");
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
   const [busy, setBusy] = useState(false);
   const [deleteRequested, setDeleteRequested] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
@@ -62,6 +65,19 @@ export default function ProfileClient() {
 
   async function changePassword(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setPasswordMessage("");
+    setPasswordErrorField("");
+    setPasswordSuccess(false);
+    if (!currentPassword.trim()) {
+      setPasswordErrorField("current");
+      setPasswordMessage("請輸入目前密碼。");
+      return;
+    }
+    if (newPassword.length < 8) {
+      setPasswordErrorField("new");
+      setPasswordMessage("新密碼至少需要 8 個字元。");
+      return;
+    }
     setBusy(true);
     setMessage("");
     const response = await fetch("/api/account/profile", {
@@ -72,13 +88,14 @@ export default function ProfileClient() {
     const body = await response.json().catch(() => ({}));
     setBusy(false);
     if (!response.ok) {
-      setMessage(body.error || copy.passwordFailed);
+      setPasswordErrorField("current");
+      setPasswordMessage(body.error || copy.passwordFailed);
       return;
     }
     setCurrentPassword("");
     setNewPassword("");
-    setPasswordOpen(false);
-    setMessage(copy.passwordUpdated);
+    setPasswordSuccess(true);
+    setPasswordMessage(copy.passwordUpdated);
   }
 
   async function logout() {
@@ -189,17 +206,56 @@ export default function ProfileClient() {
             </span>
           </button>
           {passwordOpen ? (
-            <form className="profile-form compact-form" onSubmit={changePassword}>
-              <label>
+            <form className="profile-form compact-form password-form" onSubmit={changePassword}>
+              <label className={passwordErrorField === "current" ? "has-error" : ""}>
                 <span>{copy.currentPassword}</span>
-                <input value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} type="password" autoComplete="current-password" />
+                <input
+                  value={currentPassword}
+                  onChange={(event) => {
+                    setCurrentPassword(event.target.value);
+                    if (passwordErrorField === "current") {
+                      setPasswordErrorField("");
+                      setPasswordMessage("");
+                    }
+                  }}
+                  type="password"
+                  autoComplete="current-password"
+                />
               </label>
-              <label>
+              <label className={passwordErrorField === "new" ? "has-error" : ""}>
                 <span>{copy.newPassword}</span>
-                <input value={newPassword} onChange={(event) => setNewPassword(event.target.value)} type="password" autoComplete="new-password" minLength={8} required />
+                <input
+                  value={newPassword}
+                  onChange={(event) => {
+                    setNewPassword(event.target.value);
+                    if (passwordErrorField === "new") {
+                      setPasswordErrorField("");
+                      setPasswordMessage("");
+                    }
+                  }}
+                  type="password"
+                  autoComplete="new-password"
+                  minLength={8}
+                />
               </label>
+              {passwordMessage ? (
+                <p className={passwordSuccess ? "profile-field-note success" : "profile-field-error"}>
+                  {passwordMessage}
+                </p>
+              ) : null}
               <div className="profile-actions">
-                <button className="btn" type="button" onClick={() => setPasswordOpen(false)}>{copy.cancel}</button>
+                <button
+                  className="btn"
+                  type="button"
+                  onClick={() => {
+                    setPasswordOpen(false);
+                    setPasswordMessage("");
+                    setPasswordErrorField("");
+                    setPasswordSuccess(false);
+                  }}
+                >
+                  {copy.cancel}
+                </button>
                 <button className="btn primary" type="submit" disabled={busy}>{busy ? copy.processing : copy.save}</button>
               </div>
             </form>

@@ -5214,6 +5214,42 @@ body[data-resolved-theme="light"] .security-row.danger-zone strong{
   stroke-linejoin:round!important;
   vector-effect:non-scaling-stroke!important;
 }
+
+/* Final alignment overrides for modal headers and member-center field errors. */
+.issue-modal-head{
+  display:grid!important;
+  grid-template-columns:34px 1fr 34px!important;
+  align-items:center!important;
+}
+.issue-modal-head h3{
+  grid-column:2!important;
+  text-align:center!important;
+  justify-self:center!important;
+}
+.issue-modal-close{
+  grid-column:3!important;
+  justify-self:end!important;
+}
+.password-form label.has-error input{
+  border-color:#ef4444!important;
+  box-shadow:0 0 0 1px rgba(239,68,68,.38),0 0 0 4px rgba(239,68,68,.1)!important;
+}
+.profile-field-error{
+  margin:-2px 0 2px;
+  color:#ef4444;
+  font-size:12px;
+  line-height:1.35;
+  font-weight:650;
+}
+.profile-field-note{
+  margin:-2px 0 2px;
+  font-size:12px;
+  line-height:1.35;
+  font-weight:650;
+}
+.profile-field-note.success{
+  color:#22c55e;
+}
 .chart-line .line-hit-points circle{
   fill:var(--bg)!important;
   stroke:#cbd5e1!important;
