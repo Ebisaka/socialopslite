@@ -26,14 +26,12 @@ export default function DemoShell({
   demoTools = false
 }: DemoShellProps) {
   const mountedRef = useRef(false);
-  const buildVersion = "20260705-core-clean-3";
+  const buildVersion = "20260705-runtime-clean-1";
   const configScript = `
     window.SOCIALOPS_CONFIG = ${JSON.stringify({ appEnv, demoTools, initialTab })};
-    try { localStorage.setItem("mvp_active_tab", ${JSON.stringify(initialTab)}); } catch (error) {}
   `;
 
   useEffect(() => {
-    localStorage.setItem("mvp_active_tab", initialTab);
     window.SOCIALOPS_CONFIG = { appEnv, demoTools, initialTab };
     if (!demoTools) {
       document.querySelector("#addDemoAccountBtn")?.remove();
@@ -44,14 +42,16 @@ export default function DemoShell({
 
   return (
     <>
-      <script
+      <Script
         id="socialops-config"
+        strategy="beforeInteractive"
         dangerouslySetInnerHTML={{ __html: configScript }}
       />
       <div
         data-socialops-build={`demo-parity-${buildVersion}`}
         data-socialops-env={appEnv}
         data-demo-tools={demoTools ? "true" : "false"}
+        data-initial-tab={initialTab}
         dangerouslySetInnerHTML={{ __html: demoMarkup }}
       />
       <Script
@@ -72,6 +72,7 @@ export default function DemoShell({
     </>
   );
 }
+
 
 
 

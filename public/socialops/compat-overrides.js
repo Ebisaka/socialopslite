@@ -1267,23 +1267,12 @@
     });
   }
   function contentData(){
-    var cfg=window.SOCIALOPS_CONFIG||{};
-    if(cfg.appEnv==="production"){
-      try{
-        var account=active();
-        var id=account&&account.id;
-        var range=localStorage.getItem("mvp_chart_range")||"7";
-        var store=window.contentAnalytics||contentAnalytics||{};
-        var data=store.youtube&&id&&store.youtube[id]&&(store.youtube[id][range]||store.youtube[id]["7"]);
-        return data&&Array.isArray(data.items)?data.items.map(function(item){return {type:(item.type==="Shorts"||item.type==="shorts")?"shorts":"video",title:item.title||"?????",views:item.views||"0",rate:item.rate||item.engagement||"-",cover:item.cover||((item.type==="Shorts"||item.type==="shorts")?"S":"V"),thumbnail:item.thumbnail||""}}):[];
-      }catch(_){return []}
-    }
     var account=active();
     var base=account?(account.name||"YouTube"):"YouTube";
     return [
-      {type:"shorts",title:base+" ???? Shorts",views:"87,400",rate:"7.5%",cover:"S"},
-      {type:"video",title:base+" ????",views:"42,800",rate:"5.9%",cover:"V"},
-      {type:"shorts",title:base+" ????????",views:"58,200",rate:"6.8%",cover:"S"}
+      {type:"shorts",title:base+" 近期最佳 Shorts",views:"87,400",rate:"7.5%",cover:"S"},
+      {type:"video",title:base+" 更新公告",views:"42,800",rate:"5.9%",cover:"V"},
+      {type:"shorts",title:base+" 製作流程幕後分享",views:"58,200",rate:"6.8%",cover:"S"}
     ];
   }
   function renderContentTab(){
