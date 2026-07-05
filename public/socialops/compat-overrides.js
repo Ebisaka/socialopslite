@@ -29,6 +29,7 @@
 (function socialOpsUltimateRegressionLock(){
   var cfg=window.SOCIALOPS_CONFIG||{};
   var isProduction=cfg.appEnv==="production";
+  var demoTools=!!cfg.demoTools;
   function $(selector,root){return (root||document).querySelector(selector)}
   function $$(selector,root){return Array.from((root||document).querySelectorAll(selector))}
   function text(value){return String(value==null?"":value)}

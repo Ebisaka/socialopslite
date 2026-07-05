@@ -26,7 +26,7 @@ export default function DemoShell({
   demoTools = false
 }: DemoShellProps) {
   const mountedRef = useRef(false);
-  const buildVersion = "20260705-runtime-clean-2";
+  const buildVersion = "20260705-runtime-clean-3";
   const configScript = `
     window.SOCIALOPS_CONFIG = ${JSON.stringify({ appEnv, demoTools, initialTab })};
   `;
