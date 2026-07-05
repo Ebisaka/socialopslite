@@ -5215,6 +5215,96 @@ body[data-resolved-theme="light"] .security-row.danger-zone strong{
   vector-effect:non-scaling-stroke!important;
 }
 
+/* 2026-07-05 final user-facing overrides. Keep this block at EOF. */
+.target-option-check{
+  width:24px!important;
+  height:24px!important;
+  min-width:24px!important;
+  border-radius:999px!important;
+  border:1px solid rgba(34,197,94,.95)!important;
+  background:#22c55e!important;
+  color:#052e16!important;
+  display:grid!important;
+  place-items:center!important;
+  font-size:15px!important;
+  font-weight:900!important;
+  line-height:1!important;
+  box-shadow:0 0 0 2px rgba(34,197,94,.14)!important;
+}
+.target-dialog-option:not(.active) .target-option-check{
+  visibility:hidden!important;
+}
+.issue-modal-head{
+  display:grid!important;
+  grid-template-columns:34px minmax(0,1fr) 34px!important;
+  align-items:center!important;
+  justify-content:initial!important;
+}
+.issue-modal-head h3{
+  grid-column:2!important;
+  justify-self:center!important;
+  width:100%!important;
+  margin:0!important;
+  text-align:center!important;
+}
+.issue-modal-close{
+  grid-column:3!important;
+  justify-self:end!important;
+}
+.file-button span,
+.caption-file-row .file-button span{
+  color:var(--ink)!important;
+}
+body[data-resolved-theme="light"] .file-button span,
+body[data-resolved-theme="light"] .caption-file-row .file-button span{
+  color:#111827!important;
+}
+.live-preview .preview-media-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+  margin-bottom:14px;
+}
+.live-preview .preview-slot{
+  min-height:132px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:rgba(148,163,184,.08);
+  overflow:hidden;
+  display:grid;
+  place-items:center;
+  color:var(--muted);
+}
+.live-preview .preview-slot video,
+.live-preview .preview-slot img{
+  width:100%;
+  height:100%;
+  max-height:220px;
+  object-fit:cover;
+  display:block;
+}
+.live-preview .preview-label{
+  position:absolute;
+  left:10px;
+  bottom:10px;
+  padding:3px 8px;
+  border-radius:999px;
+  background:rgba(2,6,23,.72);
+  color:#f8fafc;
+  font-size:12px;
+}
+.live-preview-card .youtube-preview-head strong{
+  display:block;
+  margin-bottom:6px;
+}
+.live-preview-card .youtube-preview-head p{
+  white-space:pre-line;
+  color:var(--text);
+}
+.live-preview-card .preview-settings{
+  margin-top:14px;
+}
+
 /* Final alignment overrides for modal headers and member-center field errors. */
 .issue-modal-head{
   display:grid!important;
