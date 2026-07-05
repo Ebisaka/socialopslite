@@ -44,9 +44,9 @@ export default function DemoShell({
     const coreScript = document.createElement("script");
     const compatScript = document.createElement("script");
     const overrideScript = document.createElement("script");
-    coreScript.src = "/socialops/core.js?v=20260705-cleanup-2";
-    compatScript.src = "/socialops/compat-overrides.js?v=20260705-cleanup-2";
-    overrideScript.src = "/socialops/runtime-overrides.js?v=20260705-cleanup-2";
+    coreScript.src = "/socialops/core.js?v=20260705-core-clean-1";
+    compatScript.src = "/socialops/compat-overrides.js?v=20260705-core-clean-1";
+    overrideScript.src = "/socialops/runtime-overrides.js?v=20260705-core-clean-1";
     coreScript.dataset.socialopsRuntime = "true";
     compatScript.dataset.socialopsRuntime = "true";
     overrideScript.dataset.socialopsRuntime = "true";
@@ -73,7 +73,7 @@ export default function DemoShell({
 
   return (
     <div
-      data-socialops-build="demo-parity-20260705-cleanup-2"
+      data-socialops-build="demo-parity-20260705-core-clean-1"
       data-socialops-env={appEnv}
       data-demo-tools={demoTools ? "true" : "false"}
       dangerouslySetInnerHTML={{ __html: demoMarkup }}
