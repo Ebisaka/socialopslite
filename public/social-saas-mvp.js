@@ -875,6 +875,247 @@ boot();
 })();
 
 
+/* 2026-07-05 authenticated app polish and no-fake-content guard. */
+(function socialOpsFinalUserFixes20260705(){
+  var cfg = window.SOCIALOPS_CONFIG || {};
+  function $(sel, root){ return (root || document).querySelector(sel); }
+  function $$(sel, root){ return Array.from((root || document).querySelectorAll(sel)); }
+  function safe(value){
+    return String(value == null ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+  function activeRange(){
+    return localStorage.getItem("mvp_chart_range") || ($("#rangeSelect") && $("#rangeSelect").value) || "7";
+  }
+  function currentAccount(){
+    try { return typeof activeAccount === "function" ? activeAccount() : (window.accounts && accounts[0]); }
+    catch (_) { return window.accounts && accounts[0]; }
+  }
+  function filterYoutubeHelp(){
+    try {
+      if (!window.helpContent || !helpContent.advancedYoutube) return;
+      helpContent.advancedYoutube.title = "YouTube 設定說明";
+      if (!Array.isArray(helpContent.advancedYoutube.sections)) return;
+      helpContent.advancedYoutube.sections = helpContent.advancedYoutube.sections.filter(function(section){
+        var title = String((section && section.title) || "");
+        return title.indexOf("僅限成人") === -1 && title.indexOf("Shorts 重混") === -1;
+      });
+    } catch (_) {}
+  }
+  function normalizeYoutubeSettingLabels(){
+    var summary = $(".advanced-summary-title > span");
+    if (summary) summary.textContent = "YouTube 設定";
+    var info = $(".summary-info");
+    if (info) {
+      info.dataset.help = "advancedYoutube";
+      info.setAttribute("aria-label", "YouTube 設定說明");
+      info.title = "YouTube 設定說明";
+    }
+    filterYoutubeHelp();
+  }
+  function analyticsData(range){
+    try {
+      var account = currentAccount();
+      var platformData = (window.contentAnalytics && contentAnalytics.youtube) || {};
+      if (account && platformData[account.id]) return platformData[account.id][range] || platformData[account.id]["7"] || null;
+      return null;
+    } catch (_) { return null; }
+  }
+  function itemType(item){
+    return /shorts/i.test(String((item && item.type) || "")) ? "Shorts" : "一般影片";
+  }
+  function rankCover(item, index){
+    var url = item && (item.thumbnail || item.coverUrl || item.image || item.coverImage);
+    if (url) return '<div class="rank-cover"><img src="' + safe(url) + '" alt=""></div>';
+    return '<div class="rank-cover" aria-hidden="true"><span>' + (itemType(item) === "Shorts" ? "S" : "YT") + '</span></div>';
+  }
+  function renderContentReport(range){
+    var list = $("#contentRankList");
+    if (!list) return;
+    var data = analyticsData(range || activeRange());
+    var items = (data && Array.isArray(data.items)) ? data.items : [];
+    if (cfg.appEnv === "production" && !items.length) {
+      ["analyticsContentMetric", "analyticsViewsMetric", "analyticsEngagementMetric"].forEach(function(id, idx){
+        var el = $("#" + id);
+        if (el) el.textContent = idx === 2 ? "0%" : "0";
+      });
+      list.innerHTML = "";
+      return;
+    }
+    if (!items.length) {
+      var account = currentAccount();
+      var name = account ? (account.name || "YouTube") : "YouTube";
+      items = [
+        { type: "shorts", title: name + " 近期最佳 Shorts", views: "87,400", engagement: "7.5%" },
+        { type: "video", title: name + " 更新公告", views: "42,800", engagement: "5.9%" },
+        { type: "shorts", title: name + " 製作流程幕後分享", views: "58,200", engagement: "6.8%" }
+      ];
+    }
+    var filter = localStorage.getItem("mvp_content_filter") || "all";
+    var normalized = items.map(function(item){ return Object.assign({}, item, { normalizedType: itemType(item) }); });
+    var visible = normalized.filter(function(item){
+      if (filter === "shorts") return item.normalizedType === "Shorts";
+      if (filter === "video") return item.normalizedType !== "Shorts";
+      return true;
+    });
+    var total = normalized.length;
+    var videos = normalized.filter(function(item){ return item.normalizedType !== "Shorts"; }).length;
+    var shorts = normalized.filter(function(item){ return item.normalizedType === "Shorts"; }).length;
+    if ($("#analyticsContentMetric")) $("#analyticsContentMetric").textContent = String(total);
+    if ($("#analyticsViewsMetric")) $("#analyticsViewsMetric").textContent = (data && data.views) || "0";
+    if ($("#analyticsEngagementMetric")) $("#analyticsEngagementMetric").textContent = (data && data.engagement) || "0%";
+    list.innerHTML =
+      '<div class="content-type-summary is-filterable">' +
+        '<button type="button" class="content-type-filter ' + (filter === "all" ? "active" : "") + '" data-content-filter="all"><span>全部</span><strong>' + total + '</strong></button>' +
+        '<button type="button" class="content-type-filter ' + (filter === "video" ? "active" : "") + '" data-content-filter="video"><span>一般影片</span><strong>' + videos + '</strong></button>' +
+        '<button type="button" class="content-type-filter ' + (filter === "shorts" ? "active" : "") + '" data-content-filter="shorts"><span>Shorts</span><strong>' + shorts + '</strong></button>' +
+      '</div>' +
+      visible.map(function(item, index){
+        return '<article class="content-rank-card with-cover">' +
+          '<div class="rank-index">' + (index + 1) + '</div>' +
+          rankCover(item, index) +
+          '<div class="rank-main"><strong>' + safe(item.title || "未命名內容") + '</strong><span>' + safe(item.normalizedType) + '</span></div>' +
+          '<div class="rank-stats"><span>' + safe(item.views || "0") + '</span><small>觀看</small></div>' +
+          '<div class="rank-stats"><span>' + safe(item.engagement || item.rate || "0%") + '</span><small>互動</small></div>' +
+        '</article>';
+      }).join("");
+    $$("[data-content-filter]", list).forEach(function(button){
+      button.onclick = function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        localStorage.setItem("mvp_content_filter", button.dataset.contentFilter || "all");
+        renderContentReport(range || activeRange());
+      };
+    });
+  }
+  function value(id, fallback){
+    var el = $("#" + id);
+    return el ? el.value : (fallback || "");
+  }
+  function checked(id){
+    var el = $("#" + id);
+    return !!(el && el.checked);
+  }
+  function labelForSelect(id, fallback){
+    var el = $("#" + id);
+    if (!el) return fallback || "";
+    var option = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex] : null;
+    return (option && option.textContent.trim()) || el.value || fallback || "";
+  }
+  function audienceText(){
+    var el = document.querySelector('input[name="audienceChoice"]:checked');
+    if (!el) return "未選擇";
+    return el.value === "kids" ? "兒童專屬" : "非兒童專屬";
+  }
+  function previewSlot(key, label, emptyText){
+    try {
+      if (typeof previewFileHtml === "function") return previewFileHtml(key, label, emptyText);
+    } catch (_) {}
+    return '<div class="preview-slot"><span>' + safe(emptyText) + '</span></div>';
+  }
+  function targetText(){
+    try {
+      var targets = typeof selectedPublishAccounts === "function" ? selectedPublishAccounts() : [];
+      if (!targets.length) return "未選擇";
+      return targets.map(function(account){ return account.name || "YouTube"; }).join("、");
+    } catch (_) { return "未選擇"; }
+  }
+  function renderComposerPreview(){
+    var list = $("#previewList");
+    if (!list) return;
+    var title = value("titleInput", "").trim() || "未命名影片";
+    var desc = value("contentInput", "").trim() || "尚未輸入說明";
+    var visibilityMap = { private: "私人", unlisted: "不公開", public: "公開" };
+    var visibility = visibilityMap[value("visibilityInput", "private")] || "私人";
+    var media = previewSlot("media", "影片", "尚未選擇影片");
+    var cover = previewSlot("cover", "封面", "尚未選擇封面");
+    var playlist = labelForSelect("playlistInput", "").trim() || "未加入";
+    var category = labelForSelect("categoryInput", "未選擇");
+    var tags = value("tagsInput", "").trim() || "未設定";
+    var caption = (function(){
+      try {
+        var entry = typeof fileEntry === "function" ? fileEntry("caption") : null;
+        return entry && entry.name ? entry.name : "未上傳字幕";
+      } catch (_) { return "未上傳字幕"; }
+    })();
+    var settings = [
+      ["發布目標", targetText()],
+      ["瀏覽權限", visibility],
+      ["播放清單", playlist],
+      ["目標觀眾", audienceText()],
+      ["類別", category],
+      ["標記", tags],
+      ["字幕", caption],
+      ["付費宣傳", checked("paidPromoInput") ? "是" : "否"],
+      ["AI 聲明", checked("aiDisclosureInput") ? "是" : "否"],
+      ["允許嵌入", checked("embedInput") ? "是" : "否"],
+      ["通知訂閱者", checked("notifyInput") ? "是" : "否"]
+    ];
+    list.innerHTML =
+      '<div class="composer-preview-list live-preview">' +
+        '<div class="preview-media-grid">' + media + cover + '</div>' +
+        '<article class="queue-row preview-summary live-preview-card">' +
+          '<div class="youtube-preview-head">' +
+            '<strong>' + safe(title) + '</strong>' +
+            '<div class="youtube-channel"><span>' + safe(targetText()) + '</span></div>' +
+            '<p>' + safe(desc.split("\\n").slice(0, 3).join("\\n")) + '</p>' +
+          '</div>' +
+          '<div class="preview-badges"><span class="badge neutral">' + safe(labelForSelect("contentType", "一般影片")) + '</span><span class="badge neutral">' + safe(visibility) + '</span></div>' +
+          '<div class="preview-settings">' +
+            settings.map(function(pair){ return '<div class="preview-setting"><span>' + safe(pair[0]) + '</span><span>' + safe(pair[1]) + '</span></div>'; }).join("") +
+          '</div>' +
+        '</article>' +
+      '</div>';
+  }
+  function syncComposerFiles(event){
+    var target = event && event.target;
+    if (!target || !target.matches) return;
+    try {
+      if (target.matches("#mediaInput") && typeof syncFileInput === "function") syncFileInput("mediaInput", "media");
+      if (target.matches("#coverInput") && typeof syncFileInput === "function") syncFileInput("coverInput", "cover");
+      if (target.matches("#captionInput") && typeof syncFileInput === "function") syncFileInput("captionInput", "caption");
+    } catch (_) {}
+  }
+  function refreshFinalView(range){
+    normalizeYoutubeSettingLabels();
+    renderContentReport(range || activeRange());
+    renderComposerPreview();
+  }
+  try {
+    renderAnalytics = function(range){ refreshFinalView(range); };
+  } catch (_) {
+    window.renderAnalytics = function(range){ refreshFinalView(range); };
+  }
+  if (typeof renderComposer === "function") {
+    var previousRenderComposer = renderComposer;
+    renderComposer = function(){
+      previousRenderComposer();
+      refreshFinalView(activeRange());
+    };
+  }
+  document.addEventListener("change", function(event){
+    syncComposerFiles(event);
+    if (event.target && event.target.matches && event.target.matches("#mediaInput,#coverInput,#captionInput,#publishMode,#visibilityInput,#playlistInput,#categoryInput,#contentType,#paidPromoInput,#aiDisclosureInput,#embedInput,#notifyInput,input[name='audienceChoice']")) {
+      setTimeout(refreshFinalView, 0);
+    }
+  });
+  document.addEventListener("input", function(event){
+    if (event.target && event.target.matches && event.target.matches("#titleInput,#contentInput,#tagsInput")) {
+      setTimeout(refreshFinalView, 0);
+    }
+  });
+  document.addEventListener("click", function(){ setTimeout(refreshFinalView, 0); });
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function(){ refreshFinalView(activeRange()); }, { once: true });
+  } else {
+    refreshFinalView(activeRange());
+  }
+  setTimeout(function(){ refreshFinalView(activeRange()); }, 120);
+  setTimeout(function(){ refreshFinalView(activeRange()); }, 800);
+})();
 /* Clean YouTube publish bridge for the Next backend. */
 (function(){
   const COPY = {
