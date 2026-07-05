@@ -198,6 +198,7 @@ boot();
     });
   }
   function contentItems(){
+    if(!demoTools)return [];
     var account=currentAccount();
     var name=accountName(account);
     return [
@@ -211,6 +212,14 @@ boot();
     if(!list)return;
     var filter=localStorage.getItem("mvp_content_filter")||"all";
     var items=contentItems();
+    if(!demoTools&&!items.length){
+      list.innerHTML="";
+      var contentMetric=$("#analyticsContentMetric"),viewsMetric=$("#analyticsViewsMetric"),engagementMetric=$("#analyticsEngagementMetric");
+      if(contentMetric)contentMetric.textContent="0";
+      if(viewsMetric)viewsMetric.textContent="0";
+      if(engagementMetric)engagementMetric.textContent="0%";
+      return;
+    }
     var shown=items.filter(function(item){return filter==="all"||item.type===filter});
     var total=items.length;
     var videos=items.filter(function(item){return item.type==="video"}).length;
