@@ -24,33 +24,47 @@ export default function LandingPage() {
     <main className="landing-page">
       <nav className="landing-nav">
         <Link className="landing-brand" href="/">
-          <img src="/socialops-logo.png" alt="SocialOps Lite" />
+          <img src="/socialops-logo.png" alt="" />
           <strong>SocialOps Lite</strong>
         </Link>
         <div className="landing-actions">
-          <Link className="btn landing-cta-button landing-cta-secondary" href="/login">登入</Link>
-          <Link className="btn primary landing-cta-button landing-cta-primary" href="/login">開始使用</Link>
+          <Link className="btn landing-cta-button landing-cta-secondary" href="/login">
+            登入
+          </Link>
+          <Link className="btn primary landing-cta-button landing-cta-primary" href="/login">
+            開始使用
+          </Link>
         </div>
       </nav>
 
       <section className="landing-hero">
-        <div>
+        <div className="landing-copy">
           <h1>一個地方管理 YouTube 內容、帳戶與數據。</h1>
           <p>
             SocialOps Lite 幫你把帳戶連線、內容準備、排程與表現資料集中到同一個工作區，
             先專注把 YouTube 營運流程做得乾淨、省事、可追蹤。
           </p>
         </div>
+
         <div className="landing-preview" aria-hidden="true">
           <div className="landing-preview-top">
-            <span></span>
-            <span></span>
-            <span></span>
+            <span />
+            <span />
+            <span />
           </div>
           <div className="landing-metrics">
-            <div><span>訂閱</span><strong>18,420</strong></div>
-            <div><span>觀看</span><strong>742,980</strong></div>
-            <div><span>互動</span><strong>6.7%</strong></div>
+            <div>
+              <span>訂閱</span>
+              <strong>18,420</strong>
+            </div>
+            <div>
+              <span>觀看</span>
+              <strong>742,980</strong>
+            </div>
+            <div>
+              <span>互動</span>
+              <strong>6.7%</strong>
+            </div>
           </div>
           <div className="landing-bars">
             {[52, 66, 44, 78, 70, 91, 60].map((height, index) => (
