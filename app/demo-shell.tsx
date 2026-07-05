@@ -26,9 +26,27 @@ export default function DemoShell({
   demoTools = false
 }: DemoShellProps) {
   const mountedRef = useRef(false);
-  const buildVersion = "20260705-runtime-clean-3";
-  const configScript = `
-    window.SOCIALOPS_CONFIG = ${JSON.stringify({ appEnv, demoTools, initialTab })};
+  const buildVersion = "20260705-runtime-clean-7";
+  const runtimeConfig = { appEnv, demoTools, initialTab };
+  const loaderScript = `
+    window.SOCIALOPS_CONFIG = ${JSON.stringify(runtimeConfig)};
+    (function(){
+      var version = ${JSON.stringify(buildVersion)};
+      var files = ["core.js", "compat-overrides.js", "runtime-overrides.js"];
+      var previous = document.querySelectorAll("script[data-socialops-runtime='true']");
+      previous.forEach(function(script){ script.remove(); });
+      function loadNext(index){
+        if(index >= files.length) return;
+        var script = document.createElement("script");
+        script.src = "/socialops/" + files[index] + "?v=" + version;
+        script.dataset.socialopsRuntime = "true";
+        script.async = false;
+        script.onload = function(){ loadNext(index + 1); };
+        script.onerror = function(){ console.error("SocialOps runtime failed to load", script.src); };
+        document.body.appendChild(script);
+      }
+      loadNext(0);
+    })();
   `;
 
   useEffect(() => {
@@ -42,11 +60,6 @@ export default function DemoShell({
 
   return (
     <>
-      <Script
-        id="socialops-config"
-        strategy="beforeInteractive"
-        dangerouslySetInnerHTML={{ __html: configScript }}
-      />
       <div
         data-socialops-build={`demo-parity-${buildVersion}`}
         data-socialops-env={appEnv}
@@ -55,25 +68,13 @@ export default function DemoShell({
         dangerouslySetInnerHTML={{ __html: demoMarkup }}
       />
       <Script
-        src={`/socialops/core.js?v=${buildVersion}`}
+        id={`socialops-runtime-loader-${buildVersion}`}
         strategy="afterInteractive"
-        data-socialops-runtime="true"
-      />
-      <Script
-        src={`/socialops/compat-overrides.js?v=${buildVersion}`}
-        strategy="afterInteractive"
-        data-socialops-runtime="true"
-      />
-      <Script
-        src={`/socialops/runtime-overrides.js?v=${buildVersion}`}
-        strategy="afterInteractive"
-        data-socialops-runtime="true"
+        dangerouslySetInnerHTML={{ __html: loaderScript }}
       />
     </>
   );
 }
-
-
 
 
 

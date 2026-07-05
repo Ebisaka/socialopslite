@@ -29,7 +29,6 @@
 (function socialOpsUltimateRegressionLock(){
   var cfg=window.SOCIALOPS_CONFIG||{};
   var isProduction=cfg.appEnv==="production";
-  var demoTools=!!cfg.demoTools;
   function $(selector,root){return (root||document).querySelector(selector)}
   function $$(selector,root){return Array.from((root||document).querySelectorAll(selector))}
   function text(value){return String(value==null?"":value)}
@@ -50,7 +49,7 @@
   function hasStatsForActive(){
     try{
       var account=currentAccount();
-      return !!(account&&window.accountStats&&accountStats[account.id]);
+      return !!(account&&window.accountStats&&window.accountStats[account.id]);
     }catch(_){return false}
   }
   function setMetricEmpty(){
@@ -556,8 +555,8 @@
     var account=typeof activeAccount==="function"?activeAccount():(accounts&&accounts[0]);
     var metric=typeof activeChartMetric==="function"?activeChartMetric():"views";
     var type=typeof activeChartType==="function"?activeChartType():"bar";
-    var fallback=accountStats.main&&accountStats.main[range]||accountStats.main&&accountStats.main["7"];
-    var data=(account&&accountStats[account.id]&&accountStats[account.id][range])||fallback;
+    var fallback=(window.accountStats||{}).main&&(window.accountStats||{}).main[range]||(window.accountStats||{}).main&&(window.accountStats||{}).main["7"];
+    var data=(account&&(window.accountStats||{})[account.id]&&(window.accountStats||{})[account.id][range])||fallback;
     if(!data)return;
     var values=(data.series&&data.series[metric])||data.series.views||[];
     var chart=$s("#viewsChart"),bars=$s("#chartBars"),line=$s("#chartLine"),title=$s("#chartTitle");
@@ -713,7 +712,7 @@
       data.accounts.forEach(function(item){
         var id=item.accountId;
         if(!id||!item.ranges)return;
-        accountStats[id]=item.ranges;
+        window.accountStats=window.accountStats||{};window.accountStats[id]=item.ranges;
         Object.keys(item.ranges).forEach(function(range){
           var r=item.ranges[range];
           if(r&&r.series&&r.series.engagement&&item.metrics&&item.metrics.videoCount!=null){
@@ -1253,7 +1252,7 @@
     }
     if(cfg.appEnv==="production"){
       var account=active();
-      if(account&&window.accountStats&&!accountStats[account.id]){
+      if(account&&window.accountStats&&!window.accountStats[account.id]){
         ["subscriberMetric","viewMetric"].forEach(function(id){var el=$("#"+id);if(el)el.textContent="0";});
         var e=$("#engagementMetric");if(e)e.textContent="0%";
         ["subscriberDelta","viewDelta","engagementDelta"].forEach(function(id){var el=$("#"+id);if(el)el.textContent="-";});
@@ -1391,73 +1390,5 @@
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",run,{once:true});else run();
   setTimeout(run,100);
   setTimeout(run,600);
-})();
-
-/* 2026-07-05 production pre-guard.
-   This runs before runtime-overrides.js and prevents a brief flash of demo
-   content/accounts while the real account and metric APIs are still loading. */
-(function socialOpsProductionPreGuard20260705(){
-  var cfg = window.SOCIALOPS_CONFIG || {};
-  if (cfg.appEnv !== "production") return;
-  function $(selector, root){ return (root || document).querySelector(selector); }
-  function $$(selector, root){ return Array.from((root || document).querySelectorAll(selector)); }
-  function isDemoAccount(account){
-    if (!account) return true;
-    var id = String(account.id || "");
-    var name = String(account.name || account.displayName || "");
-    return id === "__empty" || id === "main" || id === "studio" || id.indexOf("demo") === 0 || name === "YouTube" || name === "工作用 YouTube" || /^YouTube 測試帳號/.test(name);
-  }
-  function cleanAccounts(){
-    try {
-      if (!Array.isArray(accounts)) return;
-      var filtered = accounts.filter(function(account){ return !isDemoAccount(account); });
-      if (filtered.length !== accounts.length) {
-        accounts.length = 0;
-        filtered.forEach(function(account){ accounts.push(account); });
-      }
-    } catch (_) {}
-  }
-  function emptyContentReport(){
-    var list = $("#contentRankList");
-    if (list) {
-      list.innerHTML = '<div class="content-type-summary is-filterable"><button type="button" class="content-type-filter active" data-content-filter="all"><span>全部</span><strong>0</strong></button><button type="button" class="content-type-filter" data-content-filter="video"><span>一般影片</span><strong>0</strong></button><button type="button" class="content-type-filter" data-content-filter="shorts"><span>Shorts</span><strong>0</strong></button></div><div class="content-empty">目前沒有可顯示的內容資料</div>';
-    }
-    [["analyticsContentMetric","0"],["analyticsViewsMetric","0"],["analyticsEngagementMetric","0%"]].forEach(function(item){
-      var el = $("#" + item[0]);
-      if (el) el.textContent = item[1];
-    });
-    ["analyticsContentDelta","analyticsViewsDelta","analyticsEngagementDelta"].forEach(function(id){
-      var el = $("#" + id);
-      if (el) el.textContent = "-";
-    });
-  }
-  function emptyDemoRows(){
-    cleanAccounts();
-    emptyContentReport();
-    var addDemo = $("#addDemoAccountBtn");
-    if (addDemo) addDemo.remove();
-    var list = $("#accountList");
-    if (list) {
-      $$(".account", list).forEach(function(card){
-        if (/YouTube 測試帳號|工作用 YouTube/.test(card.textContent || "") || (card.textContent || "").trim() === "YouTube") {
-          card.remove();
-        }
-      });
-    }
-  }
-  var oldAnalytics = typeof renderAnalytics === "function" ? renderAnalytics : null;
-  renderAnalytics = function(range){
-    if (oldAnalytics) {
-      try { oldAnalytics(range); } catch (_) {}
-    }
-    emptyContentReport();
-  };
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", emptyDemoRows, { once: true });
-  } else {
-    emptyDemoRows();
-  }
-  setTimeout(emptyDemoRows, 80);
-  setTimeout(emptyDemoRows, 400);
 })();
 

@@ -34,7 +34,7 @@ export default function LoginClient() {
     }
 
     if (mode === "forgot") {
-      setMessage(body.message || "如果這個 Email 已註冊，我們會提供重設密碼的下一步。");
+      setMessage(body.message || "如果這個 Email 已註冊，我們會提供重設密碼方式。");
       if (body.resetUrl) setResetUrl(body.resetUrl);
       return;
     }
@@ -90,7 +90,7 @@ export default function LoginClient() {
           {message ? <p className="auth-message">{message}</p> : null}
           {resetUrl ? (
             <a className="auth-reset-link" href={resetUrl}>
-              開啟重設密碼連結
+              前往重設密碼
             </a>
           ) : null}
           <button className="btn primary auth-submit" type="submit" disabled={busy}>
@@ -100,9 +100,13 @@ export default function LoginClient() {
         {mode !== "forgot" ? <a className="auth-google" href="/api/auth/google/start">使用 Google 登入</a> : null}
         <div className="auth-actions">
           {mode === "login" ? (
-            <button className="auth-toggle" type="button" onClick={() => setMode("register")}>建立新帳戶</button>
+            <button className="auth-toggle" type="button" onClick={() => setMode("register")}>
+              建立新帳戶
+            </button>
           ) : (
-            <button className="auth-toggle" type="button" onClick={() => setMode("login")}>回到登入</button>
+            <button className="auth-toggle" type="button" onClick={() => setMode("login")}>
+              回到登入
+            </button>
           )}
         </div>
       </section>
